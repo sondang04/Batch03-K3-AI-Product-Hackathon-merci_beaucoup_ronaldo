@@ -82,13 +82,24 @@ def _tokens(q: str) -> list[str]:
     return toks or [_norm(q).strip()]
 
 
+def _tim_token(hay: str, tk: str) -> int:
+    """Vị trí của token trong chuỗi. Token NGẮN (<5 ký tự) phải khớp theo BIÊN TỪ,
+    nếu không 'gia' sẽ khớp bên trong 'giai' (giải) và 'giao' — bug 30/07 làm
+    keyword 'giá' đếm ra 208 học viên. Token dài thì cho khớp substring để chịu
+    được biến thể ('transformer' trong 'transformers')."""
+    if len(tk) < 5:
+        m = re.search(rf"(?<!\w){re.escape(tk)}(?!\w)", hay)
+        return m.start() if m else -1
+    return hay.find(tk)
+
+
 def _match(haystack_norm: str, toks: list[str]) -> tuple[int, int] | None:
     """(vị trí, độ phân tán) nếu MỌI token đều xuất hiện (không cần liền mạch),
     None nếu thiếu token. Đây là lý do 'hai mùa đông' khớp 'hai lần mùa đông'.
     Độ phân tán = khoảng cách giữa token đầu và cuối → càng nhỏ càng liên quan."""
     positions = []
     for tk in toks:
-        i = haystack_norm.find(tk)
+        i = _tim_token(haystack_norm, tk)
         if i < 0:
             return None
         positions.append(i)
@@ -148,6 +159,18 @@ PROBE = re.compile(
     r"|kiểm tra bảo mật|admin|pretrain|fine tune|model của bạn|bạn dùng api", re.I)
 MIN_LEN = 12
 
+# Chỉ thắc mắc HỌC TẬP mới được vào cụm "lớp vướng gì". Đo được: sau khi lọc D+E
+# vẫn còn 37% câu là logistics hoặc câu không phải thắc mắc học tập (tải file,
+# 'bây h là mấy giờ', 'Canvas là hệ thống gì') — vào cụm thì recap thành nhiễu.
+# Hai regex dưới là nhãn A (xin tóm tắt) + B (hỏi khái niệm) của mine_chatlog.py.
+HOC_TAP = re.compile(
+    r"là gì|nghĩa là|giải thích|nói rõ|làm rõ|khác nhau|khác gì|so sánh|ví dụ"
+    r"|vì sao|tại sao|như thế nào|cách hoạt động|tóm tắt|tóm lại|ý chính"
+    r"|nội dung chính|keyword", re.I)
+LOGISTICS = re.compile(
+    r"tải|download|link|slide.*ở đâu|ở đâu.*slide|deadline|nộp bài|canvas|lịch học"
+    r"|hôm nay học gì|mấy giờ|điểm danh|zoom|workspace|tài liệu.*đâu", re.I)
+
 
 @lru_cache(maxsize=1)
 def _load_student_rows() -> list[dict]:
@@ -159,15 +182,17 @@ def _load_student_rows() -> list[dict]:
             q = PREFIX_SELECTION.sub("", r["content"] or "").strip()
             if len(q) < MIN_LEN or PROBE.search(q):
                 continue                      # nhãn E / D — không vào context
-            rows.append({"m": r["message_id"], "u": r["user_id"], "q": q})
+            rows.append({"m": r["message_id"], "u": r["user_id"], "q": q,
+                         "hoc_tap": bool(HOC_TAP.search(q)) and not LOGISTICS.search(q)})
     return rows
 
 
 def peer_questions(topic: str, limit: int = 6) -> dict:
     """Thắc mắc THẬT của lớp khớp chủ đề. Chỉ trả cụm ≥2 học viên khác nhau;
     output chứa số người + mã M, KHÔNG chứa mã học viên (spec §5 #13)."""
-    t = _norm(topic)
-    matched = [r for r in _load_student_rows() if t in _norm(r["q"])]
+    toks = _tokens(topic)
+    matched = [r for r in _load_student_rows()
+               if r["hoc_tap"] and _match(_norm(r["q"]), toks) is not None]
     n_users = len({r["u"] for r in matched})
     if n_users < 2:
         return {"chu_de": topic, "so_cau": len(matched), "so_nguoi": n_users,
@@ -183,6 +208,38 @@ def peer_questions(topic: str, limit: int = 6) -> dict:
             break
     return {"chu_de": topic, "so_cau": len(matched), "so_nguoi": n_users,
             "cum": examples}
+
+
+def cluster_for_keyword(kw: str, toi_thieu_nguoi: int = 2) -> dict | None:
+    """Cụm thắc mắc cho MỘT keyword. Trả None nếu <N học viên khác nhau hỏi.
+
+    Ứng viên cụm KHÔNG tự trích từ chatlog nữa: token tiếng Việt bỏ dấu vô nghĩa
+    ('dung', 'chinh', 'phan' — thử rồi, ra rác). Thay vào đó dùng chính dòng
+    🔑 Keyword mà AI call 2 sinh cho từng block — đó là **thuật ngữ nguyên văn của
+    giảng viên**, nên vừa là khái niệm thật, vừa đã gắn sẵn với một block.
+    """
+    kw = kw.strip()
+    if len(kw) < 3:
+        return None
+    c = peer_questions(kw, limit=3)
+    if c["so_nguoi"] < toi_thieu_nguoi or not c["cum"]:
+        return None
+    return {"chu_de": kw, "so_nguoi": c["so_nguoi"], "so_cau": c["so_cau"],
+            "vi_du": c["cum"]}
+
+
+RE_KEYWORD = re.compile(r"^\s*(?:[🔑*_\- ]*)?\**\s*keyword\s*\**\s*[:：]\s*(.+)$",
+                        re.I | re.M)
+
+
+def parse_keywords(tom_tat: str) -> list[str]:
+    """Lấy danh sách keyword từ dòng '🔑 Keyword: a · b · c' của bản tóm tắt."""
+    m = RE_KEYWORD.search(tom_tat)
+    if not m:
+        return []
+    raw = re.sub(r"\*+", "", m.group(1))
+    parts = re.split(r"[·,;/]|\s+-\s+", raw)
+    return [p.strip(" .*_") for p in parts if 3 <= len(p.strip(" .*_")) <= 40]
 
 
 # ── Slides (bản hackathon trong data pack — CÓ text layer) ───────────────────

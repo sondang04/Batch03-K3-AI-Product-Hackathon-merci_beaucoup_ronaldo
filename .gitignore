@@ -15,3 +15,6 @@ codebase/data/slides/
 # Trace từ test offline (mock) sinh lại mỗi lần chạy — không cần vào repo.
 # Trace từ AI THẬT (live-*) thì GIỮ: rubric R5 cần log/trace trong repo.
 codebase/logs/traces/*-test-*.jsonl
+
+# Cache recap: nội dung dẫn xuất từ data pack — không commit (sinh lại bằng app).
+codebase/data/recap-cache/
