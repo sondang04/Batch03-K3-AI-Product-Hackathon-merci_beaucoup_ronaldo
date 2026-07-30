@@ -1,0 +1,104 @@
+
+==========================================================================
+0 · PHẠM VI — n = 25 người ngoài nhóm (chuẩn A yêu cầu ≥20)
+==========================================================================
+thời điểm thu   : 30/07/2026 10:40-10:55 (giờ nghỉ)
+hình thức       : Google Form, 6 câu, tự điền
+mã HV trùng lặp : 0
+
+==========================================================================
+1 · Q6 · Ý ĐỊNH DÙNG  ⚠️ ĐỌC PHẦN CẢNH BÁO Ở CUỐI TRƯỚC KHI TRÍCH SỐ NÀY
+==========================================================================
+  Có           21/25 = 84.0%
+  Chưa chắc    4/25 = 16.0%
+  Không        0/25 = 0.0%
+
+  → Đây là câu hỏi Ý KIẾN về tính năng chưa tồn tại (guide §1.3 mục 4 cảnh báo
+    đúng dạng câu này). KHÔNG dùng làm bằng chứng chính. Xem mục 5.
+
+==========================================================================
+2 · Q5 · % THỜI GIAN THỰC SỰ TẬP TRUNG NGHE GIẢNG  ← số hành vi, mạnh nhất
+==========================================================================
+  mean 62.5%  ·  median 60%  ·  min 5%  ·  max 90%
+  → trung bình học viên TỰ KHAI mất 37.5% buổi lecture dù có mặt
+  tập trung ≤50% : 7/25 = 28.0%
+  tập trung ≤60% : 13/25 = 52.0%
+  tập trung ≤70% : 18/25 = 72.0%
+  tập trung <50%  : 4/25 = 16.0%
+
+==========================================================================
+3 · Q4 · THỜI GIAN TỰ ĐỌC SLIDE BUỔI CHIỀU  ← số hành vi
+==========================================================================
+  <30p     8/25 = 32.0%
+  30p-1h   11/25 = 44.0%
+  1h-2h    5/25 = 20.0%
+  Hơn 2h   1/25 = 4.0%
+
+  ≥30 phút : 17/25 = 68.0%   ≥1 giờ : 6/25 = 24.0%
+  → chi phí tự học SAU buổi đã tồn tại, trên SLIDE thôi, chưa tính bản ghi
+
+==========================================================================
+4 · Q3 · ĐỘ KHÓ NỘI DUNG (1-5)
+==========================================================================
+  1 điểm : █               1
+  2 điểm : ███             3
+  3 điểm : ███████████████ 15
+  4 điểm : ██████          6
+  5 điểm :                 0
+
+  mean 3.04  ·  median 3  ·  ≥3 điểm: 21/25 = 84.0%
+
+==========================================================================
+5 · GIAO NHAU: KHÓ + MẤT TẬP TRUNG  ← nhóm cần recap nhất
+==========================================================================
+  độ khó ≥3 VÀ tập trung ≤60%: 10/25 = 40.0%
+    Vi Minh Hiền             khó 4 · tập trung 40% · đọc slide <30p
+    Trần Quốc Hùng           khó 3 · tập trung 60% · đọc slide 30p-1h
+    Đinh Xuân Huh            khó 4 · tập trung 60% · đọc slide 1h-2h
+    Bùi Thị Như Ngọc         khó 4 · tập trung 50% · đọc slide <30p
+    Đinh Quốc Trung          khó 4 · tập trung 60% · đọc slide 30p-1h
+    Hà Hùng                  khó 3 · tập trung 60% · đọc slide 30p-1h
+    Dương Vũ                 khó 3 · tập trung 50% · đọc slide 30p-1h
+    Cao Nhật Minh            khó 3 · tập trung 60% · đọc slide <30p
+    Nguyễn Đức Tín           khó 3 · tập trung 50% · đọc slide <30p
+    Nguyễn Đức Sơn           khó 3 · tập trung 30% · đọc slide 1h-2h
+
+==========================================================================
+6 · TỶ LỆ XÁC NHẬN — chuẩn A yêu cầu ≥50%
+==========================================================================
+  ⚠️ Định nghĩa "xác nhận" dưới đây được đặt SAU khi đã thấy dữ liệu (post-hoc),
+     vì form vòng 1 không có câu nào hỏi trực tiếp "bạn có từng bỏ dở việc ôn lại".
+     Yếu hơn yêu cầu của guide (chốt định nghĩa TRƯỚC khi đếm). Vòng 2 có định
+     nghĩa chốt trước — xem survey-instrument.md.
+
+  Xác nhận = có dấu vết hành vi cho thấy việc ôn lại vừa cần vừa tốn:
+     (a) tập trung ≤60% buổi giảng  → có phần chưa nghe rõ, cần ôn
+     (b) dành ≥30 phút đọc lại slide → đã bỏ thời gian thật cho việc ôn
+
+  (a) tập trung ≤60%      : 13/25 = 52.0%
+  (b) đọc slide ≥30 phút  : 17/25 = 68.0%
+  (a) VÀ (b)              : 7/25 = 28.0%
+  (a) HOẶC (b) = XÁC NHẬN : 23/25 = 92.0%  → ĐẠT chuẩn ≥50%
+  không thoả cả (a) và (b): 2/25 = 8.0%
+
+==========================================================================
+7 · Q7 · COMMENT CÓ NỘI DUNG
+==========================================================================
+  1/25 = 4.0% phản hồi có nội dung — phần còn lại để trống hoặc 'không'
+    [Phước] "Mình cần nó phải tóm tắt được những keyword chính."
+
+==========================================================================
+8 · GIỚI HẠN CỦA VÒNG KHẢO SÁT NÀY — ghi để không tự lừa mình
+==========================================================================
+  ① Q6 hỏi ý kiến về tính năng chưa tồn tại, KÈM mô tả sản phẩm ngay trong câu hỏi
+     → 84% "Có" là con số được dự đoán trước bởi guide §1.3, KHÔNG chứng minh nhu cầu.
+     Nhóm dùng nó đúng một việc: 0% trả lời "Không" ⇒ không ai phản đối hướng đi.
+  ② Q3/Q4/Q5 là số hành vi tự khai → dùng được, và là phần có giá trị của vòng này.
+  ③ Q5 là tự khai, không đo → có thể lệch cả hai chiều (khiêm tốn hoặc tự tin quá).
+  ④ Không có câu nào hỏi "LẦN GẦN NHẤT bạn ôn lại một buổi — làm gì, mất bao lâu?"
+     ⇒ chưa có số phút thật cho việc ôn lại, chưa đối chiếu được với mining B11 (85 phút).
+  ⑤ Không có câu nào hỏi "bạn có đồng ý thử prototype không?" ⇒ 25 người này CHƯA
+     phải willing user; vẫn phải đi xin riêng ≥3 người (spec §8).
+  ⑥ Thu trong 15 phút giờ nghỉ, tự chọn tham gia → thiên lệch về người đang có mặt
+     và chịu điền form.
+  → Vòng 2 vá ①④⑤ bằng 3 câu hồi tưởng trong `survey-instrument.md`.
