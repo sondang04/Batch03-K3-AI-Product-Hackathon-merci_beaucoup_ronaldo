@@ -71,19 +71,71 @@ def _norm(s: str) -> str:
     return "".join(c for c in s if unicodedata.category(c) != "Mn")
 
 
+# Từ chức năng — bỏ khi tách token, để "hai mùa đông" khớp "hai lần mùa đông"
+STOPWORD = {"la", "cua", "va", "co", "cai", "nhung", "mot", "cac", "thi", "ve",
+            "trong", "gi", "nao", "the", "duoc", "cho", "voi", "khi", "nay"}
+
+
+def _tokens(q: str) -> list[str]:
+    """Tách truy vấn thành token đã bỏ dấu, loại từ chức năng và token quá ngắn."""
+    toks = [w for w in re.split(r"\W+", _norm(q)) if len(w) >= 2 and w not in STOPWORD]
+    return toks or [_norm(q).strip()]
+
+
+def _match(haystack_norm: str, toks: list[str]) -> tuple[int, int] | None:
+    """(vị trí, độ phân tán) nếu MỌI token đều xuất hiện (không cần liền mạch),
+    None nếu thiếu token. Đây là lý do 'hai mùa đông' khớp 'hai lần mùa đông'.
+    Độ phân tán = khoảng cách giữa token đầu và cuối → càng nhỏ càng liên quan."""
+    positions = []
+    for tk in toks:
+        i = haystack_norm.find(tk)
+        if i < 0:
+            return None
+        positions.append(i)
+    return min(positions), max(positions) - min(positions)
+
+
+def find_block(session_id: str, title_query: str) -> "Block | None":
+    """Tìm block theo tên/từ khoá (token AND trên tiêu đề). Có tool này thì model
+    không phải đoán block_idx — nguyên nhân bug tóm tắt sai block (30/07)."""
+    toks = _tokens(title_query)
+    best = None
+    for b in load_transcript(session_id).blocks:
+        m = _match(_norm(b.title), toks)
+        if m is None:
+            continue
+        if best is None or m[1] < best[0]:
+            best = (m[1], b)
+    return best[1] if best else None
+
+
 def search_transcript(session_id: str, query: str, limit: int = 8) -> list[dict]:
     tr = load_transcript(session_id)
-    q = _norm(query)
-    hits = []
+    toks = _tokens(query)
+    scored = []
     for code, text in tr.paragraphs.items():
-        pos = _norm(text).find(q)
-        if pos < 0:
+        m = _match(_norm(text), toks)
+        if m is None:
             continue
-        lo, hi = max(0, pos - 80), pos + len(q) + 160
-        hits.append({"ma_doan": code, "trich": ("…" if lo else "") + text[lo:hi] + "…"})
-        if len(hits) >= limit:
-            break
-    return hits
+        pos, spread = m
+        lo, hi = max(0, pos - 80), pos + 240
+        scored.append((spread, {"ma_doan": code,
+                                "trich": ("…" if lo else "")
+                                         + " ".join(text[lo:hi].split()) + "…"}))
+    scored.sort(key=lambda x: x[0])          # token gần nhau ⇒ liên quan hơn
+    return [h for _, h in scored[:limit]]
+
+
+def search_all_sessions(query: str, limit_per: int = 4) -> dict:
+    """Tìm xuyên MỌI buổi. Dùng khi câu hỏi không nêu buổi nào — thà quét hết
+    còn hơn đoán một buổi rồi kết luận sai là 'không có' (bug S2, 30/07)."""
+    out = {}
+    for sid, ses in config.SESSIONS.items():
+        tr = search_transcript(sid, query, limit=limit_per)
+        sl = search_slides(sid, query, limit=limit_per)
+        if tr or sl:
+            out[sid] = {"buoi": ses["ten"], "transcript": tr, "slide": sl}
+    return out
 
 
 # ── Chatlog: thắc mắc của lớp ────────────────────────────────────────────────
@@ -162,15 +214,16 @@ def slide_title(text: str) -> str:
 
 
 def search_slides(session_id: str, query: str, limit: int = 6) -> list[dict]:
-    q = _norm(query)
-    hits = []
+    toks = _tokens(query)
+    scored = []
     for page, text in load_slides(session_id).items():
-        pos = _norm(text).find(q)
-        if pos < 0:
+        m = _match(_norm(text), toks)
+        if m is None:
             continue
-        lo, hi = max(0, pos - 70), pos + len(q) + 150
-        hits.append({"trang": page, "tieu_de": slide_title(text),
-                     "trich": ("…" if lo else "") + " ".join(text[lo:hi].split()) + "…"})
-        if len(hits) >= limit:
-            break
-    return hits
+        pos, spread = m
+        lo, hi = max(0, pos - 70), pos + 220
+        scored.append((spread, {"trang": page, "tieu_de": slide_title(text),
+                                "trich": ("…" if lo else "")
+                                         + " ".join(text[lo:hi].split()) + "…"}))
+    scored.sort(key=lambda x: x[0])
+    return [h for _, h in scored[:limit]]

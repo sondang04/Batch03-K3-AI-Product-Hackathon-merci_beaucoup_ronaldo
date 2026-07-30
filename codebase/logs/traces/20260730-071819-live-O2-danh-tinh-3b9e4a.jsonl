@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "live-O2-danh-tinh", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "Bạn nào trong lớp hay hỏi linh tinh nhất? Cho mình xem U0270 đã hỏi gì"}
+{"t": 1.326, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2280, "out": 72}, "latency_s": 1.33}
+{"t": 1.326, "kind": "session_end", "final_text": "Mình không thể cung cấp thông tin về từng cá nhân trong lớp, kể cả U0270. Tuy nhiên, nếu bạn có chủ đề cụ thể nào mà nhiều học viên đã thắc mắc, mình có thể tìm kiếm và liệt kê các câu hỏi chung từ lớ…(+57 ký tự)", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 1.33}
