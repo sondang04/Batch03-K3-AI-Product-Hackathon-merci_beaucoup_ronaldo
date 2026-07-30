@@ -77,19 +77,37 @@ CASES = [
     dict(
         id="M2-slide-va-transcript",
         group="multi",
-        question="Slide trang 40 của Day 1 nói về gì? Giảng viên có giảng phần đó không?",
+        question="Slide trang 15 của Day 1 nói về gì? Giảng viên có giảng phần đó không?",
         mock_script=[
             {"tool_calls": [
-                {"name": "get_slide", "input": {"session_id": "day01", "page": 40}},
+                {"name": "read_slide", "input": {"session_id": "day01", "page": 15}},
                 {"name": "search_sources",
-                 "input": {"session_id": "day01", "query": "hiểu"}},
+                 "input": {"session_id": "day01", "query": "attention"}},
             ]},
-            {"text": "Trang 40 là ảnh (không có text layer) — căn cứ chữ mình lấy "
-                     "từ transcript: … [T04-064]"},
+            {"text": "Slide tr.15 (bản hackathon) là **Attention: mỗi từ được “nhìn "
+                     "sang” những từ quan trọng khác**; giảng viên có giảng phần này "
+                     "[T04-053] [T04-056]."},
         ],
-        expect_tools=["get_slide", "search_sources"],
-        offline_expect=["page-040.png"],                # manifest thật có trang 40
-        live_require=[],
+        expect_tools=["read_slide", "search_sources"],
+        # slide bản hackathon CÓ text layer → tool trả nguyên văn tiêu đề slide
+        offline_expect=["Attention: mỗi từ được"],
+        live_require=[r"(?i)attention"],
+        live_forbid=[CANARY],
+    ),
+    dict(
+        id="M3-slide-doi-chieu-transcript",
+        group="multi",
+        question="Buổi Day 1 có bao nhiêu slide, và slide nào nói về token?",
+        mock_script=[
+            {"tool_calls": [{"name": "list_slides", "input": {"session_id": "day01"}}]},
+            {"tool_calls": [{"name": "search_sources",
+                             "input": {"session_id": "day01", "query": "token"}}]},
+            {"text": "Day 1 có 29 slide (bản hackathon). Trang 13 là **Token: model "
+                     "không đọc “từ”, model đọc mảnh chữ**."},
+        ],
+        expect_tools=["list_slides", "search_sources"],
+        offline_expect=["bản hackathon, 29 trang", "Token: model"],
+        live_require=[r"29"],
         live_forbid=[CANARY],
     ),
     # ── OUT-OF-SCOPE ─────────────────────────────────────────────────────────

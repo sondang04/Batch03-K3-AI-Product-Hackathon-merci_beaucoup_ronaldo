@@ -2,6 +2,12 @@
 """
 Cắt scroll-capture của VLearn reader thành TỪNG SLIDE RIÊNG.
 
+⚠️  KHÔNG CÒN DÙNG TRONG SẢN PHẨM (từ 30/07). Data pack upstream đã có slide bản
+    hackathon dạng PDF **có text layer đầy đủ** (`data/vlearn-pack/slides/`), nên
+    agent đọc trực tiếp bằng `pypdf` — xem `agent/sources.py:load_slides`.
+    Giữ lại file này vì: (1) vẫn là cách duy nhất xử lý scroll-capture nếu sau
+    này cần một deck chưa có bản PDF; (2) ghi lại chuỗi quyết định của nhóm.
+
 Bài toán: bản capture cuộn là MỘT ảnh rất cao, bị chia thành N tile và mỗi tile
 đặt lên một trang PDF. Ranh giới trang PDF **không** trùng ranh giới slide → slide
 bị cắt rời ngang giữa. Không có text layer (0 ký tự) → pypdf không trích được chữ.

@@ -133,16 +133,44 @@ def peer_questions(topic: str, limit: int = 6) -> dict:
             "cum": examples}
 
 
-# ── Slides ───────────────────────────────────────────────────────────────────
+# ── Slides (bản hackathon trong data pack — CÓ text layer) ───────────────────
 
 @lru_cache(maxsize=4)
-def slide_manifest(deck: str) -> dict[int, dict]:
-    import json
-    path = config.SLIDES_DIR / deck / "manifest.jsonl"
+def load_slides(session_id: str) -> dict[int, str]:
+    """{số trang -> text của trang}. Đọc trực tiếp PDF bằng pypdf: ~12ms/trang,
+    deterministic, không vision/OCR. Trang trong data pack đều có text layer
+    (đã đo: 0/29 trang rỗng ở cả hai deck)."""
+    pdf = config.SESSIONS[session_id].get("deck_pdf")
+    if not pdf:
+        return {}
+    path = config.SLIDES_PDF_DIR / pdf
     if not path.exists():
         return {}
-    out = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        r = json.loads(line)
-        out[r["page"]] = r
-    return out
+    from pypdf import PdfReader
+    reader = PdfReader(str(path))
+    return {i: (pg.extract_text() or "").strip()
+            for i, pg in enumerate(reader.pages, start=1)}
+
+
+def slide_title(text: str) -> str:
+    """Tiêu đề slide = dòng có nội dung đầu tiên, bỏ header/footer lặp."""
+    for line in text.splitlines():
+        line = line.strip()
+        if len(line) >= 3 and not line.startswith("AI IN ACTION"):
+            return line[:100]
+    return "(không có tiêu đề)"
+
+
+def search_slides(session_id: str, query: str, limit: int = 6) -> list[dict]:
+    q = _norm(query)
+    hits = []
+    for page, text in load_slides(session_id).items():
+        pos = _norm(text).find(q)
+        if pos < 0:
+            continue
+        lo, hi = max(0, pos - 70), pos + len(q) + 150
+        hits.append({"trang": page, "tieu_de": slide_title(text),
+                     "trich": ("…" if lo else "") + " ".join(text[lo:hi].split()) + "…"})
+        if len(hits) >= limit:
+            break
+    return hits

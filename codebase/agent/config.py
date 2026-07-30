@@ -15,7 +15,8 @@ except ImportError:
 DATA = REPO / "data" / "vlearn-pack"
 TRANSCRIPT_DIR = DATA / "transcript"
 CHATLOG_CSV = DATA / "chatlog" / "chat_history_anonymized_for_hackathon.csv"
-SLIDES_DIR = REPO / "codebase" / "data" / "slides"
+SLIDES_PDF_DIR = DATA / "slides"          # slide bản hackathon (trong data pack)
+SLIDES_DIR = REPO / "codebase" / "data" / "slides"   # (cũ) output tách từ scroll-capture
 LOGS_DIR = REPO / "codebase" / "logs"
 PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 
@@ -45,15 +46,25 @@ SESSIONS = {
         "ten": "Day 1 — AI & LLM Foundation (giảng viên Blue)",
         "transcript": "transcript-04-clean.md",
         "prefix": "T04",
-        "deck": "day01_302",          # 82/83 slide đã tách, KHÔNG có text layer
+        # Slide bản hackathon trong data pack: 29 trang, CÓ text layer đầy đủ
+        # (0 trang ảnh) → đọc trực tiếp bằng pypdf, không cần vision/OCR.
+        "deck_pdf": "d1-slide-hackathon.pdf",
+        "deck_ten": "d1-slide-hackathon (bản hackathon, 29 trang)",
     },
     "day02-sang": {
         "ten": "Day 2 sáng — Xác định bài toán kinh doanh cho AI",
         "transcript": "transcript-01-clean.md",
         "prefix": "T01",
-        "deck": None,
+        "deck_pdf": "d2-slide-hackathon.pdf",
+        "deck_ten": "d2-slide-hackathon (bản hackathon, 29 trang)",
     },
 }
+
+# ⚠️ Số trang của bản hackathon KHÁC deck gốc mà chatlog trỏ tới.
+# Đo được: chỉ 3/673 case chatlog khớp trang (0,4%), độ lệch không phải hằng số
+# → KHÔNG join chatlog↔slide theo số trang. Mọi citation [slide tr.N] phải ghi
+# rõ là trang của BẢN HACKATHON. Khớp thắc mắc↔nội dung vẫn theo NỘI DUNG.
+SLIDE_PAGE_KHAC_DECK_GOC = True
 
 # Khái niệm được hỏi nhiều nhưng KHÔNG có trong transcript nào (mining B14) —
 # agent phải chỉ đúng chỗ nó thuộc về thay vì bịa.

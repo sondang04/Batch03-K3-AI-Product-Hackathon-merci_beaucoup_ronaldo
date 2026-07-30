@@ -4,7 +4,7 @@ Mỗi tool: schema JSON (đưa cho model) + hàm thực thi (dispatch). Descript
 viết PRESCRIPTIVE — nói rõ KHI NÀO gọi, không chỉ nó làm gì (điều này tăng
 đáng kể tỉ lệ gọi đúng tool trên các model Opus gần đây).
 
-5 tool deterministic + 1 tool AI (summarize_block = AI call 2 trong spec §4).
+6 tool deterministic + 1 tool AI (summarize_block = AI call 2 trong spec §4).
 """
 
 from __future__ import annotations
@@ -60,11 +60,12 @@ TOOLS: list[dict] = [
     {
         "name": "search_sources",
         "description": (
-            "Tìm từ khoá trong transcript của một buổi (không phân biệt dấu), trả "
-            "mã đoạn + trích đoạn ngắn. Dùng khi: học viên hỏi về một khái niệm và "
-            "bạn chưa biết nó nằm ở đoạn nào — LUÔN tìm trước khi kết luận "
-            "'buổi này không có'. Kết quả rỗng = khái niệm KHÔNG có trong buổi; "
-            "khi đó tuyệt đối không tự giải thích từ kiến thức nền."
+            "Tìm từ khoá trong CẢ transcript VÀ slide của một buổi (không phân biệt "
+            "dấu). Trả mã đoạn [Txx-NNN] cho transcript và số trang cho slide. "
+            "Dùng khi: học viên hỏi về một khái niệm và bạn chưa biết nó nằm ở đâu — "
+            "LUÔN tìm trước khi kết luận 'buổi này không có'. Cả hai danh sách rỗng = "
+            "khái niệm KHÔNG có trong buổi; khi đó tuyệt đối không tự giải thích từ "
+            "kiến thức nền."
         ),
         "input_schema": {
             "type": "object",
@@ -114,20 +115,36 @@ TOOLS: list[dict] = [
         },
     },
     {
-        "name": "get_slide",
+        "name": "read_slide",
         "description": (
-            "Metadata một trang slide đã tách từ capture (đường dẫn PNG, cờ partial "
-            "nếu slide bị cắt cụt). LƯU Ý: slide KHÔNG có text layer — tool này "
-            "không trả chữ; nguồn text duy nhất là transcript. Dùng khi: học viên "
-            "hỏi đích danh 'slide/trang N' hoặc cần đính kèm ảnh slide vào trả lời."
+            "Đọc NGUYÊN VĂN text của một trang slide (bản hackathon trong data pack, "
+            "29 trang/buổi, có text layer đầy đủ). Dùng khi: học viên hỏi đích danh "
+            "'slide/trang N', hoặc bạn cần đối chiếu điều giảng viên NÓI (transcript) "
+            "với điều slide VIẾT. Trích dẫn dạng [slide tr.N] — luôn ghi rõ là trang "
+            "của bản hackathon, vì số trang này KHÁC deck gốc."
         ),
         "input_schema": {
             "type": "object",
             "properties": {
                 "session_id": {"type": "string", "enum": SESSION_IDS},
-                "page": {"type": "integer", "description": "Số trang (khớp 'Trang N' của VLearn)"},
+                "page": {"type": "integer",
+                         "description": "Số trang trong bản hackathon (1-29)"},
             },
             "required": ["session_id", "page"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "list_slides",
+        "description": (
+            "Liệt kê tiêu đề toàn bộ 29 trang slide của một buổi. Dùng khi: học viên "
+            "muốn xem buổi học có những slide gì, hoặc bạn cần định vị nhanh một chủ "
+            "đề nằm ở trang nào trước khi đọc sâu."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"session_id": {"type": "string", "enum": SESSION_IDS}},
+            "required": ["session_id"],
             "additionalProperties": False,
         },
     },
@@ -173,14 +190,22 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             return json.dumps(out, ensure_ascii=False)
 
         if name == "search_sources":
-            hits = sources.search_transcript(args["session_id"], args["query"])
+            sid, q = args["session_id"], args["query"]
+            t_hits = sources.search_transcript(sid, q)
+            s_hits = sources.search_slides(sid, q)
             note = ""
-            if not hits:
-                key = args["query"].strip().lower()
+            if not t_hits and not s_hits:
+                key = q.strip().lower()
                 for k, v in config.NGOAI_NGUON.items():
                     if k in key:
-                        note = f"Khái niệm này thuộc {v} — không nằm trong buổi đang hỏi."
-            return json.dumps({"ket_qua": hits, "ghi_chu": note}, ensure_ascii=False)
+                        note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
+                                "chỉ đúng chỗ đó, không tự giải thích.")
+                        break
+                else:
+                    note = ("KHÔNG có trong transcript lẫn slide của buổi này — "
+                            "không được tự giải thích từ kiến thức nền.")
+            return json.dumps({"transcript": t_hits, "slide": s_hits,
+                               "ghi_chu": note}, ensure_ascii=False)
 
         if name == "summarize_block":
             tr = sources.load_transcript(args["session_id"])
@@ -199,21 +224,33 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
         if name == "peer_questions":
             return json.dumps(sources.peer_questions(args["topic"]), ensure_ascii=False)
 
-        if name == "get_slide":
-            deck = config.SESSIONS[args["session_id"]].get("deck")
-            if not deck:
-                return json.dumps({"loi": "buổi này chưa có deck slide đã tách"},
+        if name == "read_slide":
+            sid = args["session_id"]
+            slides = sources.load_slides(sid)
+            if not slides:
+                return json.dumps({"loi": "buổi này chưa có deck slide"},
                                   ensure_ascii=False)
-            man = sources.slide_manifest(deck)
-            rec = man.get(args["page"])
-            if not rec:
+            text = slides.get(args["page"])
+            if text is None:
                 return json.dumps(
-                    {"loi": f"trang {args['page']} không có trong capture "
-                            f"(deck {deck} có {len(man)} trang)"}, ensure_ascii=False)
-            return json.dumps({"deck": deck, "trang": rec["page"], "png": rec["png"],
-                               "partial": rec.get("partial", False),
-                               "luu_y": "slide là ảnh, không có text — căn cứ chữ "
-                                        "lấy từ transcript"}, ensure_ascii=False)
+                    {"loi": f"trang {args['page']} không có — deck có {len(slides)} trang"},
+                    ensure_ascii=False)
+            return json.dumps(
+                {"deck": config.SESSIONS[sid]["deck_ten"], "trang": args["page"],
+                 "tieu_de": sources.slide_title(text), "noi_dung": text,
+                 "cach_trich_dan": f"[slide tr.{args['page']} · bản hackathon]"},
+                ensure_ascii=False)
+
+        if name == "list_slides":
+            sid = args["session_id"]
+            slides = sources.load_slides(sid)
+            if not slides:
+                return json.dumps({"loi": "buổi này chưa có deck slide"},
+                                  ensure_ascii=False)
+            return json.dumps(
+                {"deck": config.SESSIONS[sid]["deck_ten"],
+                 "trang": [{"trang": p, "tieu_de": sources.slide_title(tx)}
+                           for p, tx in slides.items()]}, ensure_ascii=False)
 
         return json.dumps({"loi": f"tool không tồn tại: {name}"}, ensure_ascii=False)
 

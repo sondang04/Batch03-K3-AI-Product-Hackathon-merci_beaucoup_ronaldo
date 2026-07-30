@@ -1,4 +1,0 @@
-{"t": 0.0, "kind": "session_start", "label": "test-O1-logistics", "provider": "mock", "model": "mock"}
-{"t": 0.0, "kind": "user_message", "text": "Deadline nộp lab Day 1 là mấy giờ ngày nào vậy?"}
-{"t": 0.0, "kind": "llm_call", "provider": "mock", "model": "mock", "n_messages": 1, "stop_reason": "end_turn", "usage": {"in": 0, "out": 0}, "latency_s": 0.0}
-{"t": 0.0, "kind": "session_end", "final_text": "Mình chỉ đọc bản ghi bài giảng nên không có thông tin deadline. Bạn hỏi ở kênh #logistics hoặc TA nhé.", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 0.0}

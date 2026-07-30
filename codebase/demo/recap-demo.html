@@ -66,7 +66,7 @@
 <header>
   <span class="hash">#</span><span class="ten">ôn-tập-day-1</span>
   <span class="mota">VLearn Recap Bot — demo flow (kịch bản tĩnh trên buổi Day 1 ·
-  bản chạy thật: gpt-4o-mini + 6 tool)</span>
+  bản chạy thật: gpt-4o-mini + 7 tool)</span>
 </header>
 
 <div id="khung"></div>
@@ -76,6 +76,7 @@
   <button class="chip" onclick="chay('recap')">/recap day01</button>
   <button class="chip" onclick="chay('muadong')">Hai mùa đông AI là gì?</button>
   <button class="chip" onclick="chay('deadline')">Deadline nộp lab?</button>
+  <button class="chip" onclick="chay('slide')">Slide 15 nói gì?</button>
   <button class="chip" onclick="chay('react')">Giải thích ReAct đi</button>
 </div>
 <div id="thanhnhap">
@@ -154,7 +155,7 @@ function chay(kb){
     themUser('/recap day01');
     themBot(
 `<div class="theblock"><b>Recap buổi Day 1 — AI &amp; LLM Foundation</b>
-Dựng từ: bản ghi buổi giảng (98 đoạn) + slide (82 trang).
+Dựng từ: bản ghi buổi giảng (98 đoạn) + slide bản hackathon (29 trang, có text).
 <b>Mình tóm tắt và gom thắc mắc của lớp. Mình không trả lời câu hỏi ngoài nguồn buổi học và không biết deadline.</b></div>
 <div class="mucluc"><b>Mục lục — 19 block</b> <span class="badge canhbao">đã bỏ 2 mục không phải nội dung học: Chào lớp · Tương tác cuối buổi</span><br>
 ${BLOCKS.map((t,i)=>`<button ${i===6?'class="sao" onclick="chay(\'block8\')"':'onclick="toast(\'Demo tĩnh: block này chưa soạn kịch bản — thử block ⭐ Attention nhé.\')"'}>${i===6?'⭐ ':''}${i+1}. ${t}</button>`).join('')}
@@ -199,6 +200,15 @@ Câu đại diện <span class="ma">[M0382]</span>: “giair thích cơ chế at
 ↳ Bạn hỏi ở kênh <b>#logistics</b> hoặc nhắn <b>TA</b> nhé.</div>`);
   }
 
+  if(kb==='slide'){
+    themUser('Slide trang 15 của Day 1 nói gì? Giảng viên có giảng phần đó không?');
+    themBot(
+`<b>Slide tr.15 · bản hackathon</b> — “Attention: mỗi từ được <i>nhìn sang</i> những từ quan trọng khác”.
+Giảng viên <b>có</b> giảng phần này: attention là chuyện model “chú ý đúng nơi cần chú ý” <span class="ma">[T04-053]</span>, và multi-head là “nhiều con mắt cùng nhìn” <span class="ma">[T04-056]</span>.
+<div class="ghichu">⚠️ Số trang là của <b>bản hackathon 29 trang</b> trong data pack — khác cách đánh số deck gốc trên VLearn, đừng tìm theo số này ở đó.</div>`,
+    'read_slide(day01, tr.15) · search_sources("attention")');
+  }
+
   if(kb==='react'){
     themUser('Giải thích ReAct agent chi tiết giúp mình, buổi Day 1 ấy');
     themBot(
@@ -218,6 +228,7 @@ function guiTay(){
   if(l.includes('mùa đông') || l.includes('mua dong')) return chay('muadong');
   if(l.includes('deadline') || l.includes('nộp')) { themUser(t); return chay2_deadline(); }
   if(l.includes('react')) { themUser(t); return chay2_react(); }
+  if(l.includes('slide')) return chay('slide');
   themUser(t);
   themBot('Đây là <b>demo tĩnh</b> (kịch bản cố định trên buổi Day 1). Bản chạy thật gọi <b>gpt-4o-mini + 6 tool</b> — xem <span class="ma">codebase/agent/</span>. Bạn thử các nút gợi ý bên dưới nhé.');
 }
@@ -225,7 +236,7 @@ function chay2_deadline(){ themBot(`<div class="theblock tuchoi">Mình chỉ đ�
 function chay2_react(){ chay('react'); }
 
 /* Mở đầu */
-themBot(`Chào bạn 👋 Mình là <b>VLearn Recap</b> — recap buổi học thành các block có trích dẫn <span class="ma">[T04-…]</span> và gom thắc mắc thật của lớp.
+themBot(`Chào bạn 👋 Mình là <b>VLearn Recap</b> — recap buổi học thành các block có trích dẫn <span class="ma">[T04-…]</span> / <span class="ma">[slide tr.N]</span> và gom thắc mắc thật của lớp.
 Demo này chạy trên <b>buổi Day 1 — AI &amp; LLM Foundation</b>. Gõ <b>/recap day01</b> hoặc bấm nút gợi ý bên dưới.`);
 </script>
 </body>

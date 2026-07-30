@@ -40,3 +40,11 @@ Test offline có một kiểm riêng bắt buộc điều này (`trace bị cắ
 Bộ test này là **smoke test cho dev loop** — chấm đậu/rớt bằng regex.
 Golden set 28 case chấm tay theo 4 chiều C1-C4 vẫn ở `eval/golden-set.md`
 và là thứ tính điểm (quality bar đã chốt, không đổi).
+
+## Trace nào vào repo, trace nào không
+
+| Loại | Vào repo? | Vì sao |
+|---|---|---|
+| `*-live-*.jsonl` | ✅ **giữ** | Lời gọi AI **thật** — rubric R5 đòi "log/trace trong repo" |
+| `*-test-*.jsonl` | ❌ gitignore | Trace mock, sinh lại được bằng một lệnh, chỉ gây nhiễu diff |
+| `*-chat-*.jsonl` | ✅ giữ | Phiên chạy thật khi demo / dry run |
