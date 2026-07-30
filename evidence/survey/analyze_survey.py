@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Phân tích khảo sát Đường A — Google Form, 25 phản hồi, 30/07/2026 10:40-10:55.
+Phân tích khảo sát Đường A — Google Form, 29 phản hồi, 30/07/2026 10:40-13:32.
+(đợt 1: 25 phản hồi trong 15 phút giờ nghỉ · đợt 2: +4 phản hồi rải đến chiều)
 
 Chạy:  python3 evidence/survey/analyze_survey.py > evidence/survey/survey-analysis.txt
 
@@ -48,6 +49,11 @@ R = [
     ("Phùng Văn Đạt",           "02012", 3, "<30p",   80, "Chưa chắc", ""),
     ("Nguyễn Đức Tín",          "01185", 3, "<30p",   50, "Có",        ""),
     ("Nguyễn Đức Sơn",          "01485", 3, "1h-2h",  30, "Có",        "Không"),
+    # ── đợt 2: thu thêm 11:12-13:32 cùng ngày (n 25 → 29) ────────────────────
+    ("Trần Chí Tâm",            "01535", 3, "30p-1h", 75, "Chưa chắc", ""),
+    ("Trương Văn Thái",         "01801", 2, "<30p",   60, "Có",        ""),
+    ("Hoang Phong",             "01077", 2, "<30p",   50, "Có",        ""),
+    ("Đào Tùng Bách",     "2A202601745", 3, "1h-2h",  70, "Chưa chắc", ""),
 ]
 
 # Comment vô nội dung — không tính là feedback
@@ -69,8 +75,9 @@ def h(t):
 
 n = len(R)
 h(f"0 · PHẠM VI — n = {n} người ngoài nhóm (chuẩn A yêu cầu ≥20)")
-print("thời điểm thu   : 30/07/2026 10:40-10:55 (giờ nghỉ)")
+print("thời điểm thu   : 30/07/2026 10:40-13:32 (đợt 1: 10:40-10:55 giờ nghỉ · đợt 2: 11:12-13:32)")
 print("hình thức       : Google Form, 6 câu, tự điền")
+print(f"đợt 1 / đợt 2   : 25 / {n - 25}")
 print(f"mã HV trùng lặp : {n - len({r[1] for r in R})}")
 
 h("1 · Q6 · Ý ĐỊNH DÙNG  ⚠️ ĐỌC PHẦN CẢNH BÁO Ở CUỐI TRƯỚC KHI TRÍCH SỐ NÀY")
@@ -133,7 +140,86 @@ print(f"  {pct(len(sub), n)} phản hồi có nội dung — phần còn lại �
 for r in sub:
     print(f'    [{r[0]}] "{r[6]}"')
 
-h("8 · GIỚI HẠN CỦA VÒNG KHẢO SÁT NÀY — ghi để không tự lừa mình")
+h("8 · ĐỢT 1 vs ĐỢT 2 — mẫu 15 phút giờ nghỉ có thiên lệch không?")
+d1, d2 = R[:25], R[25:]
+print(f"{'':22} {'đợt 1 (n=25)':>14} {'đợt 2 (n=4)':>13}")
+for nhan, f in (("độ khó (mean)", lambda g: st.mean(r[2] for r in g)),
+                ("% tập trung (mean)", lambda g: st.mean(r[4] for r in g)),
+                ("đọc slide ≥30p", lambda g: 100 * sum(1 for r in g if r[3] != "<30p") / len(g)),
+                ('ý định "Có" (%)', lambda g: 100 * sum(1 for r in g if r[5] == "Có") / len(g))):
+    print(f"  {nhan:20} {f(d1):14.1f} {f(d2):13.1f}")
+print("""
+  → Đợt 2 nhỏ (n=4) nên không kết luận thống kê được, nhưng hướng thì giống đợt 1:
+    độ khó ~3, tập trung quanh 60-75%, vẫn có người đọc slide ≥30 phút. Không có
+    dấu hiệu mẫu giờ nghỉ lệch hẳn so với người điền muộn hơn.""")
+
+h("9 · BỐN Ô: MẤT TẬP TRUNG × CÓ ÔN LẠI  ← phân khúc cần sản phẩm nhất")
+print("""  Trục dọc : tập trung trong buổi (≤60% = mất nhiều / >60% = nghe được)
+  Trục ngang: thời gian tự đọc slide sau buổi (<30p = ít ôn / ≥30p = ôn thật)""")
+o = {}
+for r in R:
+    key = ("mất" if r[4] <= 60 else "nghe được", "ít ôn" if r[3] == "<30p" else "ôn thật")
+    o.setdefault(key, []).append(r[0])
+print()
+for tt in ("mất", "nghe được"):
+    for on in ("ít ôn", "ôn thật"):
+        g = o.get((tt, on), [])
+        print(f"  tập trung {tt:9} × {on:7} : {len(g):2d}/{n} = {100*len(g)/n:4.1f}%")
+mat_it = o.get(("mất", "ít ôn"), [])
+print(f"""
+  → Ô nguy hiểm nhất là **tập trung mất × ít ôn** ({len(mat_it)}/{n} = {100*len(mat_it)/n:.1f}%):
+    nghe không vào mà cũng không đọc lại ⇒ nội dung buổi đó mất luôn. Đây là phân
+    khúc recap phục vụ trực tiếp nhất — nó phải RẺ (≤15 phút), vì nhóm này đã cho
+    thấy họ không bỏ ≥30 phút ra ôn.
+    Tên: {', '.join(mat_it)}
+  → Ô **mất × ôn thật** ({len(o.get(("mất","ôn thật"),[]))}/{n}) là nhóm đang TRẢ GIÁ bằng thời gian:
+    họ bù bằng cách đọc lại slide ≥30 phút. Recap giúp nhóm này tiết kiệm, không
+    phải giúp họ bắt đầu ôn.""")
+
+h("10 · CHÂN DUNG NHÓM \"CHƯA CHẮC\" — người thử giá trị nhất cho CP5")
+cc = [r for r in R if r[5] == "Chưa chắc"]
+co = [r for r in R if r[5] == "Có"]
+print(f"{'':24} {'Chưa chắc':>11} {'Có':>8}")
+for nhan, f in (("n", len),
+                ("độ khó (mean)", lambda g: st.mean(r[2] for r in g)),
+                ("% tập trung (mean)", lambda g: st.mean(r[4] for r in g)),
+                ("đọc slide ≥30p (%)", lambda g: 100 * sum(1 for r in g if r[3] != "<30p") / len(g))):
+    v1, v2 = f(cc), f(co)
+    print(f"  {nhan:22} {v1:11.1f} {v2:8.1f}" if isinstance(v1, float)
+          else f"  {nhan:22} {v1:11d} {v2:8d}")
+print(f"""
+  → Nhóm "Chưa chắc" ({len(cc)} người) KHÔNG phải nhóm thấy nội dung dễ: độ khó
+    trung bình xấp xỉ nhóm "Có", và họ tập trung CAO hơn + đọc slide nhiều hơn.
+    Đọc ra: họ đang tự ôn được nên chưa thấy cần bot — chứ không phải họ không có
+    pain. Đây đúng là người thử nên mời ở CP5: họ có tiêu chuẩn so sánh (cách ôn
+    hiện tại của họ đang chạy tốt), nên feedback sẽ khắt khe chứ không phải lời khen.
+    Tên: {', '.join(r[0] for r in cc)}""")
+
+h("11 · TƯƠNG QUAN — độ khó có kéo thời gian ôn lên không?")
+BUCKET_H = {"<30p": 15, "30p-1h": 45, "1h-2h": 90, "Hơn 2h": 150}   # phút, lấy trung điểm
+for nhan, xs, ys in (("độ khó ↔ phút đọc slide", [r[2] for r in R], [BUCKET_H[r[3]] for r in R]),
+                     ("độ khó ↔ % tập trung",    [r[2] for r in R], [r[4] for r in R]),
+                     ("% tập trung ↔ phút đọc",  [r[4] for r in R], [BUCKET_H[r[3]] for r in R])):
+    mx, my = st.mean(xs), st.mean(ys)
+    cov = sum((a - mx) * (b - my) for a, b in zip(xs, ys))
+    den = (sum((a - mx) ** 2 for a in xs) * sum((b - my) ** 2 for b in ys)) ** 0.5
+    r_ = cov / den if den else 0
+    print(f"  {nhan:26} r = {r_:+.2f}")
+print("""
+  → n=29 nên đây là tín hiệu định hướng, KHÔNG phải kết luận thống kê (không tính
+    p-value, không suy ra nhân quả).
+
+  Điều đáng chú ý nhất là dấu của quan hệ thứ ba: **% tập trung ↔ thời gian đọc là
+  CÙNG CHIỀU (r=+0.32), không phải ngược chiều.** Nếu học viên bù trừ — nghe không
+  vào thì đọc lại nhiều hơn — thì dấu phải là ÂM. Ở đây người tập trung tốt lại
+  cũng là người ôn nhiều, và ngược lại.
+
+  ⇒ Khoảng cách KHÔNG tự thu hẹp, nó CỘNG DỒN. Nhóm mất tập trung phần lớn cũng là
+    nhóm không ôn lại (khớp ô 27.6% ở mục 9). Hệ quả thiết kế: đừng trông vào việc
+    học viên "cố hơn" để bù — recap phải rẻ đến mức nhóm này chịu dùng, chứ không
+    phải hay đến mức họ chịu bỏ thêm thời gian.""")
+
+h("12 · GIỚI HẠN CỦA VÒNG KHẢO SÁT NÀY — ghi để không tự lừa mình")
 print("""  ① Q6 hỏi ý kiến về tính năng chưa tồn tại, KÈM mô tả sản phẩm ngay trong câu hỏi
      → 84% "Có" là con số được dự đoán trước bởi guide §1.3, KHÔNG chứng minh nhu cầu.
      Nhóm dùng nó đúng một việc: 0% trả lời "Không" ⇒ không ai phản đối hướng đi.

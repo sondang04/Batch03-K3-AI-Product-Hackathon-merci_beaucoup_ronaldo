@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "live-O1-logistics", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "Deadline nộp lab Day 1 là mấy giờ ngày nào vậy?"}
+{"t": 1.125, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2157, "out": 45}, "latency_s": 1.12}
+{"t": 1.125, "kind": "session_end", "final_text": "Mình không biết thông tin về deadline nộp lab vì chỉ có bản ghi bài giảng. Bạn có thể hỏi trong kênh `#logistics` hoặc hỏi TA để biết chính xác hơn nhé!", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 1.13}

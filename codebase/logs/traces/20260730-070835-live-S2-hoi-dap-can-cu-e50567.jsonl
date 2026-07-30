@@ -1,0 +1,6 @@
+{"t": 0.0, "kind": "session_start", "label": "live-S2-hoi-dap-can-cu", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "Giảng viên nói gì về hai mùa đông của AI vậy?"}
+{"t": 1.229, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "tool_use", "usage": {"in": 1976, "out": 22}, "latency_s": 1.23}
+{"t": 1.237, "kind": "tool_call", "name": "search_sources", "args": {"session_id": "day01", "query": "hai mùa đông"}, "result": "{\"transcript\": [], \"slide\": [], \"ghi_chu\": \"KHÔNG có trong transcript lẫn slide của buổi này — không được tự giải thích từ kiến thức nền.\"}", "latency_s": 0.007}
+{"t": 2.741, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 3, "stop_reason": "stop", "usage": {"in": 2046, "out": 45}, "latency_s": 1.5}
+{"t": 2.741, "kind": "session_end", "final_text": "Khái niệm \"hai mùa đông của AI\" không nằm trong bản ghi buổi học này. Bạn có thể hỏi VLearn Tutor hoặc TA để có thông tin chi tiết hơn về khái niệm này.", "n_llm_calls": 2, "n_tool_calls": 1, "total_s": 2.74}

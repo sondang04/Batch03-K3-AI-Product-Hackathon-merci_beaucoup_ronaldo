@@ -92,6 +92,78 @@ def run_offline(selected, fails: list):
         check(not over, f"mọi chuỗi trong trace bị cắt ≤{config.TRUNCATE} ký tự", fails)
 
 
+# ── Recap pipeline: chạy với mock, kiểm bất biến sản phẩm ────────────────────
+
+def run_recap(fails: list):
+    """Kiểm PIPELINE recap (AI call 1+2+3) bằng MockClient — không cần key.
+    Mock trả JSON hợp lệ cho gộp block và gán cụm, nên test soát được LUẬT
+    (số block trong dải, toàn vẹn mục, ngưỡng confidence, cụm bị bỏ sót)."""
+    import json as _json
+    from agent import sources
+    from agent.llm import MockClient
+    from agent.recap import BLOCK_MAX, CONF_TOI_THIEU, build_recap, render
+
+    print(f"\n{Y}── RECAP PIPELINE (mock) ──{N}")
+
+    n_core = len([b for b in sources.load_transcript("day01").blocks if not b.non_core])
+
+    class RecapMock(MockClient):
+        """subcall trả JSON cho AI call 1/3, trả tóm tắt cho AI call 2."""
+        def __init__(self, conf=0.9, gop_hong=False):
+            super().__init__(script=[])
+            self.conf, self.gop_hong = conf, gop_hong
+            self.n_sub = 0
+
+        def subcall(self, system, user):
+            self.n_sub += 1
+            if "gộp các mục" in system:
+                if self.gop_hong:            # cố ý làm mất mục 3 → phải fallback
+                    return _json.dumps({"blocks": [{"tieu_de": "gộp hỏng", "muc": [1, 2]}]})
+                muc = [int(m) for m in re.findall(r"^(\d+)\.", user, re.M)]
+                nua = len(muc) // 2
+                return _json.dumps({"blocks": [
+                    {"tieu_de": "Block A", "muc": muc[:nua]},
+                    {"tieu_de": "Block B", "muc": muc[nua:]}]})
+            if "gán các CỤM" in system:
+                cums = re.findall(r"^- (.+?) \(\d+ học viên\)", user, re.M)
+                return _json.dumps({"gan": [
+                    {"cum": c, "block": 1, "confidence": self.conf, "ly_do": "test"}
+                    for c in cums]})
+            return "- Ý có căn cứ [T04-053]\n🔑 Keyword: attention · multi-head · token"
+
+    # (1) đường bình thường
+    c = RecapMock(conf=0.9)
+    r = build_recap("day01", c, dung_cache=False)
+    check(1 <= len(r.blocks) <= BLOCK_MAX, f"số block ≤{BLOCK_MAX} (thực tế {len(r.blocks)})", fails)
+    dung = sorted(m for b in r.blocks for m in b.muc_goc)
+    check(len(dung) == len(set(dung)) == n_core,
+          f"mọi mục core xuất hiện đúng 1 lần ({len(dung)}/{n_core})", fails)
+    check(all(b.so_gach_co_ma == b.so_gach for b in r.blocks),
+          "mọi gạch đầu dòng đều có mã đoạn (badge ✅)", fails)
+    check(sum(len(b.cum_thac_mac) for b in r.blocks) > 0,
+          "confidence cao ⇒ có cụm được gán vào block", fails)
+    check(r.muc_da_bo, f"khai báo mục đã bỏ ({len(r.muc_da_bo)} mục chào lớp/bên lề)", fails)
+
+    # (2) conditional: confidence thấp ⇒ KHÔNG gán, dồn vào chưa_gan_duoc
+    c2 = RecapMock(conf=CONF_TOI_THIEU - 0.2)
+    r2 = build_recap("day01", c2, dung_cache=False)
+    check(sum(len(b.cum_thac_mac) for b in r2.blocks) == 0 and r2.chua_gan_duoc,
+          f"confidence <{CONF_TOI_THIEU} ⇒ 0 cụm gán, {len(r2.chua_gan_duoc)} cụm vào 'chưa gán được'",
+          fails)
+
+    # (3) AI gộp làm mất mục ⇒ fallback về mục thô, không mất nội dung buổi học
+    c3 = RecapMock(gop_hong=True)
+    r3 = build_recap("day01", c3, dung_cache=False)
+    check(len(r3.blocks) == n_core and any("không toàn vẹn" in w for w in r3.canh_bao),
+          "AI gộp hỏng ⇒ fallback mục thô + ghi cảnh báo", fails)
+
+    # (4) render ra thread nhiều message, có badge và dòng nhắc giới hạn
+    msgs = render(r)
+    check(len(msgs) >= len(r.blocks) + 1, f"render ra {len(msgs)} message (thread)", fails)
+    check("Recap không thay bản ghi" in msgs[-1], "message cuối nhắc giới hạn recap", fails)
+    check(any("✅" in m or "⚠️" in m for m in msgs), "badge độ phủ có trong thread", fails)
+
+
 # ── Live: model thật, chấm bằng regex ────────────────────────────────────────
 
 def run_live(selected, provider: str, fails: list):
@@ -141,6 +213,7 @@ def main():
     fails: list[str] = []
     run_static(fails)
     run_offline(selected, fails)
+    run_recap(fails)
     if args.live:
         provider = args.provider or config.PROVIDER
         if provider == "mock":

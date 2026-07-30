@@ -60,17 +60,22 @@ TOOLS: list[dict] = [
     {
         "name": "search_sources",
         "description": (
-            "Tìm từ khoá trong CẢ transcript VÀ slide của một buổi (không phân biệt "
-            "dấu). Trả mã đoạn [Txx-NNN] cho transcript và số trang cho slide. "
+            "Tìm từ khoá trong CẢ transcript VÀ slide (không phân biệt dấu, khớp "
+            "theo token nên không cần đúng nguyên cụm). Trả mã đoạn [Txx-NNN] cho "
+            "transcript và số trang cho slide. "
             "Dùng khi: học viên hỏi về một khái niệm và bạn chưa biết nó nằm ở đâu — "
-            "LUÔN tìm trước khi kết luận 'buổi này không có'. Cả hai danh sách rỗng = "
-            "khái niệm KHÔNG có trong buổi; khi đó tuyệt đối không tự giải thích từ "
-            "kiến thức nền."
+            "LUÔN tìm trước khi kết luận 'không có'. "
+            "**Nếu câu hỏi KHÔNG nêu rõ buổi nào, đặt session_id='all' để quét mọi "
+            "buổi — TUYỆT ĐỐI không tự đoán một buổi rồi kết luận 'không có'.** "
+            "Kết quả rỗng ở mọi buổi = khái niệm thật sự không có; khi đó không được "
+            "tự giải thích từ kiến thức nền."
         ),
         "input_schema": {
             "type": "object",
             "properties": {
-                "session_id": {"type": "string", "enum": SESSION_IDS},
+                "session_id": {"type": "string", "enum": SESSION_IDS + ["all"],
+                               "description": "Buổi cụ thể, hoặc 'all' khi câu hỏi "
+                                              "không nêu buổi nào"},
                 "query": {"type": "string", "description": "Từ khoá, vd 'mùa đông'"},
             },
             "required": ["session_id", "query"],
@@ -84,15 +89,23 @@ TOOLS: list[dict] = [
             "[Txx-NNN], cộng dòng '🔑 Keyword' (3-5 thuật ngữ nguyên văn của "
             "giảng viên). Dùng khi: học viên xin tóm tắt/recap một phần hoặc cả "
             "buổi (gọi lần lượt cho từng block). Đừng tự tóm tắt bằng tay khi đã "
-            "có tool này — nó áp đúng luật citation của spec."
+            "có tool này — nó áp đúng luật citation của spec. "
+            "**KHÔNG đoán block_idx.** Hoặc gọi `list_blocks` trước, hoặc truyền "
+            "`title_query` để tool tự tìm đúng block. Kết quả luôn kèm `tieu_de` — "
+            "PHẢI đối chiếu tiêu đề đó với điều học viên hỏi; nếu lệch thì gọi lại, "
+            "đừng gán nhãn tiêu đề học viên hỏi lên nội dung block khác."
         ),
         "input_schema": {
             "type": "object",
             "properties": {
                 "session_id": {"type": "string", "enum": SESSION_IDS},
-                "block_idx": {"type": "integer", "description": "Block cần tóm tắt"},
+                "block_idx": {"type": "integer",
+                              "description": "Số block (dùng khi đã biết chắc từ list_blocks)"},
+                "title_query": {"type": "string",
+                                "description": "HOẶC tên/từ khoá của block, vd 'attention "
+                                               "multi-head' — an toàn hơn đoán số"},
             },
-            "required": ["session_id", "block_idx"],
+            "required": ["session_id"],
             "additionalProperties": False,
         },
     },
@@ -190,9 +203,15 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             return json.dumps(out, ensure_ascii=False)
 
         if name == "search_sources":
-            sid, q = args["session_id"], args["query"]
-            t_hits = sources.search_transcript(sid, q)
-            s_hits = sources.search_slides(sid, q)
+            sid, q = args.get("session_id", "all"), args["query"]
+            if sid == "all":
+                found = sources.search_all_sessions(q)
+                if found:
+                    return json.dumps({"tim_xuyen_moi_buoi": found}, ensure_ascii=False)
+                t_hits = s_hits = []
+            else:
+                t_hits = sources.search_transcript(sid, q)
+                s_hits = sources.search_slides(sid, q)
             note = ""
             if not t_hits and not s_hits:
                 key = q.strip().lower()
@@ -209,17 +228,36 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
 
         if name == "summarize_block":
             tr = sources.load_transcript(args["session_id"])
-            blk = tr.block_by_idx(args["block_idx"])
+            blk = None
+            if args.get("title_query"):                     # ưu tiên tìm theo tên
+                blk = sources.find_block(args["session_id"], args["title_query"])
+                if blk is None:
+                    return json.dumps(
+                        {"loi": f"không tìm thấy block khớp '{args['title_query']}'",
+                         "goi_y": "gọi list_blocks để xem danh sách block"},
+                        ensure_ascii=False)
+            elif args.get("block_idx") is not None:
+                blk = tr.block_by_idx(args["block_idx"])
             if blk is None:
-                return json.dumps({"loi": f"không có block {args['block_idx']}"},
+                return json.dumps({"loi": "cần block_idx hoặc title_query"},
                                   ensure_ascii=False)
             if blk.non_core:
                 return json.dumps({"bo_qua": f"'{blk.title}' là phần chào lớp/bên lề "
                                              "— không tóm tắt, khai báo đã loại"},
                                   ensure_ascii=False)
             body = "\n\n".join(f"[{c}] {tr.paragraphs[c]}" for c in blk.codes)
-            return subcall(SUMMARIZE_SYSTEM,
-                           f"Block: {blk.title}\n\n{body}\n\nTóm tắt theo luật trên.")
+            tom_tat = subcall(SUMMARIZE_SYSTEM,
+                              f"Block: {blk.title}\n\n{body}\n\nTóm tắt theo luật trên.")
+            # Echo block_idx + tieu_de để model TỰ ĐỐI CHIẾU đã tóm tắt đúng block
+            # chưa (bug 30/07: model đoán index sai rồi dán nhãn tiêu đề học viên hỏi
+            # lên nội dung block khác — không có cách nào tự phát hiện).
+            return json.dumps({"block_idx": blk.idx, "tieu_de": blk.title,
+                               "dai_ma": f"{blk.codes[0]}..{blk.codes[-1]}" if blk.codes else "",
+                               "tom_tat": tom_tat,
+                               "nhac": "Nếu tiêu đề này KHÔNG khớp điều học viên hỏi, "
+                                       "gọi lại với title_query đúng — đừng dùng nội "
+                                       "dung này dưới nhãn khác."},
+                              ensure_ascii=False)
 
         if name == "peer_questions":
             return json.dumps(sources.peer_questions(args["topic"]), ensure_ascii=False)

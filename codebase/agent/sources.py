@@ -71,19 +71,82 @@ def _norm(s: str) -> str:
     return "".join(c for c in s if unicodedata.category(c) != "Mn")
 
 
+# Từ chức năng — bỏ khi tách token, để "hai mùa đông" khớp "hai lần mùa đông"
+STOPWORD = {"la", "cua", "va", "co", "cai", "nhung", "mot", "cac", "thi", "ve",
+            "trong", "gi", "nao", "the", "duoc", "cho", "voi", "khi", "nay"}
+
+
+def _tokens(q: str) -> list[str]:
+    """Tách truy vấn thành token đã bỏ dấu, loại từ chức năng và token quá ngắn."""
+    toks = [w for w in re.split(r"\W+", _norm(q)) if len(w) >= 2 and w not in STOPWORD]
+    return toks or [_norm(q).strip()]
+
+
+def _tim_token(hay: str, tk: str) -> int:
+    """Vị trí của token trong chuỗi. Token NGẮN (<5 ký tự) phải khớp theo BIÊN TỪ,
+    nếu không 'gia' sẽ khớp bên trong 'giai' (giải) và 'giao' — bug 30/07 làm
+    keyword 'giá' đếm ra 208 học viên. Token dài thì cho khớp substring để chịu
+    được biến thể ('transformer' trong 'transformers')."""
+    if len(tk) < 5:
+        m = re.search(rf"(?<!\w){re.escape(tk)}(?!\w)", hay)
+        return m.start() if m else -1
+    return hay.find(tk)
+
+
+def _match(haystack_norm: str, toks: list[str]) -> tuple[int, int] | None:
+    """(vị trí, độ phân tán) nếu MỌI token đều xuất hiện (không cần liền mạch),
+    None nếu thiếu token. Đây là lý do 'hai mùa đông' khớp 'hai lần mùa đông'.
+    Độ phân tán = khoảng cách giữa token đầu và cuối → càng nhỏ càng liên quan."""
+    positions = []
+    for tk in toks:
+        i = _tim_token(haystack_norm, tk)
+        if i < 0:
+            return None
+        positions.append(i)
+    return min(positions), max(positions) - min(positions)
+
+
+def find_block(session_id: str, title_query: str) -> "Block | None":
+    """Tìm block theo tên/từ khoá (token AND trên tiêu đề). Có tool này thì model
+    không phải đoán block_idx — nguyên nhân bug tóm tắt sai block (30/07)."""
+    toks = _tokens(title_query)
+    best = None
+    for b in load_transcript(session_id).blocks:
+        m = _match(_norm(b.title), toks)
+        if m is None:
+            continue
+        if best is None or m[1] < best[0]:
+            best = (m[1], b)
+    return best[1] if best else None
+
+
 def search_transcript(session_id: str, query: str, limit: int = 8) -> list[dict]:
     tr = load_transcript(session_id)
-    q = _norm(query)
-    hits = []
+    toks = _tokens(query)
+    scored = []
     for code, text in tr.paragraphs.items():
-        pos = _norm(text).find(q)
-        if pos < 0:
+        m = _match(_norm(text), toks)
+        if m is None:
             continue
-        lo, hi = max(0, pos - 80), pos + len(q) + 160
-        hits.append({"ma_doan": code, "trich": ("…" if lo else "") + text[lo:hi] + "…"})
-        if len(hits) >= limit:
-            break
-    return hits
+        pos, spread = m
+        lo, hi = max(0, pos - 80), pos + 240
+        scored.append((spread, {"ma_doan": code,
+                                "trich": ("…" if lo else "")
+                                         + " ".join(text[lo:hi].split()) + "…"}))
+    scored.sort(key=lambda x: x[0])          # token gần nhau ⇒ liên quan hơn
+    return [h for _, h in scored[:limit]]
+
+
+def search_all_sessions(query: str, limit_per: int = 4) -> dict:
+    """Tìm xuyên MỌI buổi. Dùng khi câu hỏi không nêu buổi nào — thà quét hết
+    còn hơn đoán một buổi rồi kết luận sai là 'không có' (bug S2, 30/07)."""
+    out = {}
+    for sid, ses in config.SESSIONS.items():
+        tr = search_transcript(sid, query, limit=limit_per)
+        sl = search_slides(sid, query, limit=limit_per)
+        if tr or sl:
+            out[sid] = {"buoi": ses["ten"], "transcript": tr, "slide": sl}
+    return out
 
 
 # ── Chatlog: thắc mắc của lớp ────────────────────────────────────────────────
@@ -96,6 +159,18 @@ PROBE = re.compile(
     r"|kiểm tra bảo mật|admin|pretrain|fine tune|model của bạn|bạn dùng api", re.I)
 MIN_LEN = 12
 
+# Chỉ thắc mắc HỌC TẬP mới được vào cụm "lớp vướng gì". Đo được: sau khi lọc D+E
+# vẫn còn 37% câu là logistics hoặc câu không phải thắc mắc học tập (tải file,
+# 'bây h là mấy giờ', 'Canvas là hệ thống gì') — vào cụm thì recap thành nhiễu.
+# Hai regex dưới là nhãn A (xin tóm tắt) + B (hỏi khái niệm) của mine_chatlog.py.
+HOC_TAP = re.compile(
+    r"là gì|nghĩa là|giải thích|nói rõ|làm rõ|khác nhau|khác gì|so sánh|ví dụ"
+    r"|vì sao|tại sao|như thế nào|cách hoạt động|tóm tắt|tóm lại|ý chính"
+    r"|nội dung chính|keyword", re.I)
+LOGISTICS = re.compile(
+    r"tải|download|link|slide.*ở đâu|ở đâu.*slide|deadline|nộp bài|canvas|lịch học"
+    r"|hôm nay học gì|mấy giờ|điểm danh|zoom|workspace|tài liệu.*đâu", re.I)
+
 
 @lru_cache(maxsize=1)
 def _load_student_rows() -> list[dict]:
@@ -107,15 +182,17 @@ def _load_student_rows() -> list[dict]:
             q = PREFIX_SELECTION.sub("", r["content"] or "").strip()
             if len(q) < MIN_LEN or PROBE.search(q):
                 continue                      # nhãn E / D — không vào context
-            rows.append({"m": r["message_id"], "u": r["user_id"], "q": q})
+            rows.append({"m": r["message_id"], "u": r["user_id"], "q": q,
+                         "hoc_tap": bool(HOC_TAP.search(q)) and not LOGISTICS.search(q)})
     return rows
 
 
 def peer_questions(topic: str, limit: int = 6) -> dict:
     """Thắc mắc THẬT của lớp khớp chủ đề. Chỉ trả cụm ≥2 học viên khác nhau;
     output chứa số người + mã M, KHÔNG chứa mã học viên (spec §5 #13)."""
-    t = _norm(topic)
-    matched = [r for r in _load_student_rows() if t in _norm(r["q"])]
+    toks = _tokens(topic)
+    matched = [r for r in _load_student_rows()
+               if r["hoc_tap"] and _match(_norm(r["q"]), toks) is not None]
     n_users = len({r["u"] for r in matched})
     if n_users < 2:
         return {"chu_de": topic, "so_cau": len(matched), "so_nguoi": n_users,
@@ -131,6 +208,38 @@ def peer_questions(topic: str, limit: int = 6) -> dict:
             break
     return {"chu_de": topic, "so_cau": len(matched), "so_nguoi": n_users,
             "cum": examples}
+
+
+def cluster_for_keyword(kw: str, toi_thieu_nguoi: int = 2) -> dict | None:
+    """Cụm thắc mắc cho MỘT keyword. Trả None nếu <N học viên khác nhau hỏi.
+
+    Ứng viên cụm KHÔNG tự trích từ chatlog nữa: token tiếng Việt bỏ dấu vô nghĩa
+    ('dung', 'chinh', 'phan' — thử rồi, ra rác). Thay vào đó dùng chính dòng
+    🔑 Keyword mà AI call 2 sinh cho từng block — đó là **thuật ngữ nguyên văn của
+    giảng viên**, nên vừa là khái niệm thật, vừa đã gắn sẵn với một block.
+    """
+    kw = kw.strip()
+    if len(kw) < 3:
+        return None
+    c = peer_questions(kw, limit=3)
+    if c["so_nguoi"] < toi_thieu_nguoi or not c["cum"]:
+        return None
+    return {"chu_de": kw, "so_nguoi": c["so_nguoi"], "so_cau": c["so_cau"],
+            "vi_du": c["cum"]}
+
+
+RE_KEYWORD = re.compile(r"^\s*(?:[🔑*_\- ]*)?\**\s*keyword\s*\**\s*[:：]\s*(.+)$",
+                        re.I | re.M)
+
+
+def parse_keywords(tom_tat: str) -> list[str]:
+    """Lấy danh sách keyword từ dòng '🔑 Keyword: a · b · c' của bản tóm tắt."""
+    m = RE_KEYWORD.search(tom_tat)
+    if not m:
+        return []
+    raw = re.sub(r"\*+", "", m.group(1))
+    parts = re.split(r"[·,;/]|\s+-\s+", raw)
+    return [p.strip(" .*_") for p in parts if 3 <= len(p.strip(" .*_")) <= 40]
 
 
 # ── Slides (bản hackathon trong data pack — CÓ text layer) ───────────────────
@@ -162,15 +271,16 @@ def slide_title(text: str) -> str:
 
 
 def search_slides(session_id: str, query: str, limit: int = 6) -> list[dict]:
-    q = _norm(query)
-    hits = []
+    toks = _tokens(query)
+    scored = []
     for page, text in load_slides(session_id).items():
-        pos = _norm(text).find(q)
-        if pos < 0:
+        m = _match(_norm(text), toks)
+        if m is None:
             continue
-        lo, hi = max(0, pos - 70), pos + len(q) + 150
-        hits.append({"trang": page, "tieu_de": slide_title(text),
-                     "trich": ("…" if lo else "") + " ".join(text[lo:hi].split()) + "…"})
-        if len(hits) >= limit:
-            break
-    return hits
+        pos, spread = m
+        lo, hi = max(0, pos - 70), pos + 220
+        scored.append((spread, {"trang": page, "tieu_de": slide_title(text),
+                                "trich": ("…" if lo else "")
+                                         + " ".join(text[lo:hi].split()) + "…"}))
+    scored.sort(key=lambda x: x[0])
+    return [h for _, h in scored[:limit]]
