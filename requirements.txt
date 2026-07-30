@@ -1,0 +1,5 @@
+# Agent /recap — dependency tối thiểu (guide §3.4: không commit key, dùng .env)
+openai>=1.40            # gpt-4o-mini (provider mặc định)
+python-dotenv>=1.0      # nạp .env
+pypdf>=4.0              # đọc slide bản hackathon (có text layer)
+discord.py>=2.3         # Discord bot

@@ -210,7 +210,8 @@ Google Form 6 câu, **29 người ngoài nhóm** (chuẩn A yêu cầu ≥20) �
 
 | Phần | Thật / Mock |
 |---|---|
-| **UI chạy được, người ngoài nhóm dùng được** | **Thật** — `codebase/app.py`: web app stdlib (`python3 codebase/app.py` → localhost:8000), giao diện kiểu Discord, chọn buổi → recap thread + hộp hỏi-đáp. **Không dùng Discord**: `discord.py` cần cài từ mạng, môi trường dev không có. Lõi agent transport-agnostic (`run_agent`/`build_recap` không biết gì về UI) nên Discord chỉ là adapter mỏng thêm sau |
+| **Discord bot** | **Thật** — `codebase/bot.py` (`discord.py` 2.7.1 trong `.venv`): `/recap buoi:…` trả 1 message đầu rồi **thread, mỗi block một message**; `/hoi` và nhắc-tên cho hỏi-đáp. Có `defer` (recap lần đầu ~50s > giới hạn 3s của Discord), chẻ message theo dòng cho vừa 2000 ký tự, thiếu quyền thread thì fallback gửi vào channel. Hướng dẫn dựng: `codebase/DISCORD-SETUP.md` |
+| UI thứ hai (web) | **Thật** — `codebase/app.py`: web app stdlib, localhost:8000. Dùng **cùng lõi** với bot (`run_agent`/`build_recap` không biết gì về UI) — hai UI, một sản phẩm |
 | **AI call 1 — gộp block** (mục thô → 8-15 block có tiêu đề + dải mã đoạn) | **Thật, đã chạy** — `recap.gop_block()`. Day 1: 19 mục core → **9 block**; Day 2: → **11 block**. Có kiểm toàn vẹn: AI gộp làm mất/nhân đôi mục ⇒ **fallback về mục thô + ghi cảnh báo**, không bao giờ để mất nội dung buổi |
 | **AI call 2 — tóm tắt block** (4-6 gạch đầu dòng, mỗi gạch ≥1 mã đoạn/trang, **+ dòng `🔑 Keyword`: 3-5 thuật ngữ giảng viên đã dùng**) | **Thật** |
 | **AI call 3 — gán cụm thắc mắc vào block** *(quyết định trung tâm)* | **Thật, đã chạy** — `recap.gan_cum()`, gọi theo **lô 6 cụm** (gộp 40 cụm/lô thì gpt-4o-mini trả rỗng). Ngưỡng `confidence ≥ 0.6`; dưới ngưỡng hoặc `block=null` ⇒ vào mục **`❓ Chưa gán được`**. Day 1: **10 cụm gán được, 2 cụm chưa gán**; Day 2: 12 gán, 0 chưa gán |
@@ -434,5 +435,6 @@ Dựng nhanh cả hai giữa CP2-CP3, cho 2 người thử mỗi bản, giữ b�
 | N2 — 30/07 tối | Ứng viên cụm đổi sang **dòng 🔑 Keyword của AI call 2**; lọc chỉ câu học tập | Trích khái niệm từ token tiếng Việt bỏ dấu ra rác (`dung`, `chinh`, `phan`); và 37% câu vào cụm là logistics (`'bây h là mấy giờ'`, `'Canvas là hệ thống gì'`) |
 | N2 — 30/07 tối | Sửa khớp token: token <5 ký tự phải khớp **biên từ** | Keyword `giá` đếm ra **208 học viên** vì `gia` khớp bên trong `giai`(giải) — sau sửa còn 7 người |
 | N2 — 30/07 tối | AI call 3 gọi theo **lô 6 cụm** | Gộp 40 cụm vào một lời gọi ⇒ gpt-4o-mini trả **rỗng hoàn toàn**, mọi cụm rơi vào 'chưa gán được' |
+| N2 — 30/07 tối | **Dựng `.venv` + Discord bot thật** (`discord.py` 2.7.1) — `codebase/bot.py` + `requirements.txt` + `DISCORD-SETUP.md`. Lõi không đổi một dòng: bot chỉ là adapter (defer, chẻ 2000 ký tự, tạo thread) | PyPI truy cập được (lần trước timeout do `pymupdf` nặng, không phải mất mạng). Test suite chạy sạch trong venv |
 | *(chờ)* | | Sau lượt đo 1 tại CP3 |
 | *(chờ)* | | Sau vòng validation CP5 — ≥1 thay đổi từ feedback, hoặc giữ nguyên có lý do |
