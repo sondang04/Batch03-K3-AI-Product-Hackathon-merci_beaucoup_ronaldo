@@ -179,7 +179,7 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 
 ### Non-goals — 6 thứ KHÔNG build
 
-1. **Không phải chatbot Q&A.** Agent không trả lời câu hỏi kiến thức mới trong thread. Việc đó đã có VLearn Tutor; xâm vào đó là lặp lại đúng lỗi 46.2% không-cite.
+1. **Không trả lời ngoài nguồn buổi học.** Agent có hỏi-đáp, nhưng là **grounded Q&A**: chỉ trả lời khi tìm được căn cứ trong transcript/slide/chatlog của buổi, luôn kèm mã đoạn; ngoài nguồn → từ chối + chỉ sang VLearn Tutor/TA. Q&A kiến thức tổng quát không-căn-cứ vẫn là non-goal — đó chính là lỗi 46.2% không-cite của tutor hiện tại. *(Scope mở từ 'không Q&A' sang 'grounded Q&A' theo quyết định sản phẩm 30/07 — xem Changelog §9.)*
 2. **Không xử lý audio → text.** Dùng transcript bản sạch có sẵn trong data pack. ASR là **mock có khai báo**.
 3. **Không sinh quiz, không chấm điểm, không đánh giá học viên.**
 4. **Không chạy realtime trong buổi học.** Chỉ chạy sau khi buổi kết thúc và transcript đã có.
@@ -386,5 +386,7 @@ Dựng nhanh cả hai giữa CP2-CP3, cho 2 người thử mỗi bản, giữ b�
 | N2 — 30/07 10:55 | **KHÔNG** đưa con số "84% muốn dùng" lên slide làm bằng chứng nhu cầu | Câu hỏi đó là câu hỏi ý kiến + mô tả sẵn sản phẩm → guide §1.3 mục 4 đã cảnh báo dạng câu này. Giữ lại đúng một kết luận: 0% phản đối |
 | N2 — 30/07 10:55 | Chốt cách tuyển willing user: ưu tiên **4 người trả lời "Chưa chắc"** và nhóm A4, không chọn người dễ tính | Guide §4.2: toàn lời khen = phiên test chưa đạt |
 | N2 — 30/07 ~12:00 | Tách được **82/83 slide** deck `day01_302` từ scroll-capture (`split_scroll_capture.py`); xác minh số trang khớp nhãn in trên thẻ. Cập nhật §4 bảng mock + thêm giới hạn dữ liệu #2 | Capture **không có text layer** (0 ký tự/trang) → đổi neo chính sang transcript, slide làm nguồn phụ |
+| N2 — 30/07 chiều | **Mở scope: thêm grounded Q&A** (hỏi-đáp có căn cứ trong nguồn buổi học) bên cạnh recap; sửa non-goal #1 tương ứng | Quyết định sản phẩm của nhóm; cost-of-error giữ nguyên vì Q&A vẫn bị buộc luật citation C1 + từ chối khi ngoài nguồn (G10) |
+| N2 — 30/07 chiều | **Dựng khung AI** `codebase/agent/` — 6 tool (list_blocks · read_transcript · search_sources · summarize_block · peer_questions · get_slide), system prompt, 3 backend (Anthropic claude-opus-5 / Gemini / Mock), vòng lặp tool-use, trace JSONL cắt ≤200 ký tự; test suite `codebase/tests/` (static + offline mock + live regex) **PASS 100% offline** | Chuẩn bị CP2/CP3; trace phục vụ rubric R5 |
 | *(chờ)* | | Sau lượt đo 1 tại CP3 |
 | *(chờ)* | | Sau vòng validation CP5 — ≥1 thay đổi từ feedback, hoặc giữ nguyên có lý do |
