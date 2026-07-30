@@ -60,7 +60,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 | B11 | Chi phí ôn một buổi | 6 buổi = 102.316 từ / 700 đoạn = **512 phút đọc, 787 phút nghe**; trung bình **85 phút đọc/buổi** (min 30, max 131) | "Tốn gì mỗi lần" — bằng số |
 | B12 | Block tự nhiên trong transcript | **96 mục `##` / 6 buổi = 16 block/buổi** (min 5, max 21) | Xác nhận độ mịn thiết kế 8-15 block/buổi là hợp với cấu trúc thật của buổi giảng |
 | B13 | Phần **không phải nội dung học** trong transcript | 8.8% số từ (buổi 06: **24.7%**) | Thứ agent phải loại bỏ, và là chỗ dễ sai |
-| B14 | **Giới hạn nguồn sự thật** | `ReAct`: 35 câu / 26 học viên trong chatlog nhưng **0 lần xuất hiện trong cả 6 transcript**; `function calling`: 4 câu / 4 HV, **0 lần** | Kịch bản ① nguy hiểm nhất: có cầu hỏi lớn ở đúng chỗ **không có căn cứ** |
+| B14 | **Giới hạn nguồn sự thật** | `ReAct`: 35 câu / 26 học viên trong chatlog nhưng **0 lần xuất hiện trong cả 6 transcript**; `function calling`: 4 câu / 4 HV, **0 lần**. **Đã truy ra nguồn**: tên file slide trong chatlog cho thấy ReAct thuộc `day03-tu-chatbot-den-agentic-agent-react.pdf` — **buổi Day 3, không có transcript trong pack** | Kịch bản ① nguy hiểm nhất: có cầu hỏi lớn ở đúng chỗ **không có căn cứ**. Vì đã biết nó thuộc buổi nào, agent nói được câu hữu ích hơn: *"ReAct thuộc buổi Day 3, không nằm trong buổi này"* thay vì chỉ "không có căn cứ" |
 | B15 | Độ sâu hội thoại | median 1 turn; **52.8% hội thoại đúng 1 turn**, 75.7% ≤2 turn | Thắc mắc hỏi một câu rồi tắt — không ai đào tới chỗ hiểu |
 
 #### Quote nguyên văn (≥5 — trích ≤1 dòng, dẫn theo mã)
@@ -195,14 +195,16 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 | **AI call 2 — tóm tắt block** (4-6 gạch đầu dòng, mỗi gạch ≥1 mã đoạn/trang, **+ dòng `🔑 Keyword`: 3-5 thuật ngữ giảng viên đã dùng**) | **Thật** |
 | **AI call 3 — gán cụm thắc mắc vào block** *(quyết định trung tâm)* | **Thật** — trace lưu ở `codebase/logs/` |
 | Bản ghi âm → transcript (ASR) | **Mock** — dùng `transcript-0*-clean.md` có sẵn |
-| Slide → text theo trang | **Mock** — text trích tay cho 2 buổi, lưu `codebase/data/slides-mock/` |
+| Slide → ảnh theo trang | **Thật, đã xong** — `split_scroll_capture.py` tách scroll-capture VLearn thành **82/83 slide** của deck `day01_302` (= Day 1 Foundation, giảng viên Blue = buổi của `transcript-04`). Số trang đã xác minh khớp nhãn `Trang N / 83` in trên thẻ. Trang 82 cắt cụt → `partial: true`; trang 83 không có trong capture |
+| Slide → **text** theo trang | **Mock/hạn chế** — capture **không có text layer** (0 ký tự/trang) ⇒ muốn có chữ phải gọi vision. Nhóm chỉ gọi vision cho các slide thuộc block đem demo, không quét cả 82 trang (chi phí + guide §3.4) |
 | Cụm thắc mắc | **Thật từ chatlog** (gom bằng nhãn + trang, `evidence/mining/`), nhưng chỉ cho 2 buổi demo |
 | Phạm vi buổi | **2 buổi**: `transcript-04` (Day 1 — Foundation, 98 đoạn / 21 mục) và `transcript-01` (Day 2 sáng — Xác định bài toán, 89 đoạn / 11 mục) |
 
 #### Hai giới hạn dữ liệu đã biết trước — khai báo thẳng, không giả vờ đã giải
 
 1. **`day_code` trong chatlog KHÔNG map được sang file transcript.** Chatlog dùng mã tài liệu dạng `Lecture_material_ms2044ey_k6uor3` / `New learning material` (794 msg — theo `DATA_DICTIONARY.md` có thể là placeholder do lỗi đặt tên), trong khi transcript được định vị buổi bằng *nội dung*, không có ID chung. ⇒ Việc gán thắc mắc vào buổi/block trong prototype là **khớp theo nội dung** (khái niệm + đoạn slide được bôi đen so với nội dung block), **không phải join theo ID**. Đây chính là lý do quyết định trung tâm phải là **conditional** chứ không automate, và là lý do chiều **C2** tồn tại.
-2. **Buổi `transcript-01` gần như không có thắc mắc nào trong chatlog.** Nhóm đã đo: `double diamond` 1 câu/1 HV · `first principle` 0 · `JTBD` 0 · `tri thức ẩn` 0 · `impact-effort` 1/1. ⇒ Nhóm **giữ nguyên buổi này trong phạm vi demo** thay vì đổi sang buổi "đẹp số" hơn, vì nó là **empty state thật** — dùng làm case 27 của golden set và dùng để demo đường đi "không có thắc mắc nào của lớp ở phần này" mà không bịa cụm.
+2. **Capture slide không có text layer.** Bản slide nhóm lấy được là scroll-capture của VLearn reader → raster thuần, `pypdf` trích ra **0 ký tự/trang**. Hệ quả: `[slide tr.N]` chỉ dùng được ở mức *ảnh của trang N*, còn muốn trích chữ phải gọi vision model — **không deterministic** (đe doạ case 28) và tốn quota. Nhóm xử lý bằng cách: neo chính vào **transcript** (có mã đoạn `[Txx-NNN]`, text sạch), chỉ dùng slide làm nguồn phụ cho các block đem demo. Nếu xin được `day01_302.pdf` gốc (chatlog cho thấy file này tồn tại) thì bỏ được toàn bộ vấn đề này.
+3. **Buổi `transcript-01` gần như không có thắc mắc nào trong chatlog.** Nhóm đã đo: `double diamond` 1 câu/1 HV · `first principle` 0 · `JTBD` 0 · `tri thức ẩn` 0 · `impact-effort` 1/1. ⇒ Nhóm **giữ nguyên buổi này trong phạm vi demo** thay vì đổi sang buổi "đẹp số" hơn, vì nó là **empty state thật** — dùng làm case 27 của golden set và dùng để demo đường đi "không có thắc mắc nào của lớp ở phần này" mà không bịa cụm.
 
 ### Automation: [ ] augment  [X] conditional  [ ] automate
 
@@ -236,7 +238,7 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 
 | # | Tình huống cụ thể | Lớp | Hành vi mong muốn (nói gì · hiện gì · cho user làm gì tiếp) | Nguyên tắc |
 |---|---|---|---|---|
-| 1 | 26 học viên hỏi về `ReAct`, nhưng cả 6 transcript **0 lần** nhắc chữ này (B14) | ① | **Không dựng gạch đầu dòng nào về ReAct.** Hiện cụm ở mục riêng cuối thread: `⚠️ Thắc mắc chưa có căn cứ trong buổi này — ReAct (26 người)` + "khái niệm này không xuất hiện trong bản ghi buổi *Day 1*; hỏi TA hoặc chờ buổi về agent" | G10, G2 |
+| 1 | 26 học viên hỏi về `ReAct`, nhưng cả 6 transcript **0 lần** nhắc chữ này — nó thuộc deck `day03-…-agentic-agent-react.pdf` (B14) | ① | **Không dựng gạch đầu dòng nào về ReAct.** Hiện cụm ở mục riêng cuối thread: `⚠️ Thắc mắc chưa có căn cứ trong buổi này — ReAct (26 người)` + **chỉ đúng chỗ nó thuộc về**: "khái niệm này thuộc buổi *Day 3*, không nằm trong bản ghi buổi *Day 1*" | G10, G2, G11 |
 | 2 | Giảng viên đang kể tên mô hình cụ thể thì bản ghi ghi `[không nghe rõ]` — `[T04-085]`: "những mô hình như kiểu [không nghe rõ]" (18-34 lần/buổi) | ① | Gạch đầu dòng ghi `[T04-085] — bản ghi mất tiếng ở đoạn này`, **không điền tên mô hình vào chỗ trống**. Badge block: `⚠️ bản ghi mất tiếng N chỗ` | G2, G10 |
 | 3 | Slide có nội dung mà giảng viên bỏ qua, không nói đến | ① | Block vẫn dựng nhưng badge `⚠️ chỉ từ slide — giảng viên không nói đến phần này`, ý chính chỉ mang `[slide tr.N]` | G2 |
 | 4 | Gạch đầu dòng mang mã `[T04-053]` nhưng đoạn đó **không chứa** ý đó | ① | Nút `Xem nguyên văn đoạn` in nguyên văn để học viên đối chiếu ngay; đây là fail nặng nhất, chấm riêng ở chiều **C1** và là điều kiện cứng của quality bar | G11 |
@@ -383,5 +385,6 @@ Dựng nhanh cả hai giữa CP2-CP3, cho 2 người thử mỗi bản, giữ b�
 | N2 — 30/07 10:55 | **Thêm dòng `🔑 Keyword` (3-5 thuật ngữ giảng viên đã dùng) vào mỗi block**; đưa vào định nghĩa chiều **C3** làm tiêu chí đạt/không đạt | Quote khảo sát của **Phước `…15`**: *"Mình cần nó phải tóm tắt được những keyword chính"* — trùng với `[M1830]` trong chatlog. Hai nguồn độc lập cùng đòi keyword |
 | N2 — 30/07 10:55 | **KHÔNG** đưa con số "84% muốn dùng" lên slide làm bằng chứng nhu cầu | Câu hỏi đó là câu hỏi ý kiến + mô tả sẵn sản phẩm → guide §1.3 mục 4 đã cảnh báo dạng câu này. Giữ lại đúng một kết luận: 0% phản đối |
 | N2 — 30/07 10:55 | Chốt cách tuyển willing user: ưu tiên **4 người trả lời "Chưa chắc"** và nhóm A4, không chọn người dễ tính | Guide §4.2: toàn lời khen = phiên test chưa đạt |
+| N2 — 30/07 ~12:00 | Tách được **82/83 slide** deck `day01_302` từ scroll-capture (`split_scroll_capture.py`); xác minh số trang khớp nhãn in trên thẻ. Cập nhật §4 bảng mock + thêm giới hạn dữ liệu #2 | Capture **không có text layer** (0 ký tự/trang) → đổi neo chính sang transcript, slide làm nguồn phụ |
 | *(chờ)* | | Sau lượt đo 1 tại CP3 |
 | *(chờ)* | | Sau vòng validation CP5 — ≥1 thay đổi từ feedback, hoặc giữ nguyên có lý do |

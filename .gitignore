@@ -6,3 +6,7 @@ node_modules/
 *Form Responses*.csv
 evidence/survey/raw/
 __pycache__/
+
+# Slide đã tách từ capture: mang watermark email cá nhân + nội dung bài giảng
+# thuộc quy định bảo mật data pack → KHÔNG commit (README mục "Bảo mật").
+codebase/data/slides/
