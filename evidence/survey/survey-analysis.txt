@@ -1,17 +1,18 @@
 
 ==========================================================================
-0 · PHẠM VI — n = 25 người ngoài nhóm (chuẩn A yêu cầu ≥20)
+0 · PHẠM VI — n = 29 người ngoài nhóm (chuẩn A yêu cầu ≥20)
 ==========================================================================
-thời điểm thu   : 30/07/2026 10:40-10:55 (giờ nghỉ)
+thời điểm thu   : 30/07/2026 10:40-13:32 (đợt 1: 10:40-10:55 giờ nghỉ · đợt 2: 11:12-13:32)
 hình thức       : Google Form, 6 câu, tự điền
+đợt 1 / đợt 2   : 25 / 4
 mã HV trùng lặp : 0
 
 ==========================================================================
 1 · Q6 · Ý ĐỊNH DÙNG  ⚠️ ĐỌC PHẦN CẢNH BÁO Ở CUỐI TRƯỚC KHI TRÍCH SỐ NÀY
 ==========================================================================
-  Có           21/25 = 84.0%
-  Chưa chắc    4/25 = 16.0%
-  Không        0/25 = 0.0%
+  Có           23/29 = 79.3%
+  Chưa chắc    6/29 = 20.7%
+  Không        0/29 = 0.0%
 
   → Đây là câu hỏi Ý KIẾN về tính năng chưa tồn tại (guide §1.3 mục 4 cảnh báo
     đúng dạng câu này). KHÔNG dùng làm bằng chứng chính. Xem mục 5.
@@ -19,39 +20,39 @@ mã HV trùng lặp : 0
 ==========================================================================
 2 · Q5 · % THỜI GIAN THỰC SỰ TẬP TRUNG NGHE GIẢNG  ← số hành vi, mạnh nhất
 ==========================================================================
-  mean 62.5%  ·  median 60%  ·  min 5%  ·  max 90%
-  → trung bình học viên TỰ KHAI mất 37.5% buổi lecture dù có mặt
-  tập trung ≤50% : 7/25 = 28.0%
-  tập trung ≤60% : 13/25 = 52.0%
-  tập trung ≤70% : 18/25 = 72.0%
-  tập trung <50%  : 4/25 = 16.0%
+  mean 62.7%  ·  median 60%  ·  min 5%  ·  max 90%
+  → trung bình học viên TỰ KHAI mất 37.3% buổi lecture dù có mặt
+  tập trung ≤50% : 8/29 = 27.6%
+  tập trung ≤60% : 15/29 = 51.7%
+  tập trung ≤70% : 21/29 = 72.4%
+  tập trung <50%  : 4/29 = 13.8%
 
 ==========================================================================
 3 · Q4 · THỜI GIAN TỰ ĐỌC SLIDE BUỔI CHIỀU  ← số hành vi
 ==========================================================================
-  <30p     8/25 = 32.0%
-  30p-1h   11/25 = 44.0%
-  1h-2h    5/25 = 20.0%
-  Hơn 2h   1/25 = 4.0%
+  <30p     10/29 = 34.5%
+  30p-1h   12/29 = 41.4%
+  1h-2h    6/29 = 20.7%
+  Hơn 2h   1/29 = 3.4%
 
-  ≥30 phút : 17/25 = 68.0%   ≥1 giờ : 6/25 = 24.0%
+  ≥30 phút : 19/29 = 65.5%   ≥1 giờ : 7/29 = 24.1%
   → chi phí tự học SAU buổi đã tồn tại, trên SLIDE thôi, chưa tính bản ghi
 
 ==========================================================================
 4 · Q3 · ĐỘ KHÓ NỘI DUNG (1-5)
 ==========================================================================
   1 điểm : █               1
-  2 điểm : ███             3
-  3 điểm : ███████████████ 15
+  2 điểm : █████           5
+  3 điểm : █████████████████ 17
   4 điểm : ██████          6
   5 điểm :                 0
 
-  mean 3.04  ·  median 3  ·  ≥3 điểm: 21/25 = 84.0%
+  mean 2.97  ·  median 3  ·  ≥3 điểm: 23/29 = 79.3%
 
 ==========================================================================
 5 · GIAO NHAU: KHÓ + MẤT TẬP TRUNG  ← nhóm cần recap nhất
 ==========================================================================
-  độ khó ≥3 VÀ tập trung ≤60%: 10/25 = 40.0%
+  độ khó ≥3 VÀ tập trung ≤60%: 10/29 = 34.5%
     Vi Minh Hiền             khó 4 · tập trung 40% · đọc slide <30p
     Trần Quốc Hùng           khó 3 · tập trung 60% · đọc slide 30p-1h
     Đinh Xuân Huh            khó 4 · tập trung 60% · đọc slide 1h-2h
@@ -75,20 +76,89 @@ mã HV trùng lặp : 0
      (a) tập trung ≤60% buổi giảng  → có phần chưa nghe rõ, cần ôn
      (b) dành ≥30 phút đọc lại slide → đã bỏ thời gian thật cho việc ôn
 
-  (a) tập trung ≤60%      : 13/25 = 52.0%
-  (b) đọc slide ≥30 phút  : 17/25 = 68.0%
-  (a) VÀ (b)              : 7/25 = 28.0%
-  (a) HOẶC (b) = XÁC NHẬN : 23/25 = 92.0%  → ĐẠT chuẩn ≥50%
-  không thoả cả (a) và (b): 2/25 = 8.0%
+  (a) tập trung ≤60%      : 15/29 = 51.7%
+  (b) đọc slide ≥30 phút  : 19/29 = 65.5%
+  (a) VÀ (b)              : 7/29 = 24.1%
+  (a) HOẶC (b) = XÁC NHẬN : 27/29 = 93.1%  → ĐẠT chuẩn ≥50%
+  không thoả cả (a) và (b): 2/29 = 6.9%
 
 ==========================================================================
 7 · Q7 · COMMENT CÓ NỘI DUNG
 ==========================================================================
-  1/25 = 4.0% phản hồi có nội dung — phần còn lại để trống hoặc 'không'
+  1/29 = 3.4% phản hồi có nội dung — phần còn lại để trống hoặc 'không'
     [Phước] "Mình cần nó phải tóm tắt được những keyword chính."
 
 ==========================================================================
-8 · GIỚI HẠN CỦA VÒNG KHẢO SÁT NÀY — ghi để không tự lừa mình
+8 · ĐỢT 1 vs ĐỢT 2 — mẫu 15 phút giờ nghỉ có thiên lệch không?
+==========================================================================
+                         đợt 1 (n=25)   đợt 2 (n=4)
+  độ khó (mean)                   3.0           2.5
+  % tập trung (mean)             62.5          63.8
+  đọc slide ≥30p                 68.0          50.0
+  ý định "Có" (%)                84.0          50.0
+
+  → Đợt 2 nhỏ (n=4) nên không kết luận thống kê được, nhưng hướng thì giống đợt 1:
+    độ khó ~3, tập trung quanh 60-75%, vẫn có người đọc slide ≥30 phút. Không có
+    dấu hiệu mẫu giờ nghỉ lệch hẳn so với người điền muộn hơn.
+
+==========================================================================
+9 · BỐN Ô: MẤT TẬP TRUNG × CÓ ÔN LẠI  ← phân khúc cần sản phẩm nhất
+==========================================================================
+  Trục dọc : tập trung trong buổi (≤60% = mất nhiều / >60% = nghe được)
+  Trục ngang: thời gian tự đọc slide sau buổi (<30p = ít ôn / ≥30p = ôn thật)
+
+  tập trung mất       × ít ôn   :  8/29 = 27.6%
+  tập trung mất       × ôn thật :  7/29 = 24.1%
+  tập trung nghe được × ít ôn   :  2/29 =  6.9%
+  tập trung nghe được × ôn thật : 12/29 = 41.4%
+
+  → Ô nguy hiểm nhất là **tập trung mất × ít ôn** (8/29 = 27.6%):
+    nghe không vào mà cũng không đọc lại ⇒ nội dung buổi đó mất luôn. Đây là phân
+    khúc recap phục vụ trực tiếp nhất — nó phải RẺ (≤15 phút), vì nhóm này đã cho
+    thấy họ không bỏ ≥30 phút ra ôn.
+    Tên: Trần Đức Mạnh, Vi Minh Hiền, Phạm Bách, Bùi Thị Như Ngọc, Cao Nhật Minh, Nguyễn Đức Tín, Trương Văn Thái, Hoang Phong
+  → Ô **mất × ôn thật** (7/29) là nhóm đang TRẢ GIÁ bằng thời gian:
+    họ bù bằng cách đọc lại slide ≥30 phút. Recap giúp nhóm này tiết kiệm, không
+    phải giúp họ bắt đầu ôn.
+
+==========================================================================
+10 · CHÂN DUNG NHÓM "CHƯA CHẮC" — người thử giá trị nhất cho CP5
+==========================================================================
+                           Chưa chắc       Có
+  n                                6       23
+  độ khó (mean)                  2.8      3.0
+  % tập trung (mean)            68.8     61.1
+  đọc slide ≥30p (%)            83.3     60.9
+
+  → Nhóm "Chưa chắc" (6 người) KHÔNG phải nhóm thấy nội dung dễ: độ khó
+    trung bình xấp xỉ nhóm "Có", và họ tập trung CAO hơn + đọc slide nhiều hơn.
+    Đọc ra: họ đang tự ôn được nên chưa thấy cần bot — chứ không phải họ không có
+    pain. Đây đúng là người thử nên mời ở CP5: họ có tiêu chuẩn so sánh (cách ôn
+    hiện tại của họ đang chạy tốt), nên feedback sẽ khắt khe chứ không phải lời khen.
+    Tên: Đoàn Nhật Nam, Phạm Nguyễn Đăng Khôi, Cao Thị Thu Trang, Phùng Văn Đạt, Trần Chí Tâm, Đào Tùng Bách
+
+==========================================================================
+11 · TƯƠNG QUAN — độ khó có kéo thời gian ôn lên không?
+==========================================================================
+  độ khó ↔ phút đọc slide    r = +0.39
+  độ khó ↔ % tập trung       r = +0.37
+  % tập trung ↔ phút đọc     r = +0.32
+
+  → n=29 nên đây là tín hiệu định hướng, KHÔNG phải kết luận thống kê (không tính
+    p-value, không suy ra nhân quả).
+
+  Điều đáng chú ý nhất là dấu của quan hệ thứ ba: **% tập trung ↔ thời gian đọc là
+  CÙNG CHIỀU (r=+0.32), không phải ngược chiều.** Nếu học viên bù trừ — nghe không
+  vào thì đọc lại nhiều hơn — thì dấu phải là ÂM. Ở đây người tập trung tốt lại
+  cũng là người ôn nhiều, và ngược lại.
+
+  ⇒ Khoảng cách KHÔNG tự thu hẹp, nó CỘNG DỒN. Nhóm mất tập trung phần lớn cũng là
+    nhóm không ôn lại (khớp ô 27.6% ở mục 9). Hệ quả thiết kế: đừng trông vào việc
+    học viên "cố hơn" để bù — recap phải rẻ đến mức nhóm này chịu dùng, chứ không
+    phải hay đến mức họ chịu bỏ thêm thời gian.
+
+==========================================================================
+12 · GIỚI HẠN CỦA VÒNG KHẢO SÁT NÀY — ghi để không tự lừa mình
 ==========================================================================
   ① Q6 hỏi ý kiến về tính năng chưa tồn tại, KÈM mô tả sản phẩm ngay trong câu hỏi
      → 84% "Có" là con số được dự đoán trước bởi guide §1.3, KHÔNG chứng minh nhu cầu.

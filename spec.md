@@ -21,8 +21,8 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 |---|---|---|---|
 | 1 | Nhận ra cần ôn | "mai có lab, hôm nay học gì ấy nhỉ" | — |
 | 2 | Tìm nguồn ôn | mở slide PDF trong VLearn / hỏi bạn trong Discord | slide là bullet rời, không có lời giảng viên nói quanh nó |
-| 3 | **Duyệt lại nội dung** | đọc slide (khảo sát: **68% dành ≥30 phút**, 24% dành ≥1 giờ — A2), tua bản ghi hoặc đọc transcript | **một buổi = 85 phút đọc trung bình (30-131 phút), 787 phút nghe cho cả 6 buổi**; 8.8% số từ là chào lớp / trò chuyện bên lề (buổi 06: 24.7%) |
-| 4 | **Xác định mình chưa hiểu chỗ nào** | tự nhớ lại, hoặc hỏi lại VLearn Tutor | **không nhớ nổi**: khảo sát cho thấy học viên chỉ tập trung **62,5% buổi học** (A1) → ~37,5% buổi không có trong đầu để mà nhớ. Thắc mắc đã hỏi thì rải trong **585 hội thoại riêng tư**, không ai xem được của ai — **52.8% hội thoại chỉ có 1 turn rồi tắt** |
+| 3 | **Duyệt lại nội dung** | đọc slide (khảo sát: **65,5% dành ≥30 phút**, 24,1% dành ≥1 giờ — A2), tua bản ghi hoặc đọc transcript | **một buổi = 85 phút đọc trung bình (30-131 phút), 787 phút nghe cho cả 6 buổi**; 8.8% số từ là chào lớp / trò chuyện bên lề (buổi 06: 24.7%) |
+| 4 | **Xác định mình chưa hiểu chỗ nào** | tự nhớ lại, hoặc hỏi lại VLearn Tutor | **không nhớ nổi**: khảo sát cho thấy học viên chỉ tập trung **62,7% buổi học** (A1) → ~37,3% buổi không có trong đầu để mà nhớ. Thắc mắc đã hỏi thì rải trong **585 hội thoại riêng tư**, không ai xem được của ai — **52.8% hội thoại chỉ có 1 turn rồi tắt** |
 | 5 | Bỏ dở hoặc hỏi lại | hỏi đúng câu 8 người khác đã hỏi | **53 nhóm câu hỏi trùng nguyên văn do ≥2 học viên khác nhau hỏi (263 tin)** |
 
 ### Core JTBD (không tên sản phẩm/AI)
@@ -33,7 +33,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 
 ### Problem statement (KHÔNG chữ AI)
 
-> Sau một buổi lecture 2-3 tiếng, học viên muốn ôn lại nhưng chỉ có hai thứ trong tay: bộ slide bullet rời và một bản ghi/transcript dài **85 phút đọc**. Không có bản đồ để biết buổi học gồm mấy phần và mình vướng ở phần nào. Tệ hơn: học viên **có mặt** vẫn tự khai chỉ tập trung được **62,5% buổi giảng** (khảo sát n=25) — nên phần lớn cái cần ôn là phần họ **chưa từng nghe rõ**, không phải phần đã quên. Các thắc mắc mà **278/369 học viên (75.3%)** đã hỏi trong buổi thì nằm khoá kín trong hội thoại riêng của từng người. Hậu quả đo được: học viên **hỏi lại đúng câu người khác đã hỏi** (53 nhóm câu trùng, 263 tin), hoặc bỏ ôn hẳn — và **52.8% hội thoại tắt sau đúng 1 câu hỏi**, tức là phần lớn thắc mắc không được đào đến chỗ hiểu.
+> Sau một buổi lecture 2-3 tiếng, học viên muốn ôn lại nhưng chỉ có hai thứ trong tay: bộ slide bullet rời và một bản ghi/transcript dài **85 phút đọc**. Không có bản đồ để biết buổi học gồm mấy phần và mình vướng ở phần nào. Tệ hơn: học viên **có mặt** vẫn tự khai chỉ tập trung được **62,7% buổi giảng** (khảo sát n=29) — nên phần lớn cái cần ôn là phần họ **chưa từng nghe rõ**, không phải phần đã quên. Các thắc mắc mà **278/369 học viên (75.3%)** đã hỏi trong buổi thì nằm khoá kín trong hội thoại riêng của từng người. Hậu quả đo được: học viên **hỏi lại đúng câu người khác đã hỏi** (53 nhóm câu trùng, 263 tin), hoặc bỏ ôn hẳn — và **52.8% hội thoại tắt sau đúng 1 câu hỏi**, tức là phần lớn thắc mắc không được đào đến chỗ hiểu.
 
 ### Evidence
 
@@ -88,33 +88,53 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 
 > **Đọc ra được từ 11-15:** tutor fail **không phải vì prompt dở** — nó fail vì chỉ được cấp mảnh slide quanh đoạn học viên bôi đen, **không có bản ghi buổi học** và **không có bản đồ cấu trúc buổi**. Đó là lý do lát cắt của nhóm đi từ transcript + slide chứ không đi từ việc sửa prompt tutor (xem ứng viên bị loại #2, §2).
 
-#### Đường A — khảo sát *(đã thu — n = 25, 30/07/2026 10:40-10:55, giờ nghỉ)*
+#### Đường A — khảo sát *(đã thu — n = 29, 30/07/2026 10:40-13:32, hai đợt)*
 
-Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). Log từng phản hồi có tên: `evidence/survey/survey-log.md` · phân tích tái tạo được: `python3 evidence/survey/analyze_survey.py` → `survey-analysis.txt`.
+Google Form 6 câu, **29 người ngoài nhóm** (chuẩn A yêu cầu ≥20) — đợt 1: 25 phản hồi trong 15 phút giờ nghỉ; đợt 2: 4 phản hồi rải đến 13:32. Log từng phản hồi có tên: `evidence/survey/survey-log.md` · phân tích tái tạo được: `python3 evidence/survey/analyze_survey.py` → `survey-analysis.txt`.
 *(Mã học viên đã mask 2 số cuối — guide §3.4 cấm đưa thông tin cá nhân lên repo public, còn rubric chỉ cần tên/vai. CSV thô không commit.)*
 
 | # | Phát hiện | Số | Nói lên điều gì |
 |---|---|---|---|
-| **A1** | **% thời gian học viên thực sự tập trung nghe giảng** *(tự khai)* | **mean 62,5% · median 60%** · **52% (13/25) tập trung ≤60%** · 28% ≤50% | **Số quan trọng nhất của cả vòng khảo sát**: học viên **có mặt** vẫn tự khai mất **~37,5% buổi lecture**. Mining không thể thấy điều này — nó chỉ thấy câu hỏi *đã được hỏi* |
-| **A2** | Thời gian tự đọc slide sau buổi chiều | **68% (17/25) dành ≥30 phút** · 24% (6/25) dành ≥1 giờ | Việc ôn lại **đã tồn tại và đã tốn thời gian thật** — trên slide thôi, chưa tính bản ghi. Job có trước sản phẩm |
-| **A3** | Độ khó nội dung lecture (1-5) | mean **3,04** · **84% (21/25) chấm ≥3** · 0 người chấm 5 | Khó vừa-đến-khó, không ai thấy quá khó → vấn đề là **duyệt lại**, không phải nội dung vượt sức |
-| **A4** | **Giao nhau: độ khó ≥3 VÀ tập trung ≤60%** | **40% (10/25)** | Đoạn user cần recap nhất — 10 người có tên trong log, là nguồn tuyển willing user |
-| **A5** | Ý định dùng bot tóm tắt (có cả phần Q&A) | Có **84%** (21/25) · Chưa chắc 16% (4/25) · **Không 0%** | ⚠️ **Không dùng làm bằng chứng nhu cầu** — xem giới hạn ① dưới. Dùng đúng một việc: **0% phản đối** |
-| **A6** | **Tỷ lệ xác nhận** — xác nhận = *(a)* tập trung ≤60% **hoặc** *(b)* dành ≥30 phút đọc lại slide | **23/25 = 92%** *(a: 52% · b: 68% · cả hai: 28%)* | **Đạt** chuẩn ≥50% — nhưng xem giới hạn ⑥: định nghĩa này **đặt sau khi thấy dữ liệu** |
+| **A1** | **% thời gian học viên thực sự tập trung nghe giảng** *(tự khai)* | **mean 62,7% · median 60%** · **51,7% (15/29) tập trung ≤60%** · 27,6% ≤50% | **Số quan trọng nhất của cả vòng khảo sát**: học viên **có mặt** vẫn tự khai mất **~37,3% buổi lecture**. Mining không thể thấy điều này — nó chỉ thấy câu hỏi *đã được hỏi* |
+| **A2** | Thời gian tự đọc slide sau buổi chiều | **65,5% (19/29) dành ≥30 phút** · 24,1% (7/29) dành ≥1 giờ | Việc ôn lại **đã tồn tại và đã tốn thời gian thật** — trên slide thôi, chưa tính bản ghi. Job có trước sản phẩm |
+| **A3** | Độ khó nội dung lecture (1-5) | mean **2,97** · **79,3% (23/29) chấm ≥3** · 0 người chấm 5 | Khó vừa-đến-khó, không ai thấy quá khó → vấn đề là **duyệt lại**, không phải nội dung vượt sức |
+| **A4** | **Giao nhau: độ khó ≥3 VÀ tập trung ≤60%** | **34,5% (10/29)** | Đoạn user cần recap nhất — 10 người có tên trong log, là nguồn tuyển willing user |
+| **A4b** | **Ô "mất tập trung × ít ôn"** — tập trung ≤60% **và** đọc slide <30 phút | **27,6% (8/29)** | **Phân khúc lõi**: nghe không vào mà cũng không đọc lại ⇒ nội dung buổi đó **mất luôn**. Quy định một ràng buộc thiết kế cứng — xem *Ba phát hiện* dưới |
+| **A5** | Ý định dùng bot tóm tắt (có cả phần Q&A) | Có **79,3%** (23/29) · Chưa chắc 20,7% (6/29) · **Không 0%** | ⚠️ **Không dùng làm bằng chứng nhu cầu** — xem giới hạn ① dưới. Dùng đúng một việc: **0% phản đối** |
+| **A6** | **Tỷ lệ xác nhận** — xác nhận = *(a)* tập trung ≤60% **hoặc** *(b)* dành ≥30 phút đọc lại slide | **27/29 = 93,1%** *(a: 51,7% · b: 65,5% · cả hai: 24,1%)* | **Đạt** chuẩn ≥50% — nhưng xem giới hạn ⑥: định nghĩa này **đặt sau khi thấy dữ liệu** |
 
-**Quote nguyên văn từ khảo sát** — chỉ **1/25 (4%)** phản hồi có nội dung, nhưng đúng là một yêu cầu sản phẩm:
+**Quote nguyên văn từ khảo sát** — chỉ **1/29 (3,4%)** phản hồi có nội dung, nhưng đúng là một yêu cầu sản phẩm:
 
 16. **[Phước — HV `…15`, độ khó 3, đọc slide 1h-2h, tập trung 80%]** — *"Mình cần nó phải tóm tắt được những keyword chính."*
     → Khớp thẳng với `[M1830|U0365]` trong chatlog ("tóm tắt nội dung, đưa ra keyword cần nhớ"). Hai nguồn độc lập cùng đòi **keyword**, nên §7 chiều **C3** tính "giữ nguyên thuật ngữ/ví dụ của giảng viên" là tiêu chí đạt, và mỗi block sẽ có dòng `🔑 Keyword` — xem Changelog §9.
 
+**Ba phát hiện từ nghiên cứu sâu** *(đầy đủ ở `evidence/survey/survey-analysis.txt` mục 8-11)*:
+
+1. **Phân khúc lõi là "mất tập trung × ít ôn" — 27,6% (8/29)** (A4b): tập trung ≤60% *và*
+   đọc slide <30 phút ⇒ nội dung buổi đó mất luôn. Điều này **quy định một ràng buộc thiết
+   kế cứng**: recap phải **rẻ về thời gian (≤15 phút)**, vì nhóm này đã chứng minh bằng hành
+   vi rằng họ không bỏ ≥30 phút ra ôn. Ô "mất × ôn thật" (24,1%) là nhóm đang *trả giá bằng
+   thời gian* — với họ recap là tiết kiệm, không phải khởi động.
+
+2. **Khoảng cách cộng dồn, không tự bù.** Tương quan `% tập trung ↔ thời gian đọc slide` là
+   **+0,32 — CÙNG chiều**. Nếu học viên bù trừ (nghe không vào thì đọc lại nhiều hơn) thì
+   dấu phải **âm**. Thực tế: người tập trung tốt cũng là người ôn nhiều, và ngược lại.
+   ⇒ Đừng thiết kế dựa trên giả định học viên sẽ "cố hơn". *(n=29, không tính p-value — đây
+   là tín hiệu định hướng, không phải kết luận thống kê.)*
+
+3. **Nhóm "Chưa chắc" không phải nhóm thấy bài dễ.** Độ khó trung bình 2,8 (nhóm "Có": 3,0),
+   nhưng họ **tập trung cao hơn (68,8% vs 61,1%)** và **đọc slide nhiều hơn (83,3% vs 60,9%)**.
+   Họ đang tự ôn được nên chưa thấy cần bot — chứ không phải không có pain. Củng cố quyết
+   định §8: mời chính nhóm này thử ở CP5, vì họ có tiêu chuẩn so sánh nên sẽ nói thật.
+
 **Giới hạn của vòng khảo sát này — nhóm ghi thẳng thay vì trích số đẹp:**
 
 1. **Câu ý định (A5) là câu hỏi ý kiến về tính năng chưa tồn tại, và mô tả sẵn sản phẩm ngay trong câu hỏi.** Guide §1.3 mục 4 cảnh báo đúng dạng câu này: *"hầu như ai cũng trả lời có, dữ liệu thu được không dùng được."* Nên **84% "Có" KHÔNG phải bằng chứng nhu cầu** — nhóm không đưa nó lên slide như một thành tích. Điều dùng được: **0% "Không"**, và **4 người "Chưa chắc" là người thử tốt nhất** cho vòng validation CP5 (guide §4.2: toàn lời khen = phiên test chưa đạt).
-2. **A1 là tự khai, không đo.** Có thể lệch cả hai chiều. Một phản hồi ghi 5% — nhóm **giữ nguyên trong log** thay vì loại cho số đẹp, và báo cáo cả mean (62,5%) lẫn median (60%).
+2. **A1 là tự khai, không đo.** Có thể lệch cả hai chiều. Một phản hồi ghi 5% — nhóm **giữ nguyên trong log** thay vì loại cho số đẹp, và báo cáo cả mean (62,7%) lẫn median (60%).
 3. **Không có câu nào hỏi "lần gần nhất"** ⇒ chưa có số phút thật cho việc *ôn lại một buổi*, nên **chưa đối chiếu được A2 với mining B11** (85 phút đọc transcript).
-4. **Không có câu nào hỏi "bạn có đồng ý thử prototype không?"** ⇒ 25 người này **chưa phải willing user** (§8 vẫn còn trống).
-5. Thu trong 15 phút giờ nghỉ, tự chọn tham gia ⇒ thiên lệch về người đang có mặt và chịu điền form.
-6. **Định nghĩa "xác nhận" (A6) là post-hoc.** Form vòng 1 không có câu nào hỏi trực tiếp "bạn có từng bỏ dở việc ôn lại", nên nhóm phải dựng tiêu chí xác nhận từ hai câu hành vi **sau khi đã thấy dữ liệu**. Guide yêu cầu chốt định nghĩa **trước** khi đếm — nên **92% là con số đúng nhưng đứng ở bậc bằng chứng thấp hơn** con số mining. Vòng 2 có định nghĩa chốt trước.
+4. **Không có câu nào hỏi "bạn có đồng ý thử prototype không?"** ⇒ 29 người này **chưa phải willing user** (§8 vẫn còn trống).
+5. Tự chọn tham gia ⇒ thiên lệch về người chịu điền form. Nhóm **đã kiểm một phần**: đợt 2 (n=4, điền muộn hơn tới 3 tiếng) cho độ khó ~2,5 và tập trung ~63,8% — cùng hướng đợt 1, không thấy dấu hiệu mẫu giờ nghỉ lệch hẳn. Nhưng n=4 quá nhỏ để kết luận.
+6. **Định nghĩa "xác nhận" (A6) là post-hoc.** Form vòng 1 không có câu nào hỏi trực tiếp "bạn có từng bỏ dở việc ôn lại", nên nhóm phải dựng tiêu chí xác nhận từ hai câu hành vi **sau khi đã thấy dữ liệu**. Guide yêu cầu chốt định nghĩa **trước** khi đếm — nên **93,1% là con số đúng nhưng đứng ở bậc bằng chứng thấp hơn** con số mining. Vòng 2 có định nghĩa chốt trước.
 
 **Vòng 2 (trước CP5) vá giới hạn 1, 3, 4** bằng 3 câu **hồi tưởng**, không hỏi ý kiến — đã chốt tại `evidence/survey/survey-instrument.md`:
 ① "Lần gần nhất bạn muốn xem lại một buổi lecture đã học — bạn đã làm gì? Mất bao lâu?" ② "Lần đó bạn có xem hết không? Bỏ dở ở chỗ nào?" ③ "Bạn có bao giờ hỏi Tutor/TA một câu mà sau đó phát hiện bạn khác đã hỏi y hệt?"
@@ -124,9 +144,9 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 | | Quy mô | Log đầy đủ | Xác nhận ≥50% | Bậc bằng chứng |
 |---|---|---|---|---|
 | **B · mining** | 1.261 câu hỏi / 369 HV, **toàn bộ, không lấy mẫu** | ✅ script + log tái tạo được | — (không áp dụng) | **Mạnh** — đếm hành vi đã xảy ra, quy tắc đếm chốt trong code |
-| **A · khảo sát** | **25 người** ngoài nhóm (≥20 ✅) | ✅ có tên từng người | **92%** ✅ | **Vừa** — tự khai, và tiêu chí xác nhận đặt post-hoc (giới hạn ⑥) |
+| **A · khảo sát** | **29 người** ngoài nhóm (≥20 ✅) | ✅ có tên từng người | **93,1%** ✅ | **Vừa** — tự khai, và tiêu chí xác nhận đặt post-hoc (giới hạn ⑥) |
 
-**Bằng chứng chính tính điểm là B.** A không thay B, nhưng A thêm một chiều **mining mù hoàn toàn**: mining chỉ thấy thắc mắc *đã thành câu hỏi*, còn A cho thấy **học viên có mặt vẫn mất ~37,5% buổi giảng** (A1) và **đã tốn ≥30 phút/buổi tự đọc lại** (A2) — tức phần lớn cái cần ôn là phần **chưa bao giờ được hỏi**. Hai đường không chồng nhau, và chỗ chúng gặp nhau là quote của Phước ↔ `[M1830]`: cùng đòi **keyword**.
+**Bằng chứng chính tính điểm là B.** A không thay B, nhưng A thêm một chiều **mining mù hoàn toàn**: mining chỉ thấy thắc mắc *đã thành câu hỏi*, còn A cho thấy **học viên có mặt vẫn mất ~37,3% buổi giảng** (A1) và **65,5% đã tốn ≥30 phút/buổi tự đọc lại** (A2) — tức phần lớn cái cần ôn là phần **chưa bao giờ được hỏi**. Hai đường không chồng nhau, và chỗ chúng gặp nhau là quote của Phước ↔ `[M1830]`: cùng đòi **keyword**.
 
 
 ---
@@ -137,7 +157,7 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 
 | Ứng viên | Bao nhiêu người (từ evidence) | Tần suất | Tốn gì mỗi lần | Build nổi trong 1,5 ngày? | Chọn? |
 |---|---|---|---|---|---|
-| **1 · Recap buổi lecture theo block + cụm thắc mắc bạn học** | **278/369 HV = 75.3%** hỏi loại này (B1); khảo sát: **84% chấm độ khó ≥3** và **40% vừa thấy khó vừa tập trung ≤60%** (A3, A4) | sau **mỗi** buổi lecture (~6 buổi/khoá) | **85 phút đọc transcript** hoặc bỏ ôn (B11); **68% đã tốn ≥30 phút đọc slide** (A2); mất **~37,5% buổi học** dù có mặt (A1); hỏi lại câu đã có (B8) | Có — transcript đã có mã đoạn `[Txx-NNN]`, thắc mắc đã có toạ độ trang (B10) | **✅ CHỌN** |
+| **1 · Recap buổi lecture theo block + cụm thắc mắc bạn học** | **278/369 HV = 75.3%** hỏi loại này (B1); khảo sát: **79,3% chấm độ khó ≥3**, **34,5% vừa thấy khó vừa tập trung ≤60%**, và **27,6% mất tập trung mà cũng không ôn lại** (A3, A4, A4b) | sau **mỗi** buổi lecture (~6 buổi/khoá) | **85 phút đọc transcript** hoặc bỏ ôn (B11); **65,5% đã tốn ≥30 phút đọc slide** (A2); mất **~37,3% buổi học** dù có mặt (A1); hỏi lại câu đã có (B8) | Có — transcript đã có mã đoạn `[Txx-NNN]`, thắc mắc đã có toạ độ trang (B10) | **✅ CHỌN** |
 | 2 · Sửa tutor: bắt buộc cite + biết-mình-không-biết | 369 HV | mỗi turn | 46.2% câu trả lời không có căn cứ (B5); 78.4% câu bị 👎 là câu không cite (B6) | Rủi ro cao | ❌ |
 | 3 · Quiz kiểm tra hiểu cuối buổi (giảng viên duyệt) | 369 HV | 1×/buổi | học sai kiến thức, mất điểm | Không | ❌ |
 | 4 · Bản tin cuối ngày cho TA | ~5 TA | 1×/ngày | ~30 phút TA lọc câu tồn | Có, nhưng… | ❌ |
@@ -186,18 +206,34 @@ Google Form 6 câu, **25 người ngoài nhóm** (chuẩn A yêu cầu ≥20). L
 5. **Không cá nhân hoá, không lưu profile học viên.** Mọi người gõ `/recap Day 1` nhận cùng một recap. Cụm thắc mắc chỉ ở dạng gộp ≥2 người.
 6. **Không tự động post lên channel chung.** Chỉ trả thread khi được gọi — chủ động post là con đường ngắn nhất thành spam (bài học từ ứng viên #5).
 
-### Mức prototype nhắm tới: [ ] Sketch  [X] Mock  [ ] Working
+### Mức prototype nhắm tới: [ ] Sketch  [ ] Mock  [X] Working
 
 | Phần | Thật / Mock |
 |---|---|
-| Discord bot + slash command + thread + button/select | **Thật** (`discord.py`, server test riêng của nhóm) |
-| **AI call 1 — cắt block** (transcript+slide → 8-15 block có tiêu đề, dải mã đoạn, dải trang) | **Thật** |
+| **Discord bot** | **Thật** — `codebase/bot.py` (`discord.py` 2.7.1 trong `.venv`): `/recap buoi:…` trả 1 message đầu rồi **thread, mỗi block một message**; `/hoi` và nhắc-tên cho hỏi-đáp. Có `defer` (recap lần đầu ~50s > giới hạn 3s của Discord), chẻ message theo dòng cho vừa 2000 ký tự, thiếu quyền thread thì fallback gửi vào channel. Hướng dẫn dựng: `codebase/DISCORD-SETUP.md` |
+| UI thứ hai (web) | **Thật** — `codebase/app.py`: web app stdlib, localhost:8000. Dùng **cùng lõi** với bot (`run_agent`/`build_recap` không biết gì về UI) — hai UI, một sản phẩm |
+| **AI call 1 — gộp block** (mục thô → 8-15 block có tiêu đề + dải mã đoạn) | **Thật, đã chạy** — `recap.gop_block()`. Day 1: 19 mục core → **9 block**; Day 2: → **11 block**. Có kiểm toàn vẹn: AI gộp làm mất/nhân đôi mục ⇒ **fallback về mục thô + ghi cảnh báo**, không bao giờ để mất nội dung buổi |
 | **AI call 2 — tóm tắt block** (4-6 gạch đầu dòng, mỗi gạch ≥1 mã đoạn/trang, **+ dòng `🔑 Keyword`: 3-5 thuật ngữ giảng viên đã dùng**) | **Thật** |
-| **AI call 3 — gán cụm thắc mắc vào block** *(quyết định trung tâm)* | **Thật** — trace lưu ở `codebase/logs/` |
+| **AI call 3 — gán cụm thắc mắc vào block** *(quyết định trung tâm)* | **Thật, đã chạy** — `recap.gan_cum()`, gọi theo **lô 6 cụm** (gộp 40 cụm/lô thì gpt-4o-mini trả rỗng). Ngưỡng `confidence ≥ 0.6`; dưới ngưỡng hoặc `block=null` ⇒ vào mục **`❓ Chưa gán được`**. Day 1: **10 cụm gán được, 2 cụm chưa gán**; Day 2: 12 gán, 0 chưa gán |
 | Bản ghi âm → transcript (ASR) | **Mock** — dùng `transcript-0*-clean.md` có sẵn |
 | **Slide → text theo trang** | **Thật, không mock** — data pack upstream (30/07) đã có `d1-slide-hackathon.pdf` + `d2-slide-hackathon.pdf`, **29 trang/buổi, text layer đầy đủ (0/29 trang rỗng ở cả hai deck)**. Agent đọc trực tiếp bằng `pypdf`: **~12ms/trang, deterministic, 0 chi phí AI, 0 vision/OCR**. Hai deck khớp đúng hai buổi demo: D1 ↔ `transcript-04`, D2 ↔ `transcript-01` |
-| Cụm thắc mắc | **Thật từ chatlog** (gom bằng nhãn + trang, `evidence/mining/`), nhưng chỉ cho 2 buổi demo |
+| Cụm thắc mắc | **Thật từ chatlog** — ứng viên cụm là **dòng 🔑 Keyword do AI call 2 sinh** (thuật ngữ nguyên văn của giảng viên), đối chiếu chatlog: keyword có ≥2 học viên khác nhau hỏi thì thành cụm. Chỉ lấy câu **học tập** (nhãn A/B) — trước đó 37% câu vào cụm là logistics/rác. Tối đa 12 cụm/buổi |
 | Phạm vi buổi | **2 buổi, mỗi buổi đủ transcript + slide**: Day 1 = `transcript-04` (98 đoạn / 21 mục) + `d1-slide-hackathon.pdf` (29 trang) · Day 2 sáng = `transcript-01` (89 đoạn / 11 mục) + `d2-slide-hackathon.pdf` (29 trang) |
+
+#### Số đo thật của bản Working *(chạy `gpt-4o-mini`, 30/07)*
+
+| | Day 1 | Day 2 sáng | Ràng buộc spec |
+|---|---|---|---|
+| Block sau khi gộp | **9** | **11** | 8-15 ✅ |
+| Lời gọi AI / recap | 12 | 13 | — |
+| Thời gian dựng | 51s | 48s | (cache lại ⇒ tức thì) |
+| Độ phủ | 12% số từ buổi | 14% | — |
+| **Thời gian đọc recap** | **~10 phút** | **~12 phút** | **≤15 phút ✅** (ràng buộc từ A4b) |
+| Gạch đầu dòng có mã đoạn | 100% (48/48) | 100% | C1 |
+| Cụm gán được / chưa gán | 10 / 2 | 12 / 0 | C2 |
+
+Ràng buộc "≤15 phút" đến từ phân khúc lõi A4b (27,6% mất tập trung **và** không ôn lại) —
+giờ đã **đo được và đạt**, không còn là mong muốn.
 
 #### Hai giới hạn dữ liệu đã biết trước — khai báo thẳng, không giả vờ đã giải
 
@@ -329,7 +365,7 @@ Nhịp lặp: chạy trọn bộ → bảng % → chọn **một** failure đau 
 | Phần | Người | Việc cụ thể |
 |---|---|---|
 | Spec | `[Tên 1]` | spec.md §1-§9, changelog, chốt quality bar trước 23:59 N1 |
-| Evidence | `[Tên 2]` | `mine_chatlog.py` + mining-log · khảo sát Đường A **vòng 1 xong (n=25)** → `analyze_survey.py` + `survey-log.md`; còn vòng 2 (3 câu hồi tưởng) trước CP5 |
+| Evidence | `[Tên 2]` | `mine_chatlog.py` + mining-log · khảo sát Đường A **vòng 1 xong (n=29)** → `analyze_survey.py` + `survey-log.md`; còn vòng 2 (3 câu hồi tưởng) trước CP5 |
 | Prompt + golden set | `[Tên 3]` | 3 AI call · `eval/golden-set.md` 28 case · chấm lượt 1-3 |
 | Code | `[Tên 4]` | Discord bot, slash command, thread/button, trace log |
 | Demo | `[Tên 5]` | slide 6 trang · demo script (1 case chuẩn + case #1/#15) · dry run bấm giờ · backup video |
@@ -338,11 +374,11 @@ Nhịp lặp: chạy trọn bộ → bảng % → chọn **một** failure đau 
 
 ### Willing users (≥3 tên — tiêu chí nghiệm thu #5)
 
-> **Trạng thái:** khảo sát vòng 1 (n=25) **không hỏi câu "bạn có đồng ý thử prototype không?"**, nên chưa ai trong 25 người là willing user. **Việc còn phải làm: đi xin trực tiếp ≥3 người, ghi tên vào bảng dưới trước CP4.**
+> **Trạng thái:** khảo sát vòng 1 (n=29) **không hỏi câu "bạn có đồng ý thử prototype không?"**, nên chưa ai trong 29 người là willing user. **Việc còn phải làm: đi xin trực tiếp ≥3 người, ghi tên vào bảng dưới trước CP4.**
 > **Ưu tiên xin ai — chọn theo dữ liệu khảo sát, không chọn người dễ tính:**
-> - **4 người trả lời "Chưa chắc"** (Đoàn Nhật Nam `…23` · Phạm Nguyễn Đăng Khôi `…43` · Cao Thị Thu Trang `…85` · Phùng Văn Đạt `…12`) — **người thử giá trị nhất**. Guide §4.2: nếu mọi phản hồi đều là lời khen thì phiên test chưa đạt. Người đã nói "chưa chắc" từ đầu sẽ nói thật lúc dùng.
+> - **6 người trả lời "Chưa chắc"** (Đoàn Nhật Nam `…23` · Phạm Nguyễn Đăng Khôi `…43` · Cao Thị Thu Trang `…85` · Phùng Văn Đạt `…12` · Trần Chí Tâm `…35` · Đào Tùng Bách `…45`) — **người thử giá trị nhất**. Không phải vì họ dễ tính, mà vì chân dung của họ: **tập trung cao hơn (68,8% vs 61,1%) và đọc slide nhiều hơn (83,3% vs 60,9%)** nhóm "Có" — tức họ đang tự ôn được, nên có **tiêu chuẩn so sánh** với cách ôn hiện tại. Guide §4.2: nếu mọi phản hồi đều là lời khen thì phiên test chưa đạt.
 > - **Phước `…15`** — người duy nhất để lại yêu cầu sản phẩm ("cần tóm tắt được keyword chính"), đã tốn 1h-2h đọc slide ⇒ user thật của job này.
-> - **Nhóm A4 (khó ≥3 ∧ tập trung ≤60%, 10 người có tên trong `survey-log.md`)** — đúng đoạn user cần recap nhất, vd Nguyễn Đức Sơn `…85` (tập trung 30%, đọc slide 1h-2h), Bùi Thị Như Ngọc `…82` (khó 4, tập trung 50%).
+> - **Nhóm A4b — "mất tập trung × ít ôn" (8 người, phân khúc lõi)**: vd Bùi Thị Như Ngọc `…82` (khó 4, tập trung 50%, đọc slide <30p), Cao Nhật Minh `…21`, Nguyễn Đức Tín `…85`, Vi Minh Hiền `…43`. Đây là người sản phẩm nhắm tới — nếu họ **không chịu dùng vì tốn thời gian** thì ràng buộc "≤15 phút" đã sai, và đó là thứ nhóm cần biết TRƯỚC demo.
 
 | # | Tên / vai | Vì sao chọn người này (từ khảo sát) | Cam kết | Trạng thái |
 |---|---|---|---|---|
@@ -393,5 +429,12 @@ Dựng nhanh cả hai giữa CP2-CP3, cho 2 người thử mỗi bản, giữ b�
 | N2 — 30/07 chiều | Thêm luật: mọi `[slide tr.N]` phải ghi rõ **bản hackathon**; không join chatlog↔slide theo số trang | Đo được **3/673 = 0,4%** case chatlog khớp số trang bản hackathon, độ lệch không phải hằng số → join theo trang là sai |
 | N2 — 30/07 chiều | **Lượt đo live đầu với `gpt-4o-mini`: 8/9 → sửa 2 lỗi tool → 10/10.** (a) `search_sources` khớp substring liền mạch nên `"hai mùa đông"` không khớp `"hai lần mùa đông"` → chuyển sang **token AND + xếp hạng theo độ phân tán**; (b) câu hỏi không nêu buổi thì model tự đoán buổi → thêm `session_id="all"` quét mọi buổi + luật cấm đoán trong system prompt | Trace `logs/traces/`, note `logs/notes/2026-07-30-s2-*.md`. Lỗi (a) khiến agent **từ chối oan** câu hỏi mà buổi học có trả lời — nguy hiểm hơn cả bịa, vì học viên tưởng bài không có nội dung đó |
 | N2 — 30/07 chiều | **`summarize_block` tóm tắt sai block nhưng vẫn dán nhãn block học viên hỏi** (biến thể kịch bản ④ #15). Sửa: thêm `title_query` (tìm block theo tên, khỏi đoán số) + **echo `block_idx`/`tieu_de`/`dai_ma`** để model tự đối chiếu. Thêm case regression S3 | Phát hiện khi chạy demo thật, KHÔNG phải từ test suite — test cũ mock sẵn `block_idx` nên không bắt được. Note `logs/notes/2026-07-30-summarize-block-*.md` |
+| N2 — 30/07 chiều | **Khảo sát Đường A đóng ở n = 29** (thêm 4 phản hồi đợt 2, 11:12-13:32). Cập nhật A1-A6, thêm **A4b**, thêm mục *Ba phát hiện từ nghiên cứu sâu* | `survey-analysis.txt` mục 8-11; mọi số n=25 trong spec đã thay |
+| N2 — 30/07 chiều | **Chốt ràng buộc thiết kế: recap phải rẻ ≤15 phút, không được hay-mà-tốn-giờ** | A4b (27,6% mất tập trung *và* không ôn lại) + tương quan tập trung↔thời gian đọc **cùng chiều +0,32** ⇒ khoảng cách cộng dồn chứ không tự bù, nên không thể trông vào việc học viên cố hơn |
+| N2 — 30/07 tối | **Đẩy lên mức Working.** Dựng `agent/recap.py` — AI call 1 (gộp 19 mục → 9 block) và **AI call 3 (gán cụm thắc mắc, conditional, ngưỡng 0.6)** vốn CHƯA TỒN TẠI trong code dù lát cắt đã khai. Thêm `codebase/app.py` (web app stdlib) để người ngoài nhóm dùng được | Chẩn đoán: `list_blocks` chỉ đọc 21 heading thô ≠ 8-15 block đã khai; không tool nào gán cụm ⇒ **chiều C2 của quality bar không có gì để chấm** |
+| N2 — 30/07 tối | Ứng viên cụm đổi sang **dòng 🔑 Keyword của AI call 2**; lọc chỉ câu học tập | Trích khái niệm từ token tiếng Việt bỏ dấu ra rác (`dung`, `chinh`, `phan`); và 37% câu vào cụm là logistics (`'bây h là mấy giờ'`, `'Canvas là hệ thống gì'`) |
+| N2 — 30/07 tối | Sửa khớp token: token <5 ký tự phải khớp **biên từ** | Keyword `giá` đếm ra **208 học viên** vì `gia` khớp bên trong `giai`(giải) — sau sửa còn 7 người |
+| N2 — 30/07 tối | AI call 3 gọi theo **lô 6 cụm** | Gộp 40 cụm vào một lời gọi ⇒ gpt-4o-mini trả **rỗng hoàn toàn**, mọi cụm rơi vào 'chưa gán được' |
+| N2 — 30/07 tối | **Dựng `.venv` + Discord bot thật** (`discord.py` 2.7.1) — `codebase/bot.py` + `requirements.txt` + `DISCORD-SETUP.md`. Lõi không đổi một dòng: bot chỉ là adapter (defer, chẻ 2000 ký tự, tạo thread) | PyPI truy cập được (lần trước timeout do `pymupdf` nặng, không phải mất mạng). Test suite chạy sạch trong venv |
 | *(chờ)* | | Sau lượt đo 1 tại CP3 |
 | *(chờ)* | | Sau vòng validation CP5 — ≥1 thay đổi từ feedback, hoặc giữ nguyên có lý do |

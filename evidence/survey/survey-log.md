@@ -1,6 +1,7 @@
-# Log khảo sát Đường A — vòng 1 · n = 25 · 30/07/2026 10:40-10:55
+# Log khảo sát Đường A — vòng 1 · n = 29 · 30/07/2026 10:40-13:32
 
-**Hình thức:** Google Form 6 câu, tự điền, thu trong giờ nghỉ. **Người ngoài nhóm:** 25/25.
+**Hình thức:** Google Form 6 câu, tự điền. **Người ngoài nhóm:** 29/29.
+**Hai đợt thu:** đợt 1 = 25 phản hồi trong 15 phút giờ nghỉ (10:40-10:55) · đợt 2 = 4 phản hồi rải đến chiều (11:12-13:32).
 **Phân tích:** `python3 evidence/survey/analyze_survey.py` → `survey-analysis.txt`.
 
 > **Mã học viên đã mask** (giữ 2 số cuối). Lý do: guide §3.4 cấm đưa thông tin cá nhân lên repo public; rubric R1/R6 chỉ yêu cầu **tên/vai**, không yêu cầu mã HV. Bản thô có mã đầy đủ giữ ngoài repo, ban tổ chức cần thì nhóm xuất lại được.
@@ -45,18 +46,23 @@
 | 23 | Phùng Văn Đạt | `…12` | 3 | <30p | 80% | Chưa chắc | — |
 | 24 | Nguyễn Đức Tín | `…85` | 3 | <30p | 50% | Có | — |
 | 25 | Nguyễn Đức Sơn | `…85` | 3 | 1h-2h | 30% | Có | "Không" |
+| 26 | Trần Chí Tâm | `…35` | 3 | 30p-1h | 75% | Chưa chắc | — |
+| 27 | Trương Văn Thái | `…01` | 2 | <30p | 60% | Có | — |
+| 28 | Hoang Phong | `…77` | 2 | <30p | 50% | Có | — |
+| 29 | Đào Tùng Bách | `…45` | 3 | 1h-2h | 70% | Chưa chắc | — |
 
 ## Kết quả tổng hợp
 
 | Câu | Kết quả | Dùng được không |
 |---|---|---|
-| **Q5 · % tập trung** | mean **62,5%** · median 60% · min 5% · max 90% · **52% học viên tập trung ≤60%** | ✅ **số mạnh nhất vòng này** — hành vi tự khai, không phải ý kiến |
-| **Q4 · đọc slide** | **68% (17/25) dành ≥30 phút** · 24% (6/25) dành ≥1 giờ | ✅ hành vi |
-| **Q3 · độ khó** | mean **3,04**/5 · **84% (21/25) chấm ≥3** · không ai chấm 5 | ✅ hành vi/cảm nhận |
-| **Giao nhau khó ≥3 ∧ tập trung ≤60%** | **40% (10/25)** | ✅ đoạn user cần recap nhất |
-| **Q6 · ý định dùng** | Có **84%** (21/25) · Chưa chắc 16% (4/25) · **Không 0%** | ⚠️ **KHÔNG dùng làm bằng chứng chính** — xem dưới |
-| **Q7 · comment** | **1/25 (4%)** có nội dung | ⚠️ quá ít để rút pattern |
-| **Tỷ lệ xác nhận** | **23/25 = 92%** — xác nhận = (a) tập trung ≤60% *hoặc* (b) đọc slide ≥30 phút *(a: 52% · b: 68% · cả hai: 28%)* | ✅ đạt ≥50%, ⚠️ định nghĩa **post-hoc** — xem giới hạn 6 |
+| **Q5 · % tập trung** | mean **62,7%** · median 60% · min 5% · max 90% · **51,7% (15/29) tập trung ≤60%** | ✅ **số mạnh nhất vòng này** — hành vi tự khai, không phải ý kiến |
+| **Q4 · đọc slide** | **65,5% (19/29) dành ≥30 phút** · 24,1% (7/29) dành ≥1 giờ | ✅ hành vi |
+| **Q3 · độ khó** | mean **2,97**/5 · **79,3% (23/29) chấm ≥3** · không ai chấm 5 | ✅ hành vi/cảm nhận |
+| **Giao nhau khó ≥3 ∧ tập trung ≤60%** | **34,5% (10/29)** | ✅ đoạn user cần recap nhất |
+| **Ô "mất tập trung × ít ôn"** | **27,6% (8/29)** — tập trung ≤60% VÀ đọc slide <30 phút | ✅ **phân khúc lõi**: nội dung mất luôn (xem mục 9 của `survey-analysis.txt`) |
+| **Q6 · ý định dùng** | Có **79,3%** (23/29) · Chưa chắc 20,7% (6/29) · **Không 0%** | ⚠️ **KHÔNG dùng làm bằng chứng chính** — xem dưới |
+| **Q7 · comment** | **1/29 (3,4%)** có nội dung | ⚠️ quá ít để rút pattern |
+| **Tỷ lệ xác nhận** | **27/29 = 93,1%** — xác nhận = (a) tập trung ≤60% *hoặc* (b) đọc slide ≥30 phút *(a: 51,7% · b: 65,5% · cả hai: 24,1%)* | ✅ đạt ≥50%, ⚠️ định nghĩa **post-hoc** — xem giới hạn 6 |
 
 ## Giới hạn — ghi để không tự lừa mình
 
@@ -64,7 +70,28 @@
 2. **Q5 là tự khai, không đo.** Có thể lệch cả hai chiều. Một phản hồi ghi 5% — hoặc là thật, hoặc là điền cho xong; nhóm giữ nguyên trong log thay vì loại, và báo cáo cả mean lẫn median.
 3. **Không có câu nào hỏi "lần gần nhất"** ⇒ chưa có số phút thật cho việc *ôn lại một buổi*, chưa đối chiếu được với mining B11 (85 phút đọc transcript/buổi).
 4. **Không có câu nào hỏi "bạn có đồng ý thử prototype không?"** ⇒ 25 người này **chưa phải willing user**. Vẫn phải đi xin riêng ≥3 người (spec §8).
-5. **Thu trong 15 phút giờ nghỉ, tự chọn tham gia** ⇒ thiên lệch về người đang có mặt và chịu điền form.
+5. **Tự chọn tham gia** ⇒ thiên lệch về người chịu điền form. Nhóm đã kiểm một phần: đợt 2 (n=4, điền muộn hơn tới 3 tiếng) cho độ khó ~2,5 và tập trung ~63,8% — cùng hướng đợt 1, không thấy dấu hiệu mẫu giờ nghỉ lệch hẳn. Nhưng n=4 quá nhỏ để kết luận.
 6. **Định nghĩa "xác nhận" là post-hoc.** Form không có câu hỏi trực tiếp "bạn có từng bỏ dở việc ôn lại", nên tiêu chí xác nhận được dựng từ Q4+Q5 **sau khi đã thấy dữ liệu**. Guide yêu cầu chốt trước khi đếm ⇒ 92% là số đúng nhưng ở bậc bằng chứng thấp hơn mining. Vòng 2 có định nghĩa chốt trước.
 
 → **Vòng 2 vá điểm 1, 3, 4** bằng 3 câu hồi tưởng ở `survey-instrument.md`.
+
+## Nghiên cứu sâu (đầy đủ trong `survey-analysis.txt` mục 8-11)
+
+1. **Ô "mất tập trung × ít ôn" = 27,6% (8/29)** — tập trung ≤60% *và* đọc slide
+   <30 phút. Nghe không vào mà cũng không đọc lại ⇒ nội dung buổi đó **mất luôn**.
+   Đây là phân khúc lõi của recap, và nó quy định một ràng buộc thiết kế: recap
+   phải **rẻ về thời gian** (≤15 phút), vì nhóm này đã chứng minh họ không bỏ ≥30
+   phút ra ôn. Ô "mất × ôn thật" (24,1%) là nhóm đang **trả giá bằng thời gian** —
+   recap giúp họ tiết kiệm, chứ không phải giúp họ bắt đầu ôn.
+
+2. **Khoảng cách cộng dồn, không tự bù.** Tương quan `% tập trung ↔ thời gian đọc`
+   là **+0,32 — cùng chiều**. Nếu học viên bù trừ (nghe không vào thì đọc nhiều hơn)
+   thì dấu phải **âm**. Người tập trung tốt lại cũng là người ôn nhiều, và ngược lại.
+   ⇒ Đừng trông vào việc học viên "cố hơn": recap phải rẻ đến mức nhóm yếu chịu
+   dùng, không phải hay đến mức họ chịu bỏ thêm thời gian.
+
+3. **Nhóm "Chưa chắc" không phải nhóm thấy bài dễ.** Độ khó trung bình 2,8 (nhóm
+   "Có": 3,0) nhưng họ **tập trung cao hơn (68,8% vs 61,1%)** và **đọc slide nhiều
+   hơn (83,3% vs 60,9%)**. Đọc ra: họ đang tự ôn được nên chưa thấy cần bot — chứ
+   không phải họ không có pain. Củng cố quyết định mời chính nhóm này thử ở CP5:
+   họ có tiêu chuẩn so sánh nên feedback sẽ khắt khe, không phải lời khen.
