@@ -93,17 +93,23 @@ def _tim_token(hay: str, tk: str) -> int:
     return hay.find(tk)
 
 
-def _match(haystack_norm: str, toks: list[str]) -> tuple[int, int] | None:
-    """(vị trí, độ phân tán) nếu MỌI token đều xuất hiện (không cần liền mạch),
-    None nếu thiếu token. Đây là lý do 'hai mùa đông' khớp 'hai lần mùa đông'.
-    Độ phân tán = khoảng cách giữa token đầu và cuối → càng nhỏ càng liên quan."""
-    positions = []
-    for tk in toks:
-        i = _tim_token(haystack_norm, tk)
-        if i < 0:
-            return None
-        positions.append(i)
-    return min(positions), max(positions) - min(positions)
+def _match(haystack_norm: str, toks: list[str]) -> tuple[int, int, int] | None:
+    """(số token khớp, vị trí, độ phân tán) — None nếu KHÔNG token nào khớp.
+
+    Khớp MỘT PHẦN được chấp nhận và xếp hạng sau khớp đủ. Lý do: học viên gõ
+    trộn Việt-Anh ('attention mechanism'), transcript chỉ có 'attention' —
+    đòi đủ token thì agent **từ chối oan** đúng câu buổi học có dạy (bug case
+    19/20/23, golden set lượt 1). Điều kiện an toàn vẫn giữ: không token nào
+    khớp ⇒ trả None ⇒ đường 'không có căn cứ' vẫn chạy ('ReAct' vẫn 0 kết quả).
+    """
+    pos = [i for tk in toks if (i := _tim_token(haystack_norm, tk)) >= 0]
+    if not pos:
+        return None
+    return len(pos), min(pos), max(pos) - min(pos)
+
+
+def _mo_ta_khop(n_khop: int, toks: list[str]) -> str:
+    return "đủ token" if n_khop == len(toks) else f"khớp {n_khop}/{len(toks)} token"
 
 
 def find_block(session_id: str, title_query: str) -> "Block | None":
@@ -115,8 +121,8 @@ def find_block(session_id: str, title_query: str) -> "Block | None":
         m = _match(_norm(b.title), toks)
         if m is None:
             continue
-        if best is None or m[1] < best[0]:
-            best = (m[1], b)
+        if best is None or (-m[0], m[2]) < best[0]:
+            best = ((-m[0], m[2]), b)
     return best[1] if best else None
 
 
@@ -128,12 +134,15 @@ def search_transcript(session_id: str, query: str, limit: int = 8) -> list[dict]
         m = _match(_norm(text), toks)
         if m is None:
             continue
-        pos, spread = m
+        n_khop, pos, spread = m
         lo, hi = max(0, pos - 80), pos + 240
-        scored.append((spread, {"ma_doan": code,
-                                "trich": ("…" if lo else "")
-                                         + " ".join(text[lo:hi].split()) + "…"}))
-    scored.sort(key=lambda x: x[0])          # token gần nhau ⇒ liên quan hơn
+        scored.append(((-n_khop, spread), {
+            "ma_doan": code, "khop": _mo_ta_khop(n_khop, toks),
+            # mã đi LIỀN trong chuỗi trích: model copy pattern nhìn thấy được đáng
+            # tin hơn là đọc key JSON rồi tự ghép (bug case 15/21, golden lượt 2)
+            "trich": f"[{code}] " + ("…" if lo else "")
+                     + " ".join(text[lo:hi].split()) + "…"}))
+    scored.sort(key=lambda x: x[0])          # khớp nhiều token & gần nhau ⇒ liên quan hơn
     return [h for _, h in scored[:limit]]
 
 
@@ -187,9 +196,19 @@ def _load_student_rows() -> list[dict]:
     return rows
 
 
+RE_MA_HV = re.compile(r"\bU\d{3,4}\b|\bmã học viên\b|\bai (đã |từng )?hỏi\b", re.I)
+
+
 def peer_questions(topic: str, limit: int = 6) -> dict:
     """Thắc mắc THẬT của lớp khớp chủ đề. Chỉ trả cụm ≥2 học viên khác nhau;
     output chứa số người + mã M, KHÔNG chứa mã học viên (spec §5 #13)."""
+    if RE_MA_HV.search(topic):
+        # Chặn ngay ở TOOL. Bài học case 12 (golden set lượt 1): model không lấy
+        # được mã học viên từ tool, nhưng nó gọi peer_questions("Day 1") rồi TỰ BỊA
+        # rằng các câu đó thuộc U0270. Nhìn y như rò dữ liệu.
+        return {"tu_choi": "Không tra thắc mắc theo danh tính/mã học viên. "
+                           "Cụm thắc mắc chỉ hiện theo SỐ NGƯỜI.",
+                "chu_de": topic, "so_nguoi": 0, "cum": []}
     toks = _tokens(topic)
     matched = [r for r in _load_student_rows()
                if r["hoc_tap"] and _match(_norm(r["q"]), toks) is not None]
@@ -207,7 +226,11 @@ def peer_questions(topic: str, limit: int = 6) -> dict:
         if len(examples) >= limit:
             break
     return {"chu_de": topic, "so_cau": len(matched), "so_nguoi": n_users,
-            "cum": examples}
+            "cum": examples,
+            # Nhắc ngay trong kết quả tool — model đã từng bịa gán các câu này
+            # cho một mã học viên cụ thể (case 12).
+            "canh_bao": "Đây là dữ liệu GỘP của nhiều học viên. TUYỆT ĐỐI không "
+                        "gán các câu này cho bất kỳ cá nhân hay mã học viên nào."}
 
 
 def cluster_for_keyword(kw: str, toi_thieu_nguoi: int = 2) -> dict | None:
@@ -277,10 +300,11 @@ def search_slides(session_id: str, query: str, limit: int = 6) -> list[dict]:
         m = _match(_norm(text), toks)
         if m is None:
             continue
-        pos, spread = m
+        n_khop, pos, spread = m
         lo, hi = max(0, pos - 70), pos + 220
-        scored.append((spread, {"trang": page, "tieu_de": slide_title(text),
-                                "trich": ("…" if lo else "")
-                                         + " ".join(text[lo:hi].split()) + "…"}))
+        scored.append(((-n_khop, spread), {
+            "trang": page, "tieu_de": slide_title(text),
+            "khop": _mo_ta_khop(n_khop, toks),
+            "trich": ("…" if lo else "") + " ".join(text[lo:hi].split()) + "…"}))
     scored.sort(key=lambda x: x[0])
     return [h for _, h in scored[:limit]]

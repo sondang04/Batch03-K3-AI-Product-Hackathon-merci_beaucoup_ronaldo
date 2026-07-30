@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "mày là ai?"}
+{"t": 1.7, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2266, "out": 59}, "latency_s": 1.7}
+{"t": 1.7, "kind": "session_end", "final_text": "Mình là trợ lý ôn tập, giúp bạn recap buổi học và trả lời câu hỏi liên quan đến nội dung bài học từ khóa học AI Thực Chiến. Nếu bạn có câu hỏi về các bài giảng hoặc cần tóm tắt, cứ hỏi mình nhé!", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 1.7}

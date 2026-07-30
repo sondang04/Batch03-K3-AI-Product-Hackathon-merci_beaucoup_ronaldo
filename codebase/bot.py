@@ -8,7 +8,8 @@ làm ba việc: nhận lệnh, gọi lõi, và chẻ output cho vừa giới h�
 Discord. Web app `app.py` dùng đúng lõi đó — hai UI, một sản phẩm.
 
 Lệnh:
-    /recap  buoi:<Day 1|Day 2 sáng>   → thread, mỗi block một message
+    /recap  buoi:<Day 1|Day 2 sáng>   → header + MỤC LỤC chọn được (Select);
+                                       chọn block → nội dung riêng cho bạn
     /hoi    cau_hoi:<...>             → trả lời có căn cứ, kèm mã đoạn
     (nhắc bot trong tin nhắn thường cũng được coi là /hoi)
 
@@ -32,6 +33,7 @@ from agent import config                        # noqa: E402
 from agent.agent import run_agent               # noqa: E402
 from agent.llm import make_client               # noqa: E402
 from agent.recap import build_recap, render     # noqa: E402
+import ui_discord                              # noqa: E402
 
 MAX = 1900          # Discord cho 2000 ký tự/message — chừa chỗ cho đuôi
 CLIENT = make_client()
@@ -63,8 +65,10 @@ class Bot(discord.Client):
         super().__init__(intents=discord.Intents(guilds=True, messages=True,
                                                  message_content=True))
         self.tree = app_commands.CommandTree(self)
+        self.core = CLIENT      # component truy cập lõi qua itr.client.core
 
     async def setup_hook(self):
+        ui_discord.dang_ky_persistent(self)   # mục lục sống sót qua restart
         await self.tree.sync()
         print(f"✓ đã sync {len(self.tree.get_commands())} slash command")
 
@@ -111,20 +115,10 @@ async def cmd_recap(itr: discord.Interaction, buoi: app_commands.Choice[str]):
     except Exception as e:                       # lỗi lõi ≠ bot chết
         return await itr.followup.send(f"⚠️ Không dựng được recap: `{type(e).__name__}: {e}`")
 
-    msgs = render(r)
-    head = await itr.followup.send(msgs[0], wait=True)
-    # Mỗi block một message trong THREAD — đúng hình dung của lát cắt: học viên
-    # nhảy vào đúng block cần, không bị bắt đọc tuần tự.
-    try:
-        th = await head.create_thread(name=f"Recap {r.buoi}"[:100],
-                                      auto_archive_duration=1440)
-        dest = th
-    except (discord.Forbidden, discord.HTTPException):
-        dest = itr.channel                       # thiếu quyền tạo thread → gửi thẳng
-        await itr.followup.send("_(không tạo được thread — gửi vào channel)_")
-    for m in msgs[1:]:
-        for part in chunk(m):
-            await dest.send(part)
+    # MỘT message: header + mục lục Select. Học viên bấm chọn block → nội dung
+    # trả riêng (ephemeral) cho người bấm. Đổ 11 block ra channel thì vừa ngập
+    # vừa bắt đọc tuần tự — trái G8.
+    await itr.followup.send(ui_discord.header(r), view=ui_discord.MucLuc(buoi.value, r))
 
 
 @bot.tree.command(name="hoi", description="Hỏi về nội dung buổi học (trả lời kèm mã đoạn)")

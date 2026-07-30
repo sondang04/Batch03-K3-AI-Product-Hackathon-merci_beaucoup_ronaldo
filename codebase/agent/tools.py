@@ -222,18 +222,10 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                     return json.dumps({"loi": f"Không tìm thấy block {b_idx} trong buổi học này. Vui lòng kiểm tra lại chỉ số block."},
                                       ensure_ascii=False)
                 codes = blk.codes
-            
-            out_lines = []
-            for c in (codes or [])[:40]:
-                noi_dung = tr.paragraphs.get(c, "").strip()
-                if noi_dung:
-                    out_lines.append(f"**[{c}]** {noi_dung}")
-                else:
-                    out_lines.append(f"**[{c}]** (không tìm thấy đoạn mã này trong transcript)")
-            
-            if not out_lines:
-                return "Không tìm thấy đoạn hội thoại nào phù hợp với yêu cầu."
-            return "\n\n".join(out_lines)
+            out = [{"ma_doan": c,
+                     "noi_dung": f"[{c}] " + tr.paragraphs.get(c, "(không có mã này)")}
+                   for c in (codes or [])[:40]]
+            return json.dumps(out, ensure_ascii=False)
 
         if name == "search_sources":
             sid = args.get("session_id", "all")

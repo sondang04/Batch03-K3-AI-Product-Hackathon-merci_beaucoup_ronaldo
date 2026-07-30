@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "mày là llm gì"}
+{"t": 1.695, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2267, "out": 40}, "latency_s": 1.69}
+{"t": 1.695, "kind": "session_end", "final_text": "Mình không thể cung cấp thông tin về bản thân hay cấu hình của mình. Nếu bạn có câu hỏi liên quan đến nội dung bài học, mình sẽ cố gắng giúp đỡ!", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 1.7}
