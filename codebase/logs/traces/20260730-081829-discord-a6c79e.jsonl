@@ -1,0 +1,6 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "giải thích thêm về gọi API"}
+{"t": 1.454, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "tool_use", "usage": {"in": 2268, "out": 21}, "latency_s": 1.45}
+{"t": 2.483, "kind": "tool_call", "name": "search_sources", "args": {"session_id": "all", "query": "gọi API"}, "result": "{\"tim_xuyen_moi_buoi\": {\"day01\": {\"buoi\": \"Day 1 — AI & LLM Foundation (giảng viên Blue)\", \"transcript\": [{\"ma_doan\": \"T04-050\", \"trich\": \"…xác thì đều có những nền tảng, có những tool cho các bạn tín…(+2617 ký tự)", "latency_s": 1.029}
+{"t": 10.998, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 3, "stop_reason": "stop", "usage": {"in": 3218, "out": 389}, "latency_s": 8.51}
+{"t": 10.998, "kind": "session_end", "final_text": "Về **gọi API**, mình có một số thông tin từ buổi học:\n\n- **Khái niệm và ứng dụng**: Gọi API là một phương thức cho phép người dùng tương tác với các mô hình AI thông qua các lệnh bằng ngôn ngữ tự nhiê…(+1190 ký tự)", "n_llm_calls": 2, "n_tool_calls": 1, "total_s": 11.0}
