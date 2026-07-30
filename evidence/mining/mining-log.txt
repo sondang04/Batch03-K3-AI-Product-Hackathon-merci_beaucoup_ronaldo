@@ -1,0 +1,107 @@
+
+==============================================================================
+0 · PHẠM VI DỮ LIỆU
+==============================================================================
+dòng                 : 2,522
+học viên (mã ẩn danh): 369
+hội thoại            : 585
+turn (1 hỏi + 1 đáp) : 1261
+khoảng thời gian     : 2026-07-22 → 2026-07-29
+conversation_mode    : {'in_class': 2522}
+
+==============================================================================
+1 · CÂU HỎI NEO VÀO TRANG TÀI LIỆU  (nền tảng cho việc gán thắc mắc vào block)
+==============================================================================
+tin học viên có tiền tố '(Trang N, đoạn được chọn: …)': 1252/1261 = 99.3%
+trích được số trang: 1252/1261
+
+==============================================================================
+2 · PHÂN LOẠI Ý ĐỊNH CỦA 1.261 CÂU HỎI  (quy tắc: xem QUY_TAC_PHAN_LOAI)
+==============================================================================
+  B · hỏi khái niệm trong bài   566   44.9%   234 học viên
+  G · khác                     356   28.2%   177 học viên
+  E · rác / tin cụt            152   12.1%    91 học viên
+  A · xin tóm tắt / ôn lại     126   10.0%    92 học viên
+  C · logistics                 35    2.8%    32 học viên
+  D · probe / jailbreak         19    1.5%    10 học viên
+  F · dán quiz vào hỏi           7    0.6%     6 học viên
+
+  → A+B (ôn lại / hiểu nội dung buổi học): 692 câu = 54.9%  ·  278/369 học viên = 75.3%
+
+==============================================================================
+3 · TUTOR HIỆN TẠI LÀM ĐƯỢC ĐẾN ĐÂU VỚI YÊU CẦU TÓM TẮT
+==============================================================================
+turn có yêu cầu tóm tắt                    : 130
+  tutor trả 'không tìm thấy / không truy cập được': 52 = 40.0%
+  tutor trả lời KHÔNG kèm citation          : 88 = 67.7%
+
+trên TOÀN BỘ 1261 câu trả lời tutor:
+  không kèm citation                       : 582 = 46.2%
+  nói không tìm thấy / không truy cập được : 185 = 14.7%
+
+học viên chấm 👎: 37 câu (👍 33)
+  trong đó không có citation: 29 = 78.4%
+
+==============================================================================
+4 · THẮC MẮC BỊ TRÙNG — 'BẠN HỌC ĐÃ VƯỚNG CHỖ NÀY'
+==============================================================================
+cặp (tài liệu, trang) có câu hỏi           : 395
+  cặp có ≥2 học viên KHÁC NHAU cùng hỏi   : 178  → chứa  974 câu = 77.8% tổng câu hỏi
+  cặp có ≥3 học viên KHÁC NHAU cùng hỏi   : 102  → chứa  765 câu = 61.1% tổng câu hỏi
+  cặp có ≥5 học viên KHÁC NHAU cùng hỏi   :  46  → chứa  481 câu = 38.4% tổng câu hỏi
+
+nhóm câu hỏi TRÙNG NGUYÊN VĂN do ≥2 học viên khác nhau hỏi: 53 nhóm / 263 tin
+  12 học viên × 12 lần: giải thích đoạn bôi đen ở trang 2
+  10 học viên × 12 lần: giải thích đoạn bôi đen ở trang 15
+   9 học viên × 12 lần: giải thích đoạn bôi đen ở trang 11
+   9 học viên × 12 lần: giải thích đoạn bôi đen ở trang 17
+   9 học viên × 12 lần: giải thích đoạn bôi đen ở trang 3
+   8 học viên × 13 lần: giải thích đoạn bôi đen ở trang 4
+   7 học viên × 10 lần: giải thích đoạn bôi đen ở trang 13
+   7 học viên ×  9 lần: giải thích đoạn bôi đen ở trang 8
+
+==============================================================================
+5 · KHÁI NIỆM BỊ NHIỀU HỌC VIÊN HỎI LẠI
+==============================================================================
+  llm              47 câu /  40 học viên khác nhau
+  agent            56 câu /  38 học viên khác nhau
+  prompt           43 câu /  31 học viên khác nhau
+  react            35 câu /  26 học viên khác nhau
+  token            20 câu /  20 học viên khác nhau
+  context          19 câu /  16 học viên khác nhau
+  transformer      15 câu /  14 học viên khác nhau
+  attention         8 câu /   6 học viên khác nhau
+  deep learning     7 câu /   5 học viên khác nhau
+  rlhf              4 câu /   4 học viên khác nhau
+  mùa đông          3 câu /   3 học viên khác nhau
+
+==============================================================================
+6 · TRANSCRIPT: CHI PHÍ ÔN LẠI MỘT BUỔI + ĐỘ MỊN BLOCK TỰ NHIÊN
+==============================================================================
+file                        block  đoạn      từ  phút đọc  phút nghe  phi-ND
+transcript-01-clean.md         11    89   14509        73        112    0.0%
+transcript-02-clean.md          5    43    6021        30         46    0.0%
+transcript-03-clean.md         19   154   26168       131        201    6.3%
+transcript-04-clean.md         21    98   20141       101        155   14.4%
+transcript-05-clean.md         19   154   17560        88        135    0.0%
+transcript-06-clean.md         21   162   17917        90        138   24.7%
+TỔNG 6 buổi                    96   700  102316       512        787    8.8%
+
+trung bình: 16 block/buổi · 146 từ/đoạn · 85 phút đọc/buổi
+
+==============================================================================
+7 · GIỚI HẠN NGUỒN SỰ THẬT — khái niệm được hỏi nhưng KHÔNG có trong transcript
+==============================================================================
+  react              chatlog:  35 câu /  26 HV   | transcript:   0 lần ← KHÔNG CÓ CĂN CỨ
+  function calling   chatlog:   4 câu /   4 HV   | transcript:   0 lần ← KHÔNG CÓ CĂN CỨ
+  mcp                chatlog:   4 câu /   4 HV   | transcript:   1 lần 
+  rag                chatlog:   1 câu /   1 HV   | transcript:  10 lần 
+  attention          chatlog:   8 câu /   6 HV   | transcript:  41 lần 
+  transformer        chatlog:  15 câu /  14 HV   | transcript:  44 lần 
+
+==============================================================================
+8 · ĐỘ SÂU HỘI THOẠI — thắc mắc hỏi một lần rồi tắt
+==============================================================================
+turn/hội thoại: median 1 · mean 2.16 · max 30
+hội thoại chỉ có 1 turn : 309/585 = 52.8%
+hội thoại ≤2 turn       : 443/585 = 75.7%

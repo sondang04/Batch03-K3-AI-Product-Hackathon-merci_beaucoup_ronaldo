@@ -1,3 +1,17 @@
 .DS_Store
 node_modules/
 *.env
+.env
+
+# Khảo sát: CSV thô từ Google Form chứa họ tên đầy đủ + mã HV — không commit
+*Form Responses*.csv
+evidence/survey/raw/
+__pycache__/
+
+# Slide đã tách từ capture: mang watermark email cá nhân + nội dung bài giảng
+# thuộc quy định bảo mật data pack → KHÔNG commit (README mục "Bảo mật").
+codebase/data/slides/
+
+# Trace từ test offline (mock) sinh lại mỗi lần chạy — không cần vào repo.
+# Trace từ AI THẬT (live-*) thì GIỮ: rubric R5 cần log/trace trong repo.
+codebase/logs/traces/*-test-*.jsonl
