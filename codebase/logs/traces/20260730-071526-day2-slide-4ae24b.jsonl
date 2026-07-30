@@ -1,0 +1,6 @@
+{"t": 0.0, "kind": "session_start", "label": "day2-slide", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "Slide Day 2 nói gì về mức độ tự động hoá?"}
+{"t": 0.884, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "tool_use", "usage": {"in": 2155, "out": 28}, "latency_s": 0.88}
+{"t": 1.374, "kind": "tool_call", "name": "search_sources", "args": {"session_id": "day02-sang", "query": "mức độ tự động hoá"}, "result": "{\"transcript\": [{\"ma_doan\": \"T01-063\", \"trich\": \"…i đấy. Tác giả viết rất nhiều bài dài nhưng rất chất lượng, viết theo cách minh họa dễ hiểu, hay đến nỗi cuối cùng được mời đến để phỏng vấn, và có mộ…(+2131 ký tự)", "latency_s": 0.49}
+{"t": 4.344, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 3, "stop_reason": "stop", "usage": {"in": 2980, "out": 303}, "latency_s": 2.97}
+{"t": 4.344, "kind": "session_end", "final_text": "Về mức độ tự động hóa trong buổi học Day 2, có một số điểm chính như sau:\n\n- **Automate hay Augment**: Xác định mức độ tự động hóa phụ thuộc vào độ tin cậy và rủi ro của AI. Có thể có hai hướng đi: AI…(+771 ký tự)", "n_llm_calls": 2, "n_tool_calls": 1, "total_s": 4.34}

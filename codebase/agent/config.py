@@ -5,7 +5,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 
-# Nạp .env ở gốc repo (OPENAI_API_KEY, ...) — .env đã bị gitignore chặn,
+# Nạp .env ở gốc repo (OPENROUTER_API_KEY, ...) — .env đã bị gitignore chặn,
 # key không bao giờ vào git (luật an toàn guide §3.4).
 try:
     from dotenv import load_dotenv
@@ -21,10 +21,20 @@ LOGS_DIR = REPO / "codebase" / "logs"
 PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 
 # ── Model ────────────────────────────────────────────────────────────────────
-# Provider chọn qua env AGENT_PROVIDER: openai | anthropic | gemini | mock
+# Provider chọn qua env AGENT_PROVIDER: openrouter | openai | anthropic | gemini | mock
 # (mock = offline, dùng cho test suite — không cần key, không cần mạng)
-# Mặc định: openai / gpt-4o-mini (quyết định nhóm 30/07 — xem spec §9).
-PROVIDER = os.environ.get("AGENT_PROVIDER", "openai")
+# Mặc định: openrouter — 1 key gọi được model của nhiều hãng, và đây là key
+# nhóm thực sự có trong .env. Vẫn giữ gpt-4o-mini (quyết định nhóm 30/07,
+# spec §9), chỉ đổi đường vào: openai/gpt-4o-mini qua cổng OpenRouter.
+PROVIDER = os.environ.get("AGENT_PROVIDER", "openrouter")
+
+# OpenRouter nói giao thức OpenAI-compatible → dùng lại `openai` SDK, chỉ đổi
+# base_url + key. Model đặt theo dạng "<hãng>/<model>" (openai/gpt-4o-mini,
+# anthropic/claude-sonnet-4.5, google/gemini-2.5-flash, ...).
+OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL",
+                                     "https://openrouter.ai/api/v1")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-opus-5")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash")  # tên model thấy trong chatlog production của VLearn
