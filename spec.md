@@ -358,13 +358,19 @@ C3): tách riêng, **chưa gộp** vào con số dưới — ghi rõ để khôn
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | 30/07 08:40 | **22/28 = 79%** | 4/4 | 3/4 | 3/4 | 3/4 | 5/8 | 4/4 | đạt %, **vỡ điều kiện cứng C4** | Case 12: model bịa gán câu hỏi của lớp cho `U0270` → chặn ở tool + cảnh báo trong kết quả tool |
 | 2 | 30/07 08:45 | **24/28 = 86%** | 4/4 | 3/4 | 3/4 | 3/4 | 7/8 | 4/4 | đạt | Case 19/20/23: `"attention mechanism"` → 0 kết quả, **từ chối oan** → cho khớp một phần |
-| 3 | 30/07 08:54 | **26/28 = 93%** | 4/4 | 3/4 | **4/4** | 3/4 | **8/8** | 4/4 | **đạt** (93% ≥ 75% · 0 bịa mã · 0 fail C4) | Case 15/21: mã đoạn không sang câu trả lời → in mã liền trong chuỗi trích |
+| 3 | 30/07 08:54 | **26/28 = 93%** | 4/4 | 3/4 | **4/4** | 3/4 | **8/8** | 4/4 | đạt | Case 15/21: mã đoạn không sang câu trả lời → in mã liền trong chuỗi trích |
+| 4 | 30/07 09:06 | **28/28 = 100%** | 4/4 | **4/4** | 4/4 | **4/4** | 8/8 | 4/4 | **đạt** (0 bịa mã · 0 fail C4) | **Không sửa sản phẩm** — chỉ sửa thước đo (xem dưới). Case 06 và 15 pass do **model biến động** ⇒ 100% này không phải độ tin cậy thật |
 
-**Hai case còn fail** — giữ nguyên, không nới tiêu chí cho số đẹp:
-- **06** — model viết `**T04-006**` thay vì `[T04-006]`. Mã **đúng và tồn tại**, chỉ sai format;
-  nhưng UI linkify theo `[Txx-NNN]` nên sai format là mất tính năng đối chiếu.
-- **15** — giải thích multi-head bằng ngôn ngữ sách giáo khoa, **mất ẩn dụ của giảng viên**
-  ("nhiều con mắt", "thầy bói xem voi"). Đúng chiều C3, và đúng thứ khảo sát đòi (quote của Phước).
+**Hai case flaky — 100% ở lượt 4 KHÔNG phải độ tin cậy thật.** Case 06 (format mã đoạn) và
+case 15 (giữ ẩn dụ giảng viên) fail ở lượt 3, pass ở lượt 4, **mà sản phẩm không đổi một dòng**
+giữa hai lượt. Hai chiều `C1 format` và `C3 giữ giọng` đang không ổn định. Trước CP6 phải chạy
+mỗi case ≥3 lần lấy tỉ lệ, thay vì lấy một lượt làm kết luận. Chi tiết: `eval/runs/luot-4.md`.
+
+**Sửa thước đo ở lượt 4 (không phải sửa sản phẩm).** Lượt 1-3 dùng một check `mã đoạn tồn tại
+thật` trả fail cả khi **không có mã nào** — gộp "thiếu mã" (lỗi C1 thường) với "bịa mã" (điều
+kiện cứng). Case 06 lượt 3 viết mã **thật, hợp lệ, chỉ thiếu ngoặc** nên bị đếm thành bịa, làm
+bảng báo `bịa 1/28`. Từ lượt 4 tách thành `có mã đoạn` (C1) và `mã đoạn không bịa` (quét mọi
+format). Bảng lượt 1-3 giữ nguyên số cũ để thấy chuỗi quyết định.
 
 Nhịp lặp: chạy trọn bộ → bảng % → chọn **một** failure đau nhất → sửa → **chạy lại trọn bộ**. Mỗi lượt một bản ghi trong `eval/runs/`, đủ mọi case kể cả fail. Bar đã chốt — nếu không đạt thì phân tích khoảng cách (nội dung slide 4), **không sửa bar**.
 

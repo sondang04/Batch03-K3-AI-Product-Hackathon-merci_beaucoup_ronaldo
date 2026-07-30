@@ -71,16 +71,31 @@
 
 ---
 
-## Bảng chấm — dùng cho mỗi lượt chạy
+## Bảng chấm — đã điền
 
-Sao bảng này sang `eval/runs/luot-<N>.md`, ghi **đủ mọi case kể cả fail**.
+Bảng theo mẫu dưới, **đủ 28 case kể cả fail**, sinh tự động chứ không gõ tay:
 
-| Case | Input | Output (rút gọn / link trace) | C1 | C2 | C3 | C4 | Pass? | Ghi chú |
-|---|---|---|---|---|---|---|---|---|
-| 01 | | | | | | | | |
-| … | | | | | | | | |
-| 28 | | | | | | | | |
+```bash
+.venv/bin/python eval/run_golden.py          # chạy → eval/runs/golden-<stamp>.json
+python3 eval/lam_bang_cham.py                # → eval/runs/luot-<N>.md
+```
 
-**Tổng:** `__/28 pass = __%` · vs bar 75% → **đạt / chưa đạt** · điều kiện cứng (a) bịa: `__/28` · (b) fail C4: `__/28`
-**Failure đau nhất lượt này → sửa gì:**
-**Hai người chấm độc lập case nào, lệch ở đâu:**
+| Lượt | File | Máy chấm | Điều kiện cứng | vs bar 75% |
+|---|---|---|---|---|
+| 1 | [`runs/luot-1.md`](runs/luot-1.md) | 22/28 = 79% | fail C4 1/28 | **chưa đạt** — vỡ điều kiện cứng |
+| 2 | [`runs/luot-2.md`](runs/luot-2.md) | 24/28 = 86% | fail C4 1/28 | chưa đạt |
+| 3 | [`runs/luot-3.md`](runs/luot-3.md) | 26/28 = 93% | 0 fail C4 | đạt |
+| 4 | [`runs/luot-4.md`](runs/luot-4.md) | 28/28 = 100% | 0 bịa · 0 fail C4 | **đạt** |
+
+⚠️ **100% ở lượt 4 không phải độ tin cậy thật** — case 06 và 15 pass do model biến động,
+sản phẩm không đổi giữa lượt 3 và 4. Xem mục *Failure đau nhất* trong `runs/luot-4.md`.
+
+**Ký hiệu ô trong bảng:** `✅`/`❌` máy chấm được · `✅⏳` máy đạt nhưng còn phần người
+phải đọc · `⏳` chỉ người chấm được · `—` chiều không áp dụng.
+
+**Cột `Pass?` chỉ là phần máy chấm** (regex + đối chiếu data pack: có mã đoạn, mã **tồn
+tại thật**, từ chối đúng chỗ, số block trong dải). Phần **người chấm** — 20/28 case, liệt
+kê cuối mỗi bảng — chưa gộp vào, để không tự cho điểm khống.
+
+**Hai người chấm độc lập case nào, lệch ở đâu:** _chưa làm — vòng test độ rõ (spec §7 mục 4),
+việc trước CP5._

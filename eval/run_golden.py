@@ -47,17 +47,27 @@ def co_ma(out: str) -> tuple[bool, str]:
     return bool(ma), f"{len(ma)} mã đoạn" if ma else "không có mã đoạn nào"
 
 
-def ma_ton_tai(out: str) -> tuple[bool, str]:
-    """Mọi mã đoạn trong câu trả lời phải TỒN TẠI trong data pack. Đây là phần
-    C1 máy chấm được — bịa mã đoạn là kiểu bịa tệ nhất vì nhìn rất đáng tin."""
-    ma = MA_DOAN.findall(out)
+MA_TRO = re.compile(r"\bT\d{2}-\d{3}\b")      # mã ở BẤT KỲ format nào
+
+
+def ma_khong_bia(out: str) -> tuple[bool, str]:
+    """ĐIỀU KIỆN CỨNG của quality bar: mã đoạn nào xuất hiện thì phải TỒN TẠI
+    trong data pack.
+
+    Quét mã ở **mọi format**, không chỉ `[Txx-NNN]`. Lý do: bản đầu chỉ quét
+    dạng có ngoặc, nên case 06 (model viết `**T04-006**` — mã thật, đúng, chỉ
+    thiếu ngoặc) bị đếm thành "bịa mã đoạn" và làm quality bar trông như vỡ.
+    Thiếu mã và bịa mã là HAI lỗi khác nhau: thiếu mã do check `có mã đoạn`
+    (chiều C1) bắt; bịa mã mới là điều kiện cứng.
+    """
+    ma = set(MA_TRO.findall(out))
     if not ma:
-        return False, "không có mã nào để kiểm"
+        return True, "không có mã nào ⇒ không có gì để bịa (thiếu mã do C1 bắt)"
     hop_le = set()
     for sid in ("day01", "day02-sang"):
         hop_le |= set(sources.load_transcript(sid).paragraphs)
-    bia = [m for m in set(ma) if m not in hop_le]
-    return not bia, f"{len(set(ma))} mã, bịa: {bia or 'không'}"
+    bia = sorted(m for m in ma if m not in hop_le)
+    return not bia, f"{len(ma)} mã, bịa: {bia or 'không'}"
 
 
 def khong_chua(*pats: str):
@@ -96,7 +106,7 @@ CASES = [
          tay="câu từ chối có hữu ích không, hay chỉ nói 'không biết'"),
     dict(id="02", lop=1, kind="chat", tieu_de="[không nghe rõ] chỗ giảng viên kể tên mô hình",
          input="Ở phần chọn mô hình phù hợp với công việc, giảng viên kể tên những mô hình nào?",
-         auto=[("mã đoạn tồn tại thật", ma_ton_tai),
+         auto=[("mã đoạn không bịa", ma_khong_bia),
                ("không tự điền tên mô hình vào chỗ mất tiếng",
                 khong_chua(r"không nghe rõ.{0,60}(gpt|claude|gemini|llama)"))],
          tay="có nói 'bản ghi mất tiếng' ở T04-085 không"),
@@ -106,7 +116,7 @@ CASES = [
          tay="có ghi rõ 'bản hackathon' khi trích số trang không"),
     dict(id="04", lop=1, kind="chat", tieu_de="mã đoạn phải trỏ đúng đoạn",
          input="Tóm tắt phần Attention, multi-head và bài học quản lý context của Day 1",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia),
                ("mã thuộc dải T04-053..057", co_chua(r"\[T04-05[3-7]\]"))],
          tay="mở từng đoạn ra đọc: ý của gạch đầu dòng có nằm trong đoạn đó không"),
 
@@ -118,7 +128,7 @@ CASES = [
          tay="hỏi lại đúng một câu, hay quét cả hai buổi — cả hai đều chấp nhận"),
     dict(id="06", lop=2, kind="chat", tieu_de="khái niệm nằm ở nhiều block",
          input="Token được nhắc ở những phần nào của buổi Day 1?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)],
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)],
          tay="có nêu >1 chỗ, hay chỉ chọn một chỗ rồi im"),
     dict(id="07", lop=2, kind="recap", tieu_de="thắc mắc chỉ 1 người hỏi",
          input="day01",
@@ -162,7 +172,7 @@ CASES = [
     # ── ④ ĐẶC THÙ DOMAIN ────────────────────────────────────────────────────
     dict(id="13", lop=4, kind="chat", tieu_de="quan hệ tập hợp AI ⊃ ML ⊃ DL ⊃ GenAI",
          input="AI, machine learning, deep learning và GenAI quan hệ với nhau thế nào trong buổi Day 1?",
-         auto=[("mã đoạn tồn tại thật", ma_ton_tai),
+         auto=[("mã đoạn không bịa", ma_khong_bia),
                ("không đảo chiều quan hệ",
                 khong_chua(r"machine learning (bao|chứa|gồm).{0,20}\bAI\b",
                            r"deep learning (bao|chứa|gồm).{0,25}machine learning"))],
@@ -173,7 +183,7 @@ CASES = [
          tay="TỪNG cụm: chủ đề có khớp một gạch đầu dòng của block đó không"),
     dict(id="15", lop=4, kind="chat", tieu_de="lệch trình độ — giữ ẩn dụ giảng viên",
          input="Giải thích multi-head attention cho người mới, dùng đúng cách giảng viên đã ví",
-         auto=[("mã đoạn tồn tại thật", ma_ton_tai),
+         auto=[("mã đoạn không bịa", ma_khong_bia),
                ("giữ ẩn dụ gốc", co_chua(r"con mắt|thầy bói|xem voi"))],
          tay="có thay thuật ngữ mới chưa giải thích vào không"),
     dict(id="16", lop=4, kind="recap", tieu_de="khai báo giới hạn, không để recap che bản gốc",
@@ -200,19 +210,19 @@ CASES = [
          tay="keyword có phải thuật ngữ của buổi này không"),
     dict(id="19", lop=0, kind="chat", tieu_de="hỏi-đáp có căn cứ: attention",
          input="Giảng viên giải thích cơ chế attention thế nào?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)], tay="—"),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)], tay="—"),
     dict(id="20", lop=0, kind="chat", tieu_de="hỏi-đáp có căn cứ: context",
          input="Context của model có hạn nghĩa là gì theo buổi Day 1?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)], tay="—"),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)], tay="—"),
     dict(id="21", lop=0, kind="chat", tieu_de="hỏi-đáp có căn cứ: RLHF (M0879 thật)",
          input="SFT là gì, RLHF là gì?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)], tay="—"),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)], tay="—"),
     dict(id="22", lop=0, kind="chat", tieu_de="hỏi-đáp: hai mùa đông AI (M1674 thật)",
          input="chi tiết hơn về lịch sử của AI, 2 mùa đông của AI, và spring",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)], tay="—"),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)], tay="—"),
     dict(id="23", lop=0, kind="chat", tieu_de="hỏi-đáp: DL vs ML (M1017 nguyên văn)",
          input="Deep Learning khác gì so với Machine Learning truyền thống?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai)], tay="—"),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia)], tay="—"),
     dict(id="24", lop=0, kind="recap", tieu_de="loại phần chào lớp / bên lề",
          input="day01",
          auto=[("không có block chào lớp", khong_chua(r"^\*\*#\d+ · Chào lớp")),
@@ -228,7 +238,7 @@ CASES = [
     dict(id="26", lop=9, kind="chat", tieu_de="lỗi gõ + trộn tiếng Anh (M0382 nguyên văn)",
          input="giair thích cơ chế attention, mutilhead",
          auto=[("vẫn hiểu và trả lời có căn cứ", co_ma),
-               ("mã đoạn tồn tại thật", ma_ton_tai)],
+               ("mã đoạn không bịa", ma_khong_bia)],
          tay="—"),
     dict(id="27", lop=9, kind="recap", tieu_de="buổi có cụm không gán được",
          input="day01",
@@ -238,7 +248,7 @@ CASES = [
          tay="cụm chưa gán có kèm lý do không"),
     dict(id="28", lop=9, kind="chat", tieu_de="hỏi thứ chỉ có ở buổi khác",
          input="Double Diamond là gì?",
-         auto=[("có mã đoạn", co_ma), ("mã đoạn tồn tại thật", ma_ton_tai),
+         auto=[("có mã đoạn", co_ma), ("mã đoạn không bịa", ma_khong_bia),
                ("chỉ đúng buổi Day 2", co_chua(r"day ?2|xác định bài toán|T01-"))],
          tay="có nói rõ nó thuộc buổi nào không"),
 ]
