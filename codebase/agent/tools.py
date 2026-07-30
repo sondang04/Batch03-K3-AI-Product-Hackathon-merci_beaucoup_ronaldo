@@ -242,6 +242,16 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                 return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
             q = args.get("query", "")
             
+            # 1. Kiểm tra khái niệm ngoài nguồn trước tiên để tránh việc khớp một phần gây nhiễu
+            note = ""
+            key = sources._norm(q)
+            for k, v in config.NGOAI_NGUON.items():
+                k_norm = sources._norm(k)
+                if k_norm in key or key in k_norm:
+                    note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
+                            "chỉ đúng chỗ đó, không tự giải thích.")
+                    return json.dumps({"transcript": [], "slide": [], "ghi_chu": note}, ensure_ascii=False)
+
             try:
                 if sid == "all":
                     found = sources.search_all_sessions(q)
@@ -254,18 +264,9 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             except Exception as e:
                 return json.dumps({"loi": f"Gặp lỗi khi tìm kiếm dữ liệu: {type(e).__name__}: {e}. Vui lòng thử lại với từ khóa khác."}, ensure_ascii=False)
                 
-            note = ""
             if not t_hits and not s_hits:
-                key = sources._norm(q)
-                for k, v in config.NGOAI_NGUON.items():
-                    k_norm = sources._norm(k)
-                    if k_norm in key or key in k_norm:
-                        note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
-                                "chỉ đúng chỗ đó, không tự giải thích.")
-                        break
-                else:
-                    note = ("KHÔNG có trong transcript lẫn slide của buổi này — "
-                            "không được tự giải thích từ kiến thức nền.")
+                note = ("KHÔNG có trong transcript lẫn slide của buổi này — "
+                        "không được tự giải thích từ kiến thức nền.")
             return json.dumps({"transcript": t_hits, "slide": s_hits,
                                "ghi_chu": note}, ensure_ascii=False)
 
