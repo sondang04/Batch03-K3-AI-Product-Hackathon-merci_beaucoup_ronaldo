@@ -55,6 +55,27 @@ CASES = [
         live_require=[r"\[T04-\d{3}\]"],
         live_forbid=[CANARY],
     ),
+    dict(
+        id="S3-tomtat-dung-block",
+        group="single",
+        # Regression cho bug 30/07: model đoán block_idx sai rồi dán nhãn tiêu đề
+        # học viên hỏi lên nội dung block khác. title_query loại bỏ việc đoán.
+        question="Tóm tắt phần Attention, multi-head và bài học quản lý context của Day 1",
+        mock_script=[
+            {"tool_calls": [{"name": "summarize_block",
+                             "input": {"session_id": "day01",
+                                       "title_query": "attention multi-head"}}]},
+            {"text": "**Attention, multi-head và bài học quản lý context** "
+                     "[T04-053]..[T04-057]\n🔑 Keyword: attention · multi-head · context"},
+        ],
+        expect_tools=["summarize_block"],
+        # tool PHẢI echo tiêu đề + dải mã để model tự đối chiếu đúng block
+        offline_expect=["Attention, multi-head và bài học quản lý context",
+                        "T04-053..T04-057"],
+        live_require=[r"(?i)attention", r"\[T04-05\d\]"],
+        # không được dán nhãn Attention lên nội dung buổi khác:
+        live_forbid=[CANARY, r"(?i)turing test", r"(?i)alphago"],
+    ),
     # ── MULTI TOOL ───────────────────────────────────────────────────────────
     dict(
         id="M1-recap-va-thac-mac",

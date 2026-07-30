@@ -1,0 +1,6 @@
+{"t": 0.0, "kind": "session_start", "label": "live-S2-hoi-dap-can-cu", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.0, "kind": "user_message", "text": "Giảng viên nói gì về hai mùa đông của AI vậy?"}
+{"t": 0.941, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "tool_use", "usage": {"in": 2274, "out": 21}, "latency_s": 0.94}
+{"t": 1.361, "kind": "tool_call", "name": "search_sources", "args": {"session_id": "all", "query": "hai mùa đông"}, "result": "{\"tim_xuyen_moi_buoi\": {\"day01\": {\"buoi\": \"Day 1 — AI & LLM Foundation (giảng viên Blue)\", \"transcript\": [{\"ma_doan\": \"T04-029\", \"trich\": \"Thế nhưng sau đấy độ gần chục năm, nó lại tiếp tục chạm trần,…(+1463 ký tự)", "latency_s": 0.42}
+{"t": 4.464, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 3, "stop_reason": "stop", "usage": {"in": 2830, "out": 294}, "latency_s": 3.1}
+{"t": 4.464, "kind": "session_end", "final_text": "Giảng viên đã đề cập đến hai mùa đông của AI trong buổi học như sau:\n\n- **Mùa đông thứ nhất** là giai đoạn từ những năm 1970 đến 1980-1990. Trong khoảng thời gian này, AI không phát triển mạnh mẽ như …(+811 ký tự)", "n_llm_calls": 2, "n_tool_calls": 1, "total_s": 4.46}
