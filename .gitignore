@@ -2,7 +2,6 @@
 node_modules/
 *.env
 .env
-.venv
 
 # Khảo sát: CSV thô từ Google Form chứa họ tên đầy đủ + mã HV — không commit
 *Form Responses*.csv
