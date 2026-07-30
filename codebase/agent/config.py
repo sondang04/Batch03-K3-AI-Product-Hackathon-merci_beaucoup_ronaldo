@@ -4,6 +4,14 @@ import os
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+
+# Nạp .env ở gốc repo (OPENAI_API_KEY, ...) — .env đã bị gitignore chặn,
+# key không bao giờ vào git (luật an toàn guide §3.4).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(REPO / ".env")
+except ImportError:
+    pass
 DATA = REPO / "data" / "vlearn-pack"
 TRANSCRIPT_DIR = DATA / "transcript"
 CHATLOG_CSV = DATA / "chatlog" / "chat_history_anonymized_for_hackathon.csv"
@@ -12,9 +20,11 @@ LOGS_DIR = REPO / "codebase" / "logs"
 PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 
 # ── Model ────────────────────────────────────────────────────────────────────
-# Provider chọn qua env AGENT_PROVIDER: anthropic | gemini | mock
+# Provider chọn qua env AGENT_PROVIDER: openai | anthropic | gemini | mock
 # (mock = offline, dùng cho test suite — không cần key, không cần mạng)
-PROVIDER = os.environ.get("AGENT_PROVIDER", "mock")
+# Mặc định: openai / gpt-4o-mini (quyết định nhóm 30/07 — xem spec §9).
+PROVIDER = os.environ.get("AGENT_PROVIDER", "openai")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-opus-5")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash")  # tên model thấy trong chatlog production của VLearn
 

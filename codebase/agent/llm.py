@@ -1,5 +1,6 @@
-"""Lớp LLM client — 3 backend sau cùng một interface:
+"""Lớp LLM client — 4 backend sau cùng một interface:
 
+- OpenAIClient    : `openai` SDK, model gpt-4o-mini (mặc định của nhóm từ 30/07).
 - AnthropicClient : `anthropic` SDK, model claude-opus-5 (thinking adaptive mặc
                     định của model; cache system prompt).
 - GeminiClient    : `google.genai` SDK, model theo env GEMINI_MODEL — free tier
@@ -39,6 +40,72 @@ class Turn:
     stop_reason: str | None = None
     usage: dict | None = None
     latency_s: float = 0.0
+
+
+# ── OpenAI ───────────────────────────────────────────────────────────────────
+
+class OpenAIClient:
+    provider = "openai"
+
+    def __init__(self, model: str = config.OPENAI_MODEL):
+        import json as _json
+        from openai import OpenAI
+        self._json = _json
+        self.model = model
+        # OPENAI_BASE_URL hỗ trợ sẵn trong SDK — dùng khi BTC cấp key qua proxy
+        self._client = OpenAI()
+
+    def _to_messages(self, system: str, history: list[dict]) -> list[dict]:
+        msgs = [{"role": "system", "content": system}]
+        for h in history:
+            if h["role"] == "user":
+                msgs.append({"role": "user", "content": h["text"]})
+            elif h["role"] == "assistant":
+                m = {"role": "assistant", "content": h.get("text") or None}
+                if h.get("tool_calls"):
+                    m["tool_calls"] = [
+                        {"id": tc.id, "type": "function",
+                         "function": {"name": tc.name,
+                                      "arguments": self._json.dumps(tc.input,
+                                                                    ensure_ascii=False)}}
+                        for tc in h["tool_calls"]]
+                msgs.append(m)
+            elif h["role"] == "tool_results":
+                # OpenAI: MỖI tool_result là một message role="tool" riêng
+                for r in h["results"]:
+                    msgs.append({"role": "tool", "tool_call_id": r["id"],
+                                 "content": r["content"]})
+        return msgs
+
+    @staticmethod
+    def _to_tools(tools: list[dict]) -> list[dict]:
+        return [{"type": "function",
+                 "function": {"name": d["name"], "description": d["description"],
+                              "parameters": d["input_schema"]}}
+                for d in tools]
+
+    def create(self, system: str, history: list[dict], tools: list[dict]) -> Turn:
+        t0 = time.time()
+        resp = self._client.chat.completions.create(
+            model=self.model, max_tokens=config.MAX_TOKENS,
+            messages=self._to_messages(system, history),
+            tools=self._to_tools(tools))
+        msg = resp.choices[0].message
+        calls = [ToolCall(id=c.id, name=c.function.name,
+                          input=self._json.loads(c.function.arguments or "{}"))
+                 for c in (msg.tool_calls or [])]
+        usage = ({"in": resp.usage.prompt_tokens, "out": resp.usage.completion_tokens}
+                 if resp.usage else None)
+        return Turn(text=msg.content or "", tool_calls=calls,
+                    stop_reason="tool_use" if calls else resp.choices[0].finish_reason,
+                    usage=usage, latency_s=time.time() - t0)
+
+    def subcall(self, system: str, user: str) -> str:
+        resp = self._client.chat.completions.create(
+            model=self.model, max_tokens=1024,
+            messages=[{"role": "system", "content": system},
+                      {"role": "user", "content": user}])
+        return resp.choices[0].message.content or ""
 
 
 # ── Anthropic ────────────────────────────────────────────────────────────────
@@ -211,6 +278,8 @@ class MockClient:
 
 def make_client(provider: str | None = None):
     p = provider or config.PROVIDER
+    if p == "openai":
+        return OpenAIClient()
     if p == "anthropic":
         return AnthropicClient()
     if p == "gemini":

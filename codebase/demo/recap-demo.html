@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/recap — demo flow Day 1 (giao diện mô phỏng Discord)</title>
+<style>
+  /* Demo tĩnh, tự chứa — mở trực tiếp trong browser, không cần server.
+     Kịch bản cố định trên buổi Day 1; bản chạy thật: codebase/agent/ (gpt-4o-mini). */
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: "gg sans","Segoe UI",Roboto,system-ui,sans-serif;
+         background:#1e1f22; color:#dbdee1; height:100vh; display:flex;
+         flex-direction:column; }
+  header { background:#313338; border-bottom:1px solid #26272b; padding:10px 16px;
+           display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  header .hash { color:#80848e; font-size:22px; font-weight:600; }
+  header .ten { font-weight:700; }
+  header .mota { color:#949ba4; font-size:13px; border-left:1px solid #3f4147;
+                 padding-left:10px; margin-left:2px; }
+  #khung { flex:1; overflow-y:auto; background:#313338; padding:16px 16px 4px; }
+  .msg { display:flex; gap:12px; margin-bottom:14px; animation:hien .18s ease-out; }
+  @keyframes hien { from {opacity:0; transform:translateY(4px)} to {opacity:1} }
+  .avatar { width:38px; height:38px; border-radius:50%; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:19px; background:#5865f2; }
+  .avatar.bot { background:#23a55a; }
+  .noidung { min-width:0; max-width:760px; }
+  .tacgia { font-weight:600; font-size:15px; margin-bottom:2px; }
+  .tacgia .tag { background:#5865f2; color:#fff; font-size:10px; padding:1px 5px;
+                 border-radius:4px; vertical-align:2px; margin-left:5px; }
+  .tacgia .gio { color:#949ba4; font-weight:400; font-size:11px; margin-left:6px; }
+  .body { font-size:14.5px; line-height:1.45; white-space:pre-wrap; }
+  .body b { color:#f2f3f5; }
+  .ma { color:#00a8fc; font-size:12.5px; }              /* mã đoạn [T04-xxx] */
+  .tools { color:#949ba4; font-size:12px; margin:2px 0 6px;
+           font-family:Consolas,monospace; }            /* dòng tool đã gọi */
+  .badge { display:inline-block; font-size:11.5px; padding:1px 7px;
+           border-radius:9px; margin-left:6px; vertical-align:1px; }
+  .badge.ok { background:#23a55a33; color:#2dc770; }
+  .badge.canhbao { background:#f0b23222; color:#f0b232; }
+  .theblock { background:#2b2d31; border-left:3px solid #23a55a; border-radius:6px;
+              padding:10px 12px; margin-top:6px; }
+  .theblock.tuchoi { border-left-color:#f23f43; }
+  .mucluc button, .hanhdong button, .chip {
+      background:#4e5058; color:#fff; border:0; border-radius:4px; cursor:pointer;
+      font-size:13px; padding:5px 10px; margin:3px 4px 0 0; font-family:inherit; }
+  .mucluc button:hover, .hanhdong button:hover, .chip:hover { background:#6d6f78; }
+  .mucluc button.sao { background:#5865f2; }
+  details { margin-top:7px; background:#232428; border-radius:5px; padding:7px 10px; }
+  summary { cursor:pointer; color:#b5bac1; font-size:13.5px; }
+  .nguyenvan { background:#1e1f22; border-radius:5px; padding:8px 10px; margin-top:7px;
+               font-size:13px; color:#b5bac1; border-left:3px solid #00a8fc; }
+  .ghichu { color:#949ba4; font-size:12px; margin-top:5px; font-style:italic; }
+  #goiy { background:#313338; padding:4px 16px 8px; flex-shrink:0; }
+  #goiy .nhan { color:#949ba4; font-size:11.5px; margin-bottom:2px; }
+  #thanhnhap { background:#313338; padding:0 16px 18px; flex-shrink:0; }
+  #onhap { display:flex; background:#383a40; border-radius:8px; padding:11px 14px; }
+  #onhap input { flex:1; background:none; border:0; outline:0; color:#dbdee1;
+                 font-size:14.5px; font-family:inherit; }
+  #onhap input::placeholder { color:#6d6f78; }
+  .danggo { color:#949ba4; font-size:13px; padding:2px 0 8px 50px; }
+  .danggo b { color:#dbdee1; font-weight:600; }
+</style>
+</head>
+<body>
+<header>
+  <span class="hash">#</span><span class="ten">ôn-tập-day-1</span>
+  <span class="mota">VLearn Recap Bot — demo flow (kịch bản tĩnh trên buổi Day 1 ·
+  bản chạy thật: gpt-4o-mini + 6 tool)</span>
+</header>
+
+<div id="khung"></div>
+
+<div id="goiy">
+  <div class="nhan">Gợi ý (bấm để chạy kịch bản):</div>
+  <button class="chip" onclick="chay('recap')">/recap day01</button>
+  <button class="chip" onclick="chay('muadong')">Hai mùa đông AI là gì?</button>
+  <button class="chip" onclick="chay('deadline')">Deadline nộp lab?</button>
+  <button class="chip" onclick="chay('react')">Giải thích ReAct đi</button>
+</div>
+<div id="thanhnhap">
+  <div id="onhap">
+    <input id="hop" placeholder="Nhắn #ôn-tập-day-1  —  gõ /recap day01 hoặc một câu hỏi rồi Enter"
+           onkeydown="if(event.key==='Enter')guiTay()">
+  </div>
+</div>
+
+<script>
+const khung = document.getElementById('khung');
+const gio = () => new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+
+function themUser(text){
+  khung.insertAdjacentHTML('beforeend', `
+  <div class="msg"><div class="avatar">🧑‍🎓</div><div class="noidung">
+    <div class="tacgia">học viên K3 <span class="gio">hôm nay lúc ${gio()}</span></div>
+    <div class="body">${text}</div></div></div>`);
+  cuon();
+}
+function themBot(html, tools){
+  const id = 'go'+Date.now();
+  khung.insertAdjacentHTML('beforeend',
+    `<div class="danggo" id="${id}"><b>VLearn Recap</b> đang soạn…</div>`);
+  cuon();
+  setTimeout(()=>{
+    document.getElementById(id).outerHTML = `
+    <div class="msg"><div class="avatar bot">📚</div><div class="noidung">
+      <div class="tacgia">VLearn Recap <span class="tag">BOT</span>
+        <span class="gio">hôm nay lúc ${gio()}</span></div>
+      ${tools?`<div class="tools">⚙️ ${tools}</div>`:''}
+      <div class="body">${html}</div></div></div>`;
+    cuon();
+  }, 650);
+}
+function cuon(){ khung.scrollTop = khung.scrollHeight; }
+function toast(t){ themBot(t); }
+
+/* ── Dữ liệu THẬT từ transcript-04 (trích ngắn theo quy định bảo mật) ────── */
+const BLOCKS = [  // 19 block học của Day 1 (đã loại 2 mục chào lớp/cuối buổi)
+ "Nội dung ngày học và bức tranh tổng quan về AI","Lịch sử AI: Turing test và hai mùa đông",
+ "Deep learning và sức mạnh của dữ liệu","AlphaGo và kiến trúc Transformer",
+ "Cuộc đua AI sau ChatGPT","Mổ xẻ mô hình ngôn ngữ lớn: dự đoán token và context",
+ "Attention, multi-head và bài học quản lý context","Tham số, RLHF và ngành gán nhãn dữ liệu",
+ "Thí nghiệm bàn cờ, giới hạn kiến thức và các mức tiếp cận mô hình","Temperature và top-k/top-p",
+ "Từ mô hình đến AI agent","Các lớp bao quanh LLM và tầm quan trọng của evaluation",
+ "Bức tranh thị trường mô hình và tốc độ thay đổi","Làn sóng mã nguồn mở Trung Quốc và DeepSeek",
+ "Benchmark năng lực và xu hướng chi phí tính toán","Chọn mô hình phù hợp với công việc",
+ "Mixture of Experts","Cơ bản về gọi API mô hình LLM","Tóm tắt buổi học"];
+const NV = {  // nguyên văn (cắt ~230 ký tự) để nút "Xem nguyên văn" đối chiếu
+ "T04-053":"Bởi vì thực ra — mình sẽ quay trở lại khái niệm attention trong kiến trúc Transformer ban đầu ấy — bản chất là để một mô hình có thể làm được việc này rất tốt, thì nó phải chú ý được đúng cái nơi nó cần chú ý. Khi bạn đưa cho nó 1 triệu token ngữ cảnh, nó có thể là chú ý sai chỗ…",
+ "T04-022":"AI không phải đi thẳng một phát lên đâu, mà nó đã trải qua hai lần mùa đông rồi. Hai lần mùa đông đấy rơi vào tầm những năm 70 đến tận những năm 80–90… chạm trần về việc thiếu dữ liệu, thiếu máy móc…"};
+
+function xemNV(nut, ma){
+  if(nut.dataset.mo){ nut.nextElementSibling?.remove(); delete nut.dataset.mo; return; }
+  nut.dataset.mo = 1;
+  nut.insertAdjacentHTML('afterend', `<div class="nguyenvan">📖 <span class="ma">[${ma}]</span>
+  ${NV[ma]}<div class="ghichu">trích ngắn để đối chiếu — bản đầy đủ trong data pack của khoá</div></div>`);
+  cuon();
+}
+function saiChoNao(nut){
+  nut.insertAdjacentHTML('afterend', `<div class="nguyenvan">Bạn thấy sai ở đâu?
+  <button class="chip" onclick="ackSai(this,'sai block')">gán sai block</button>
+  <button class="chip" onclick="ackSai(this,'thiếu ý')">thiếu ý</button>
+  <button class="chip" onclick="ackSai(this,'trích dẫn sai đoạn')">trích dẫn sai đoạn</button></div>`);
+  nut.disabled = true; cuon();
+}
+function ackSai(nut, loai){
+  nut.parentElement.outerHTML = `<div class="ghichu">✅ Đã ghi nhận “${loai}” vào feedback log
+  (validation/) — cảm ơn bạn! Mục này giúp nhóm sửa recap trước demo.</div>`;
+}
+
+/* ── 4 kịch bản ──────────────────────────────────────────────────────────── */
+function chay(kb){
+  if(kb==='recap'){
+    themUser('/recap day01');
+    themBot(
+`<div class="theblock"><b>Recap buổi Day 1 — AI &amp; LLM Foundation</b>
+Dựng từ: bản ghi buổi giảng (98 đoạn) + slide (82 trang).
+<b>Mình tóm tắt và gom thắc mắc của lớp. Mình không trả lời câu hỏi ngoài nguồn buổi học và không biết deadline.</b></div>
+<div class="mucluc"><b>Mục lục — 19 block</b> <span class="badge canhbao">đã bỏ 2 mục không phải nội dung học: Chào lớp · Tương tác cuối buổi</span><br>
+${BLOCKS.map((t,i)=>`<button ${i===6?'class="sao" onclick="chay(\'block8\')"':'onclick="toast(\'Demo tĩnh: block này chưa soạn kịch bản — thử block ⭐ Attention nhé.\')"'}>${i===6?'⭐ ':''}${i+1}. ${t}</button>`).join('')}
+</div><div class="ghichu">Bấm một block để đọc — mỗi block ≤60 giây.</div>`,
+    'list_blocks(day01)');
+  }
+
+  if(kb==='block8'){
+    themBot(
+`<div class="theblock"><b>#7 · Attention, multi-head và bài học quản lý context</b>
+<span class="badge ok">✅ 5/5 ý có mã đoạn</span>
+
+• Attention = mô hình phải “chú ý đúng nơi cần chú ý”; 1 triệu token ngữ cảnh có thể làm nó chú ý sai chỗ — 100.000 token <b>chất lượng</b> nhiều khi tốt hơn <span class="ma">[T04-053]</span>
+• Đưa một câu vào, model tự nhận diện các từ quan trọng và nối chúng theo tổ hợp thường gặp trong ngữ cảnh <span class="ma">[T04-054]</span>
+• Khác cách cũ: trước đây một từ chỉ “nhìn” được từ đứng cạnh nó; attention bao phủ cả câu — hợp với các ngôn ngữ có ngữ pháp khác nhau <span class="ma">[T04-055]</span>
+• Multi-head = thay vì một “con mắt”, sinh nhiều con mắt cùng nhìn — mỗi mắt bắt một loại liên quan trong văn bản <span class="ma">[T04-056]</span>
+• Bài học thực chiến (đặc biệt khi vibe code): <b>quản lý sự chú ý và context bạn đưa cho model</b> — quản tốt thì code tốt hơn <span class="ma">[T04-057]</span>
+
+🔑 <b>Keyword:</b> attention · multi-head · context · Transformer</div>
+<details><summary>💬 Bạn học từng vướng gì ở đây (6 người)</summary>
+<div style="margin-top:6px">Cụm <b>“cơ chế attention &amp; multi-head”</b> — 6 học viên khác nhau hỏi trên VLearn.
+Câu đại diện <span class="ma">[M0382]</span>: “giair thích cơ chế attention, mutilhead” <span class="ghichu">(giữ nguyên lỗi gõ — câu thật)</span>
+↳ Chốt lại: xem gạch 1 và 4 — <span class="ma">[T04-053]</span> <span class="ma">[T04-056]</span></div></details>
+<div class="hanhdong">
+<button onclick="xemNV(this,'T04-053')">📖 Xem nguyên văn [T04-053]</button>
+<button onclick="saiChoNao(this)">⚠️ Sai chỗ nào?</button></div>`,
+    'read_transcript(T04-053..057) · summarize_block(#7) · peer_questions("attention")');
+  }
+
+  if(kb==='muadong'){
+    themUser('Hai mùa đông AI là gì?');
+    themBot(
+`AI không đi lên theo đường thẳng — nó từng qua <b>hai “mùa đông”</b>, rơi vào khoảng thập niên 70 đến 80–90, chủ yếu vì các ý tưởng <b>chạm trần thiếu dữ liệu và thiếu phần cứng</b> <span class="ma">[T04-022]</span>. “Mùa đông” nghĩa là cộng đồng <b>mất niềm tin, quỹ ngừng rót vốn</b>; sau đó sóng mới nổi lên khi có thành tựu kéo niềm tin quay lại <span class="ma">[T04-023]</span>.
+<div class="hanhdong"><button onclick="xemNV(this,'T04-022')">📖 Xem nguyên văn [T04-022]</button></div>`,
+    'search_sources("mùa đông") · read_transcript(T04-022, T04-023)');
+  }
+
+  if(kb==='deadline'){
+    themUser('Deadline nộp lab Day 1 là mấy giờ vậy?');
+    themBot(
+`<div class="theblock tuchoi">Mình chỉ đọc <b>bản ghi bài giảng</b> nên không có thông tin deadline — và mình sẽ không đoán, vì trả lời sai deadline là bạn trượt bài nộp thật 😅
+↳ Bạn hỏi ở kênh <b>#logistics</b> hoặc nhắn <b>TA</b> nhé.</div>`);
+  }
+
+  if(kb==='react'){
+    themUser('Giải thích ReAct agent chi tiết giúp mình, buổi Day 1 ấy');
+    themBot(
+`<div class="theblock tuchoi"><b>ReAct không nằm trong bản ghi buổi Day 1</b> — mình đã tìm toàn bộ 98 đoạn, 0 kết quả. Khái niệm này thuộc <b>buổi Day 3</b> (deck <i>từ chatbot đến agentic agent — ReAct</i>).
+Mình không tự giảng từ kiến thức ngoài để tránh đưa bạn nội dung không đối chiếu được.
+↳ Học ngay: bôi đen đoạn tài liệu Day 3 trên VLearn rồi hỏi Tutor, hoặc hỏi TA.</div>`,
+    'search_sources("ReAct") → 0 kết quả trong day01');
+  }
+}
+
+/* Gõ tay: khớp từ khoá → chạy kịch bản; còn lại → nói rõ là demo tĩnh */
+function guiTay(){
+  const hop = document.getElementById('hop');
+  const t = hop.value.trim(); if(!t) return; hop.value='';
+  const l = t.toLowerCase();
+  if(l.startsWith('/recap')) return chay('recap');
+  if(l.includes('mùa đông') || l.includes('mua dong')) return chay('muadong');
+  if(l.includes('deadline') || l.includes('nộp')) { themUser(t); return chay2_deadline(); }
+  if(l.includes('react')) { themUser(t); return chay2_react(); }
+  themUser(t);
+  themBot('Đây là <b>demo tĩnh</b> (kịch bản cố định trên buổi Day 1). Bản chạy thật gọi <b>gpt-4o-mini + 6 tool</b> — xem <span class="ma">codebase/agent/</span>. Bạn thử các nút gợi ý bên dưới nhé.');
+}
+function chay2_deadline(){ themBot(`<div class="theblock tuchoi">Mình chỉ đọc bản ghi bài giảng nên không có thông tin deadline. Hỏi <b>#logistics</b> hoặc <b>TA</b> nhé.</div>`); }
+function chay2_react(){ chay('react'); }
+
+/* Mở đầu */
+themBot(`Chào bạn 👋 Mình là <b>VLearn Recap</b> — recap buổi học thành các block có trích dẫn <span class="ma">[T04-…]</span> và gom thắc mắc thật của lớp.
+Demo này chạy trên <b>buổi Day 1 — AI &amp; LLM Foundation</b>. Gõ <b>/recap day01</b> hoặc bấm nút gợi ý bên dưới.`);
+</script>
+</body>
+</html>
