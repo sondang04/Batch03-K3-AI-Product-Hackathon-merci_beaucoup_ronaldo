@@ -22,3 +22,4 @@ codebase/data/recap-cache/
 # venv — dựng lại bằng: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/
 codebase/logs/traces/*-golden-*.jsonl
+logs/
