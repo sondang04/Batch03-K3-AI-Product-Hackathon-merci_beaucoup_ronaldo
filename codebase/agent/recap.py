@@ -313,7 +313,7 @@ def render(r: Recap) -> list[str]:
             m += (f"• *{c['chu_de']}* ({c['so_nguoi']} người) — {c['vi_sao_chua_gan']}"
                   + (f", confidence {c['confidence']}" if c["confidence"] else "") + "\n")
         out.append(m)
-    cuoi = f"đã bỏ {r.cum_bo_le} thắc mắc lẻ (chỉ 1 người hỏi)\n" if r.cum_bo_le else ""
+    cuoi = f"đã bỏ {r.cum_bo_le} thắc mắc lẻ (chỉ 1 người hỏi)\n"   # khai cả khi 0
     cuoi += "**Recap không thay bản ghi** — block ⚠️ nên xem lại nguyên văn."
     if r.canh_bao:
         cuoi += "\n\n🔧 " + " · ".join(r.canh_bao)

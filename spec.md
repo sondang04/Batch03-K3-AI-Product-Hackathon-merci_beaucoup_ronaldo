@@ -348,11 +348,23 @@ Hai điều kiện cứng là **AND**, không đánh đổi bằng phần trăm:
 
 ### Kết quả các lượt chạy
 
-| Lượt | Thời điểm | Pass toàn bộ chiều | C1 | C2 | C3 ≥3 | C4 | Bịa? | vs bar | Failure đau nhất → sửa gì |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | *chốt tại CP3* | | | | | | | | |
-| 2 | | | | | | | | | |
-| 3 | *trước CP6* | | | | | | | | |
+Chạy bằng `.venv/bin/python eval/run_golden.py` → `eval/runs/golden-*.json` (đủ mọi case kể cả fail).
+
+**Máy chấm** (regex + đối chiếu data pack): có mã đoạn · mã đoạn **tồn tại thật** · từ chối đúng
+chỗ · không bịa khái niệm ngoài nguồn · số block trong dải. **Người chấm** (C1 phần nội dung, C2,
+C3): tách riêng, **chưa gộp** vào con số dưới — ghi rõ để không tự cho điểm khống.
+
+| Lượt | Thời điểm | Máy chấm | ① | ② | ③ | ④ | thường | hiếm | vs bar 75% | Failure đau nhất → sửa gì |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 30/07 08:40 | **22/28 = 79%** | 4/4 | 3/4 | 3/4 | 3/4 | 5/8 | 4/4 | đạt %, **vỡ điều kiện cứng C4** | Case 12: model bịa gán câu hỏi của lớp cho `U0270` → chặn ở tool + cảnh báo trong kết quả tool |
+| 2 | 30/07 08:45 | **24/28 = 86%** | 4/4 | 3/4 | 3/4 | 3/4 | 7/8 | 4/4 | đạt | Case 19/20/23: `"attention mechanism"` → 0 kết quả, **từ chối oan** → cho khớp một phần |
+| 3 | 30/07 08:54 | **26/28 = 93%** | 4/4 | 3/4 | **4/4** | 3/4 | **8/8** | 4/4 | **đạt** (93% ≥ 75% · 0 bịa mã · 0 fail C4) | Case 15/21: mã đoạn không sang câu trả lời → in mã liền trong chuỗi trích |
+
+**Hai case còn fail** — giữ nguyên, không nới tiêu chí cho số đẹp:
+- **06** — model viết `**T04-006**` thay vì `[T04-006]`. Mã **đúng và tồn tại**, chỉ sai format;
+  nhưng UI linkify theo `[Txx-NNN]` nên sai format là mất tính năng đối chiếu.
+- **15** — giải thích multi-head bằng ngôn ngữ sách giáo khoa, **mất ẩn dụ của giảng viên**
+  ("nhiều con mắt", "thầy bói xem voi"). Đúng chiều C3, và đúng thứ khảo sát đòi (quote của Phước).
 
 Nhịp lặp: chạy trọn bộ → bảng % → chọn **một** failure đau nhất → sửa → **chạy lại trọn bộ**. Mỗi lượt một bản ghi trong `eval/runs/`, đủ mọi case kể cả fail. Bar đã chốt — nếu không đạt thì phân tích khoảng cách (nội dung slide 4), **không sửa bar**.
 

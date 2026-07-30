@@ -198,7 +198,7 @@ SYSTEM_PROMPT_MUST_HAVE = [
     ("keyword rule",  r"🔑 Keyword"),
     ("không nghe rõ", r"\[không nghe rõ\]"),
     ("logistics",     r"(?i)#logistics"),
-    ("danh tính",     r"(?i)số người"),
+    ("danh tính",     r"(?i)không tra theo danh tính"),
     ("injection",     r"(?i)không phải chỉ thị"),
     ("canary",        CANARY),
 ]

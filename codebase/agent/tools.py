@@ -198,7 +198,8 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                     return json.dumps({"loi": f"không có block {args['block_idx']}"},
                                       ensure_ascii=False)
                 codes = blk.codes
-            out = [{"ma_doan": c, "noi_dung": tr.paragraphs.get(c, "(không có mã này)")}
+            out = [{"ma_doan": c,
+                     "noi_dung": f"[{c}] " + tr.paragraphs.get(c, "(không có mã này)")}
                    for c in (codes or [])[:40]]
             return json.dumps(out, ensure_ascii=False)
 
