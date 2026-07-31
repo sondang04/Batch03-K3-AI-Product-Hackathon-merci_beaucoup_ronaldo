@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Tạo buổi mới — Admin{% endblock %}
+
+{% block content %}
+<a href="/" class="text-sm text-slate-500 hover:text-slate-900 mb-3 inline-block">← Quay lại</a>
+
+<div class="bg-white rounded-lg border border-slate-200 p-6 mb-6 max-w-2xl">
+  <h1 class="text-xl font-bold mb-1">+ Tạo buổi học mới</h1>
+  <p class="text-sm text-slate-600 mb-6">
+    Sau khi tạo, buổi sẽ xuất hiện trong registry (<code>data/vlearn-pack/sessions.json</code>) và
+    Discord bot cần <strong>restart</strong> một lần để nhận. Build recap/quiz chạy được ngay trên UI.
+  </p>
+
+  <form method="POST" action="/sessions/new" class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        ID buổi <span class="text-red-500">*</span>
+      </label>
+      <input name="session_id" required pattern="[a-z0-9][a-z0-9\-]+"
+             placeholder="day03, day04-chieu, buoi-mvp..."
+             class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm font-mono">
+      <p class="text-xs text-slate-500 mt-1">Chữ thường, số, dấu gạch ngang. Không được trùng với buổi đã có:
+        {% for id in existing_ids %}<code class="bg-slate-100 px-1 rounded">{{ id }}</code>{% if not loop.last %}, {% endif %}{% endfor %}.
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Tên hiển thị <span class="text-red-500">*</span>
+      </label>
+      <input name="ten" required
+             placeholder="Day 3 — Từ chatbot đến agentic agent"
+             class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+      <p class="text-xs text-slate-500 mt-1">Tên này hiện cho học viên trên Discord khi gõ <code>/recap</code>.</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="block text-sm font-medium mb-1">
+          Prefix <span class="text-red-500">*</span>
+        </label>
+        <input name="prefix" required pattern="T\d{2}" placeholder="T03"
+               class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm font-mono">
+        <p class="text-xs text-slate-500 mt-1">Mã đoạn trong transcript phải bắt đầu bằng prefix này (vd <code>**[T03-001]**</code>).</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Deck PDF</label>
+        <select name="deck_pdf" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+          <option value="">— không có —</option>
+          {% for f in slides_files %}
+          <option value="{{ f }}">{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Transcript gắn vào <span class="text-red-500">*</span>
+      </label>
+      <select name="transcript" required class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+        <option value="">— chọn file đã có trong data/vlearn-pack/transcript/ —</option>
+        {% for f in transcript_files %}
+        <option value="{{ f }}">{{ f }}</option>
+        {% endfor %}
+      </select>
+      <p class="text-xs text-slate-500 mt-1">
+        Nếu file chưa có, upload nó ở trang buổi học (sau khi tạo buổi trước với prefix tạm).
+      </p>
+    </div>
+
+    <div class="pt-3 border-t border-slate-200 flex items-center gap-3">
+      <button class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-md hover:bg-emerald-700 font-medium">
+        ✓ Tạo buổi
+      </button>
+      <a href="/" class="text-sm text-slate-500 hover:text-slate-900">Hủy</a>
+    </div>
+  </form>
+</div>
+
+<div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900 max-w-2xl">
+  <strong>💡 Hai luồng tạo buổi mới:</strong>
+  <ol class="list-decimal list-inside mt-2 space-y-1 text-amber-800">
+    <li><strong>Upload trước</strong>: upload file transcript ở trang bất kỳ → file được lưu vào <code>data/vlearn-pack/transcript/</code> với session_id tạm. Sau đó vào <em>Tạo buổi mới</em> chọn file đó.</li>
+    <li><strong>Tạo buổi trước</strong>: tạo buổi mới (prefix tạm), upload file đúng prefix, rồi sửa lại prefix nếu cần.</li>
+  </ol>
+</div>
+{% endblock %}

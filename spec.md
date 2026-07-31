@@ -201,7 +201,7 @@ Google Form 6 câu, **29 người ngoài nhóm** (chuẩn A yêu cầu ≥20) �
 
 1. **Không trả lời ngoài nguồn buổi học.** Agent có hỏi-đáp, nhưng là **grounded Q&A**: chỉ trả lời khi tìm được căn cứ trong transcript/slide/chatlog của buổi, luôn kèm mã đoạn; ngoài nguồn → từ chối + chỉ sang VLearn Tutor/TA. Q&A kiến thức tổng quát không-căn-cứ vẫn là non-goal — đó chính là lỗi 46.2% không-cite của tutor hiện tại. *(Scope mở từ 'không Q&A' sang 'grounded Q&A' theo quyết định sản phẩm 30/07 — xem Changelog §9.)*
 2. **Không xử lý audio → text.** Dùng transcript bản sạch có sẵn trong data pack. ASR là **mock có khai báo**.
-3. **Không sinh quiz, không chấm điểm, không đánh giá học viên.**
+3. **Không tự động chấm điểm, không đánh giá học viên.** Quiz chỉ ở chế độ **opt-in** (`/quiz` command), không tự động sinh.
 4. **Không chạy realtime trong buổi học.** Chỉ chạy sau khi buổi kết thúc và transcript đã có.
 5. **Không cá nhân hoá, không lưu profile học viên.** Mọi người gõ `/recap Day 1` nhận cùng một recap. Cụm thắc mắc chỉ ở dạng gộp ≥2 người.
 6. **Không tự động post lên channel chung.** Chỉ trả thread khi được gọi — chủ động post là con đường ngắn nhất thành spam (bài học từ ứng viên #5).
@@ -249,7 +249,38 @@ giờ đã **đo được và đạt**, không còn là mong muốn.
 - **Gán cụm thắc mắc vào block (buộc phải conditional):** đây là chỗ **sai thì đắt và học viên KHÔNG tự thấy**. Nếu agent gán cụm "26 người vướng ReAct" vào block Attention, học viên đọc recap sẽ tin rằng Attention là chỗ khó của lớp → **học lệch, đầu tư thời gian sai chỗ, và không có cách nào phát hiện** vì họ không có bản gốc để đối chiếu. Nên: điểm khớp dưới ngưỡng, hoặc hai block khớp sát nhau → **không gán**, dồn vào `❓ Chưa gán được (n=…)` ở cuối thread. **Thà để trống hơn gán bừa.**
 - **Tuyệt đối không tự làm (ngoài phạm vi):** trả lời câu hỏi kiến thức mới và phát biểu thông tin logistics — hai chỗ mà sai là học viên học sai kiến thức hoặc trượt deadline, và agent không có nguồn để đúng.
 
-### §4b. Nguyên tắc đã áp dụng (7 nguyên tắc)
+### §4b. Quiz — tự kiểm tra hiểu bài (phương án A, opt-in)
+
+> **Lát cắt:** Học viên gõ `/quiz <buổi>` trong Discord **để tự kiểm tra hiểu bài** sau khi đã xem recap.
+
+**Nguồn dữ liệu:** Từ recap đã có — dùng lại nội dung block đã tóm tắt với citation. Giảm cost-of-error vì quiz chỉ sinh từ nội dung đã được kiểm chứng.
+
+**Cấu trúc quiz (6 câu tối đa):**
+
+| Loại | Số câu | Nguồn | Ví dụ |
+|---|---|---|---|
+| **RECALL** | tối đa 3 | ý chính block với citation | "Theo bản ghi, giảng viên định nghĩa AI là gì?" |
+| **KEYWORD** | tối đa 2 | dòng 🔑 Keyword của giảng viên | "Thuật ngữ 'attention mechanism' có nghĩa là gì?" |
+| **APPLICATION** | tối đa 1 | thắc mắc thật của lớp (≥2 người) | "Tại sao học viên hỏi về sự khác biệt giữa ML và DL?" |
+
+**Mỗi câu hỏi bao gồm:**
+- Câu hỏi
+- Đáp án
+- Giải thích (dựa trên nội dung có citation)
+- Citation (mã đoạn `[Txx-NNN]` hoặc slide `[slide tr.N]`)
+
+**Nguyên tắc áp dụng cho Quiz:**
+
+- **G1 — Làm rõ hệ thống làm được gì:** Header quiz: "Self-test kiểm tra hiểu · N câu · Quiz không thay recap"
+- **G2 — Làm rõ giới hạn:** Mỗi câu kèm citation để học viên tự kiểm tra; disclaimer "Quiz không thay recap"
+- **G10 — Thu hẹp phạm vi:** Chỉ sinh khi có đủ nội dung recap; nếu recap không đủ → thông báo
+
+**Non-goal Quiz:**
+- Không chấm điểm tự động (học viên tự kiểm tra)
+- Không lưu kết quả quiz của học viên
+- Không sinh quiz nếu recap buổi đó chưa có
+
+### §4c. Nguyên tắc đã áp dụng (7 nguyên tắc)
 
 | Nguyên tắc | Áp cụ thể vào đâu trong prototype |
 |---|---|
@@ -454,5 +485,6 @@ Dựng nhanh cả hai giữa CP2-CP3, cho 2 người thử mỗi bản, giữ b�
 | N2 — 30/07 tối | Sửa khớp token: token <5 ký tự phải khớp **biên từ** | Keyword `giá` đếm ra **208 học viên** vì `gia` khớp bên trong `giai`(giải) — sau sửa còn 7 người |
 | N2 — 30/07 tối | AI call 3 gọi theo **lô 6 cụm** | Gộp 40 cụm vào một lời gọi ⇒ gpt-4o-mini trả **rỗng hoàn toàn**, mọi cụm rơi vào 'chưa gán được' |
 | N2 — 30/07 tối | **Dựng `.venv` + Discord bot thật** (`discord.py` 2.7.1) — `codebase/bot.py` + `requirements.txt` + `DISCORD-SETUP.md`. Lõi không đổi một dòng: bot chỉ là adapter (defer, chẻ 2000 ký tự, tạo thread) | PyPI truy cập được (lần trước timeout do `pymupdf` nặng, không phải mất mạng). Test suite chạy sạch trong venv |
+| N3 — 30/07 16:50 | **Thêm tính năng Quiz** — phương án A (quiz từ recap đã có). Tạo agent/quiz.py + tool generate_quiz + command /quiz. Quiz gồm 3 loại câu: RECALL (ý chính block), KEYWORD (thuật ngữ giảng viên), APPLICATION (thắc mắc thật của lớp). Update non-goal #3 | Quyết định sản phẩm sau khi đánh giá 3 phương án; phương án A được chọn vì dùng lại nội dung recap đã có, giảm cost-of-error |
 | *(chờ)* | | Sau lượt đo 1 tại CP3 |
 | *(chờ)* | | Sau vòng validation CP5 — ≥1 thay đổi từ feedback, hoặc giữ nguyên có lý do |

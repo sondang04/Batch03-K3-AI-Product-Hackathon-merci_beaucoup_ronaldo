@@ -1,0 +1,82 @@
+{
+ "session_id": "day02-sang",
+ "buoi": "Day 2 sáng — Xác định bài toán kinh doanh cho AI",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "Khả năng xác định bài toán từ yêu cầu mơ hồ là yếu tố quan trọng trong ứng dụng AI vì lý do nào?",
+   "lua_chon": [
+    "Nó giúp giảm thời gian phát triển sản phẩm.",
+    "70% thành công trong ứng dụng AI phụ thuộc vào con người.",
+    "Nó cho phép nhân viên dễ dàng chạy dự án không cần chuẩn bị.",
+    "Nó giúp tránh việc sử dụng công nghệ lạc hậu."
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "70% thành công trong ứng dụng AI phụ thuộc vào con người.",
+   "giai_thich": "Đáp án đúng vì thành công của ứng dụng AI không chỉ phụ thuộc vào công nghệ mà còn vào khả năng xác định và giải quyết vấn đề của con người. [T01-003]",
+   "nguon": "[T01-003]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Trong quy trình phát triển sản phẩm AI, yếu tố nào là cần thiết để tạo ra trải nghiệm người dùng tốt?",
+   "lua_chon": [
+    "Hiểu cách vận hành của AI.",
+    "Tập trung vào quảng cáo sản phẩm.",
+    "Sử dụng công nghệ mới nhất.",
+    "Chỉ quan tâm đến ngân sách."
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "Hiểu cách vận hành của AI.",
+   "giai_thich": "Quá trình phát triển sản phẩm AI đòi hỏi người xây dựng phải hiểu cách mà AI hoạt động để thiết kế trải nghiệm người dùng hiệu quả. [T01-019]",
+   "nguon": "[T01-019]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Mô hình nào đề cập đến việc mở rộng và hội tụ trong quá trình tìm kiếm giải pháp?",
+   "lua_chon": [
+    "Mô hình Design Thinking.",
+    "Mô hình Double Diamond.",
+    "Mô hình Lean Startup.",
+    "Mô hình Business Model Canvas."
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Mô hình Double Diamond.",
+   "giai_thich": "Mô hình Double Diamond nhấn mạnh quá trình mở rộng để xác định vấn đề và sau đó hội tụ để tìm ra giải pháp. [T01-049]",
+   "nguon": "[T01-049]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Khái niệm nào mô tả việc không sao chép lại mà giải quyết vấn đề từ nguyên lý nguyên bản trong suy nghĩ?",
+   "lua_chon": [
+    "Design Thinking.",
+    "First Principle Thinking.",
+    "Agile Development.",
+    "User-Centered Design."
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "First Principle Thinking.",
+   "giai_thich": "First Principle Thinking là phương pháp suy nghĩ từ nguyên bản, giúp người sử dụng giải quyết vấn đề một cách độc lập mà không bị ảnh hưởng bởi cách làm của người khác. [T01-062]",
+   "nguon": "[T01-062]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Khi có một bài toán mơ hồ trong dự án, bạn nên làm gì đầu tiên để xác định vấn đề cụ thể?",
+   "lua_chon": [
+    "Đưa ra giải pháp ngay lập tức.",
+    "Bóc tách yêu cầu và xác định pain point.",
+    "Đợi ý kiến từ đội ngũ cấp trên.",
+    "Sử dụng công nghệ mới để giải quyết."
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Bóc tách yêu cầu và xác định pain point.",
+   "giai_thich": "Phân tích và bóc tách yêu cầu từ đề bài sẽ giúp bạn hiểu rõ hơn về vấn đề thực sự cần giải quyết trước khi đưa ra giải pháp. [T01-030]",
+   "nguon": "[T01-030]"
+  }
+ ],
+ "muc_da_bo": [],
+ "so_recall": 2,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 14.0
+}

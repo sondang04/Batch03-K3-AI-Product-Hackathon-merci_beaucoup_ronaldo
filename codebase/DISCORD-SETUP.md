@@ -7,6 +7,9 @@ Lõi agent đã xong và test rồi; phần này chỉ là nối vào Discord.
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt      # openai · python-dotenv · pypdf · discord.py
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+
 ```
 
 Kiểm nhanh: `.venv/bin/python -c "import discord; print(discord.__version__)"` → `2.7.1`

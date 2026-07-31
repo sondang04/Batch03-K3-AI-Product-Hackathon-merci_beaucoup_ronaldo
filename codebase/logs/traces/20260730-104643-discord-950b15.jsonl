@@ -1,0 +1,6 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.002, "kind": "user_message", "text": "LLM là gì"}
+{"t": 1.432, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "tool_use", "usage": {"in": 2464, "out": 20}, "latency_s": 1.43}
+{"t": 1.562, "kind": "tool_call", "name": "search_sources", "args": {"session_id": "all", "query": "LLM"}, "result": "{\"tim_xuyen_moi_buoi\": {\"day01\": {\"buoi\": \"Day 1 — AI & LLM Foundation (giảng viên Blue)\", \"transcript\": [{\"ma_doan\": \"T04-003\", \"khop\": \"đủ token\", \"trich\": \"[T04-003] …chúng ta vào bài đầu tiên: học…(+3513 ký tự)", "latency_s": 0.129}
+{"t": 6.242, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 3, "stop_reason": "stop", "usage": {"in": 3706, "out": 271}, "latency_s": 4.68}
+{"t": 6.245, "kind": "session_end", "final_text": "**LLM (Large Language Model)** là các mô hình ngôn ngữ lớn, được thiết kế để xử lý và sinh ra văn bản tự nhiên.  Dưới đây là một số thông tin liên quan đến LLM trong bài giảng:\n\n- **Định nghĩa và ứng …(+688 ký tự)", "n_llm_calls": 2, "n_tool_calls": 1, "total_s": 6.24}
