@@ -19,5 +19,12 @@
     "prefix": "T03",
     "deck_pdf": "",
     "deck_ten": ""
+  },
+  "buoisaulab": {
+    "ten": "buổi sáng sau một ngày lab — chủ đề bài toán · đánh giá · dữ liệu",
+    "transcript": "transcript-05-clean.md",
+    "prefix": "T05",
+    "deck_pdf": "",
+    "deck_ten": ""
   }
 }
