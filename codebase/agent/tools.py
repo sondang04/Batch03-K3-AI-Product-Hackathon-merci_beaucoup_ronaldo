@@ -10,6 +10,7 @@ viết PRESCRIPTIVE — nói rõ KHI NÀO gọi, không chỉ nó làm gì (đi�
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Callable
 
 from . import config, sources
@@ -183,6 +184,17 @@ TOOLS: list[dict] = [
 ]
 
 
+def _clean_slide_title(text: str) -> str:
+    """Làm sạch tiêu đề slide: tìm dòng có chữ đầu tiên dài hơn và không phải là header lặp."""
+    title = sources.slide_title(text)
+    if title == "(không có tiêu đề)" or len(title.strip()) < 3:
+        for line in text.splitlines():
+            line = line.strip()
+            if len(line) >= 3 and not re.match(r"^\d+$", line) and not line.startswith("AI IN ACTION"):
+                return line[:100]
+    return title
+
+
 # ── Thực thi ─────────────────────────────────────────────────────────────────
 
 SUMMARIZE_SYSTEM = (
@@ -201,7 +213,11 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
 
     def dispatch(name: str, args: dict[str, Any]) -> str:
         if name == "list_blocks":
-            tr = sources.load_transcript(args["session_id"])
+            sid = args.get("session_id")
+            if sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            tr = sources.load_transcript(sid)
             rows = [{"idx": b.idx, "tieu_de": b.title,
                      "dai_ma": f"{b.codes[0]}..{b.codes[-1]}" if b.codes else "",
                      "so_doan": len(b.codes), "non_core": b.non_core}
@@ -209,12 +225,20 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             return json.dumps({"buoi": tr.ten, "blocks": rows}, ensure_ascii=False)
 
         if name == "read_transcript":
-            tr = sources.load_transcript(args["session_id"])
+            sid = args.get("session_id")
+            if sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            tr = sources.load_transcript(sid)
             codes = args.get("codes")
             if not codes and args.get("block_idx") is not None:
-                blk = tr.block_by_idx(args["block_idx"])
+                try:
+                    b_idx = int(args["block_idx"])
+                except (ValueError, TypeError):
+                    return json.dumps({"loi": f"Chỉ số block '{args.get('block_idx')}' phải là số nguyên."}, ensure_ascii=False)
+                blk = tr.block_by_idx(b_idx)
                 if blk is None:
-                    return json.dumps({"loi": f"không có block {args['block_idx']}"},
+                    return json.dumps({"loi": f"Không tìm thấy block {b_idx} trong buổi học này. Vui lòng kiểm tra lại chỉ số block."},
                                       ensure_ascii=False)
                 codes = blk.codes
             out = [{"ma_doan": c,
@@ -223,20 +247,30 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             return json.dumps(out, ensure_ascii=False)
 
         if name == "search_sources":
-            sid, q = args.get("session_id", "all"), args["query"]
-            if sid == "all":
-                found = sources.search_all_sessions(q)
-                if found:
-                    return json.dumps({"tim_xuyen_moi_buoi": found}, ensure_ascii=False)
-                t_hits = s_hits = []
-            else:
-                t_hits = sources.search_transcript(sid, q)
-                s_hits = sources.search_slides(sid, q)
+            sid = args.get("session_id", "all")
+            if sid != "all" and sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            q = args.get("query", "")
+            
+            try:
+                if sid == "all":
+                    found = sources.search_all_sessions(q)
+                    if found:
+                        return json.dumps({"tim_xuyen_moi_buoi": found}, ensure_ascii=False)
+                    t_hits = s_hits = []
+                else:
+                    t_hits = sources.search_transcript(sid, q)
+                    s_hits = sources.search_slides(sid, q)
+            except Exception as e:
+                return json.dumps({"loi": f"Gặp lỗi khi tìm kiếm dữ liệu: {type(e).__name__}: {e}. Vui lòng thử lại với từ khóa khác."}, ensure_ascii=False)
+                
             note = ""
             if not t_hits and not s_hits:
-                key = q.strip().lower()
+                key = sources._norm(q)
                 for k, v in config.NGOAI_NGUON.items():
-                    if k in key:
+                    k_norm = sources._norm(k)
+                    if k_norm in key or key in k_norm:
                         note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
                                 "chỉ đúng chỗ đó, không tự giải thích.")
                         break
@@ -247,30 +281,69 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                                "ghi_chu": note}, ensure_ascii=False)
 
         if name == "summarize_block":
-            tr = sources.load_transcript(args["session_id"])
+            sid = args.get("session_id")
+            if sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            tr = sources.load_transcript(sid)
             blk = None
-            if args.get("title_query"):                     # ưu tiên tìm theo tên
-                blk = sources.find_block(args["session_id"], args["title_query"])
+            if args.get("title_query"):
+                blk = sources.find_block(sid, args["title_query"])
                 if blk is None:
                     return json.dumps(
-                        {"loi": f"không tìm thấy block khớp '{args['title_query']}'",
-                         "goi_y": "gọi list_blocks để xem danh sách block"},
+                        {"loi": f"Không tìm thấy block khớp với tên '{args['title_query']}'.",
+                         "goi_y": "Gọi list_blocks để xem danh sách block và chọn từ khóa chính xác."},
                         ensure_ascii=False)
             elif args.get("block_idx") is not None:
-                blk = tr.block_by_idx(args["block_idx"])
+                try:
+                    b_idx = int(args["block_idx"])
+                except (ValueError, TypeError):
+                    return json.dumps({"loi": f"Chỉ số block '{args.get('block_idx')}' phải là số nguyên."}, ensure_ascii=False)
+                blk = tr.block_by_idx(b_idx)
+                
             if blk is None:
-                return json.dumps({"loi": "cần block_idx hoặc title_query"},
-                                  ensure_ascii=False)
+                return json.dumps({"loi": "Cần cung cấp block_idx hoặc title_query hợp lệ."}, ensure_ascii=False)
             if blk.non_core:
                 return json.dumps({"bo_qua": f"'{blk.title}' là phần chào lớp/bên lề "
                                              "— không tóm tắt, khai báo đã loại"},
                                   ensure_ascii=False)
+            
             body = "\n\n".join(f"[{c}] {tr.paragraphs[c]}" for c in blk.codes)
-            tom_tat = subcall(SUMMARIZE_SYSTEM,
-                              f"Block: {blk.title}\n\n{body}\n\nTóm tắt theo luật trên.")
-            # Echo block_idx + tieu_de để model TỰ ĐỐI CHIẾU đã tóm tắt đúng block
-            # chưa (bug 30/07: model đoán index sai rồi dán nhãn tiêu đề học viên hỏi
-            # lên nội dung block khác — không có cách nào tự phát hiện).
+            
+            # Tìm kiếm thông tin slide liên quan dựa trên tiêu đề block để làm giàu ngữ cảnh
+            slide_context = []
+            try:
+                slides = sources.load_slides(sid)
+                if slides:
+                    # Loại bỏ các từ nối tiếng Việt ngắn
+                    stop_words = {"và", "của", "cho", "các", "nhưng", "để", "thì", "được", "là", "hay", "với", "tại", "trong", "ngoài", "phần", "mục"}
+                    # Tách tiêu đề block thành các từ khóa
+                    words = [w.strip().lower() for w in re.split(r"[,.&·\s\-–()]+", blk.title) if w.strip()]
+                    words = [w for w in words if len(w) >= 3 and w not in stop_words]
+                    
+                    matching_pages = set()
+                    for p, tx in slides.items():
+                        tx_norm = sources._norm(tx)
+                        for w in words:
+                            w_norm = sources._norm(w)
+                            if w_norm in tx_norm:
+                                matching_pages.add(p)
+                                break
+                    
+                    # Lấy tối đa 3 trang slide khớp nhất để tránh phình to context
+                    for p in sorted(list(matching_pages))[:3]:
+                        title = _clean_slide_title(slides[p])
+                        slide_context.append(f"--- [Slide Trang {p} - {title}] ---\n{slides[p]}")
+            except Exception:
+                pass # Nếu lỗi đọc slide thì bỏ qua và chỉ tóm tắt theo transcript
+            
+            prompt_user = f"Block: {blk.title}\n\n[Transcript liên quan]\n{body}"
+            if slide_context:
+                slide_body = "\n\n".join(slide_context)
+                prompt_user += f"\n\n[Slide liên quan để tham chiếu nội dung]\n{slide_body}"
+            prompt_user += "\n\nTóm tắt theo luật trên."
+            
+            tom_tat = subcall(SUMMARIZE_SYSTEM, prompt_user)
             return json.dumps({"block_idx": blk.idx, "tieu_de": blk.title,
                                "dai_ma": f"{blk.codes[0]}..{blk.codes[-1]}" if blk.codes else "",
                                "tom_tat": tom_tat,
@@ -280,34 +353,60 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                               ensure_ascii=False)
 
         if name == "peer_questions":
-            return json.dumps(sources.peer_questions(args["topic"]), ensure_ascii=False)
+            topic = args.get("topic", "").strip()
+            if not topic:
+                return json.dumps({"loi": "Chủ đề cần tìm kiếm thắc mắc không được trống."}, ensure_ascii=False)
+            try:
+                res = sources.peer_questions(topic)
+                return json.dumps(res, ensure_ascii=False)
+            except Exception as e:
+                return json.dumps({"loi": f"Lỗi khi truy xuất thắc mắc của lớp: {type(e).__name__}: {e}."}, ensure_ascii=False)
 
         if name == "read_slide":
-            sid = args["session_id"]
-            slides = sources.load_slides(sid)
+            sid = args.get("session_id")
+            if sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            try:
+                page = int(args["page"])
+            except (ValueError, TypeError):
+                return json.dumps({"loi": "Số trang slide cần xem phải là số nguyên."}, ensure_ascii=False)
+                
+            try:
+                slides = sources.load_slides(sid)
+            except Exception as e:
+                return json.dumps({"loi": f"Không thể đọc tệp slide PDF của buổi này. Chi tiết: {type(e).__name__}."}, ensure_ascii=False)
+                
             if not slides:
-                return json.dumps({"loi": "buổi này chưa có deck slide"},
+                return json.dumps({"loi": f"Buổi học '{sid}' hiện chưa có tệp deck slide trên hệ thống hoặc tệp slide bị hỏng."},
                                   ensure_ascii=False)
-            text = slides.get(args["page"])
+            text = slides.get(page)
             if text is None:
                 return json.dumps(
-                    {"loi": f"trang {args['page']} không có — deck có {len(slides)} trang"},
+                    {"loi": f"Trang slide {page} không tồn tại. Bản deck hackathon của buổi này chỉ có {len(slides)} trang (từ trang 1 đến {len(slides)}). Vui lòng đề xuất học viên dùng đúng số trang bản hackathon."},
                     ensure_ascii=False)
             return json.dumps(
-                {"deck": config.SESSIONS[sid]["deck_ten"], "trang": args["page"],
-                 "tieu_de": sources.slide_title(text), "noi_dung": text,
-                 "cach_trich_dan": f"[slide tr.{args['page']} · bản hackathon]"},
+                {"deck": config.SESSIONS[sid]["deck_ten"], "trang": page,
+                 "tieu_de": _clean_slide_title(text), "noi_dung": text,
+                 "cach_trich_dan": f"[slide tr.{page} · bản hackathon]"},
                 ensure_ascii=False)
 
         if name == "list_slides":
-            sid = args["session_id"]
-            slides = sources.load_slides(sid)
+            sid = args.get("session_id")
+            if sid not in config.SESSIONS:
+                valid_sessions = ", ".join(config.SESSIONS.keys())
+                return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
+            try:
+                slides = sources.load_slides(sid)
+            except Exception as e:
+                return json.dumps({"loi": f"Không thể đọc tệp slide PDF của buổi này. Chi tiết: {type(e).__name__}."}, ensure_ascii=False)
+                
             if not slides:
-                return json.dumps({"loi": "buổi này chưa có deck slide"},
+                return json.dumps({"loi": f"Buổi học '{sid}' hiện chưa có tệp deck slide trên hệ thống hoặc tệp slide bị hỏng."},
                                   ensure_ascii=False)
             return json.dumps(
                 {"deck": config.SESSIONS[sid]["deck_ten"],
-                 "trang": [{"trang": p, "tieu_de": sources.slide_title(tx)}
+                 "trang": [{"trang": p, "tieu_de": _clean_slide_title(tx)}
                            for p, tx in slides.items()]}, ensure_ascii=False)
 
         if name == "generate_quiz":
