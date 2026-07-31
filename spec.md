@@ -1,4 +1,4 @@
-# AI SPEC — Recap theo block cho một buổi lecture · Nhóm [XX] · Zone [X]
+# AI SPEC — Recap theo block cho một buổi lecture · Nhóm [C4-merci_beaucoup_ronaldo] · Zone [8]
 Hướng: [ ] A — VLearn  [ ] B — Trợ lý Học viên  [X] C — Làn mở *(dùng data pack VLearn, giao diện Discord)*
 Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 
