@@ -114,6 +114,42 @@ def inject_quiz_data(quiz_obj) -> Path:
     return out
 
 
+# ── Mini HTTP cho UI admin (127.0.0.1:8765) ────────────────────────────────────
+# UI admin gọi GET /sessions để biết bot đã thấy buổi nào, POST /reload để ép reload.
+# Nếu port bận thì không crash — chỉ log warning. Bot vẫn chạy Discord bình thường.
+
+ADMIN_HTTP_HOST = os.environ.get("BOT_HTTP_HOST", "127.0.0.1")
+ADMIN_HTTP_PORT = int(os.environ.get("BOT_HTTP_PORT", "8765"))
+
+async def _handle_sessions(request: _aioweb.Request) -> _aioweb.Response:
+    return _aioweb.json_response({"sessions": sorted(config.SESSIONS.keys())})
+
+
+async def _handle_reload(request: _aioweb.Request) -> _aioweb.Response:
+    config.reload_sessions()
+    global _LAST_SESSIONS_SIG
+    _LAST_SESSIONS_SIG = config.sessions_signature()
+    await _refresh_commands()
+    return _aioweb.json_response({"ok": True, "sessions": sorted(config.SESSIONS.keys())})
+
+
+async def _start_admin_http(bot_ref: "Bot") -> _aioweb.AppRunner:
+    """Khởi mini HTTP ở 127.0.0.1:PORT. Trả runner để bot giữ ref."""
+    app = _aioweb.Application()
+    app.router.add_get("/sessions", _handle_sessions)
+    app.router.add_post("/reload", _handle_reload)
+    runner = _aioweb.AppRunner(app)
+    try:
+        await runner.setup()
+        site = _aioweb.TCPSite(runner, ADMIN_HTTP_HOST, ADMIN_HTTP_PORT)
+        await site.start()
+        print(f"✓ admin HTTP: http://{ADMIN_HTTP_HOST}:{ADMIN_HTTP_PORT}/sessions")
+    except OSError as e:
+        # Port bận (vd có bot instance cũ) — không sao, bot vẫn chạy Discord
+        print(f"⚠️ admin HTTP không start được (port {ADMIN_HTTP_PORT} bận): {e}")
+    return runner
+
+
 def chunk(text: str) -> list[str]:
     """Chẻ theo dòng để không cắt giữa mã đoạn hay giữa một gạch đầu dòng."""
     out, cur = [], ""
@@ -612,37 +648,3 @@ async def cmd_reload_sessions_error(itr: discord.Interaction, error: Exception):
         await itr.response.send_message(f"⚠️ Lỗi: `{type(error).__name__}: {error}`", ephemeral=True)
 
 
-# ── Mini HTTP cho UI admin (127.0.0.1:8765) ────────────────────────────────────
-# UI admin gọi GET /sessions để biết bot đã thấy buổi nào, POST /reload để ép reload.
-# Nếu port bận thì không crash — chỉ log warning. Bot vẫn chạy Discord bình thường.
-
-ADMIN_HTTP_HOST = os.environ.get("BOT_HTTP_HOST", "127.0.0.1")
-ADMIN_HTTP_PORT = int(os.environ.get("BOT_HTTP_PORT", "8765"))
-
-async def _handle_sessions(request: _aioweb.Request) -> _aioweb.Response:
-    return _aioweb.json_response({"sessions": sorted(config.SESSIONS.keys())})
-
-
-async def _handle_reload(request: _aioweb.Request) -> _aioweb.Response:
-    config.reload_sessions()
-    global _LAST_SESSIONS_SIG
-    _LAST_SESSIONS_SIG = config.sessions_signature()
-    await _refresh_commands()
-    return _aioweb.json_response({"ok": True, "sessions": sorted(config.SESSIONS.keys())})
-
-
-async def _start_admin_http(bot_ref: "Bot") -> _aioweb.AppRunner:
-    """Khởi mini HTTP ở 127.0.0.1:PORT. Trả runner để bot giữ ref."""
-    app = _aioweb.Application()
-    app.router.add_get("/sessions", _handle_sessions)
-    app.router.add_post("/reload", _handle_reload)
-    runner = _aioweb.AppRunner(app)
-    try:
-        await runner.setup()
-        site = _aioweb.TCPSite(runner, ADMIN_HTTP_HOST, ADMIN_HTTP_PORT)
-        await site.start()
-        print(f"✓ admin HTTP: http://{ADMIN_HTTP_HOST}:{ADMIN_HTTP_PORT}/sessions")
-    except OSError as e:
-        # Port bận (vd có bot instance cũ) — không sao, bot vẫn chạy Discord
-        print(f"⚠️ admin HTTP không start được (port {ADMIN_HTTP_PORT} bận): {e}")
-    return runner
