@@ -382,8 +382,8 @@ Nhịp lặp: chạy trọn bộ → bảng % → chọn **một** failure đau 
 
 | Phần | Người | Việc cụ thể |
 |---|---|---|
-| Spec | `Cao Nam Cường` | spec.md §1-§9, changelog, chốt quality bar trước 23:59 N1 |
-| Evidence | `Đặng Thái Nam Sơn` | `mine_chatlog.py` + mining-log · khảo sát Đường A **vòng 1 xong (n=29)** → `analyze_survey.py` + `survey-log.md`; còn vòng 2 (3 câu hồi tưởng) trước CP5 |
+| Spec | `Đặng Thái Nam Sơn` | spec.md §1-§9, changelog, chốt quality bar trước 23:59 N1 |
+| Evidence | `Cao Nam Cường` | `mine_chatlog.py` + mining-log · khảo sát Đường A **vòng 1 xong (n=29)** → `analyze_survey.py` + `survey-log.md`; còn vòng 2 (3 câu hồi tưởng) trước CP5 |
 | Prompt + golden set | `Trần Đình Đăng` | 3 AI call · `eval/golden-set.md` 28 case · chấm lượt 1-3 |
 | Code | `Chu Thành Dũng` | Discord bot, slash command, thread/button, trace log |
 | Demo | `Dương Mạnh Phong` | slide 6 trang · demo script (1 case chuẩn + case #1/#15) · dry run bấm giờ · backup video |
