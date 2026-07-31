@@ -1,0 +1,98 @@
+{
+ "session_id": "day02",
+ "buoi": "Day 2 (chiều) — Soi bài toán các nhóm · tự động hoá & ràng buộc",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "Track nào trong lĩnh vực AI không yêu cầu người quản lý sản phẩm (PM) phải giỏi code?",
+   "lua_chon": [
+    "AI Engineer",
+    "MLOps",
+    "Project Manager (PM)",
+    "Data Scientist"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Project Manager (PM)",
+   "giai_thich": "Project Manager (PM) không cần phải giỏi code mà cần giao tiếp hiệu quả và hiểu rõ yêu cầu của dự án AI. [T03-016]",
+   "nguon": "[T03-016]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Tầm quan trọng của việc sử dụng model self-host trong AI là gì?",
+   "lua_chon": [
+    "Để giảm chi phí vận hành",
+    "Để duy trì niềm tin của người dùng",
+    "Để tăng hiệu suất làm việc",
+    "Để cải thiện khả năng lập kế hoạch"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Để duy trì niềm tin của người dùng",
+   "giai_thich": "Sử dụng model self-host hay lưu lại log trả lời cũ giúp duy trì niềm tin và cảm giác tích cực của người dùng ngay cả khi mô hình không hoàn hảo. [T03-018]",
+   "nguon": "[T03-018]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Khả năng nào là cần thiết cho một người quản lý dự án (PM) trong lĩnh vực AI?",
+   "lua_chon": [
+    "Kỹ năng coding tốt",
+    "Tầm nhìn tổng quát (global view)",
+    "Kiến thức sâu về AI",
+    "Khả năng phân tích số liệu"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Tầm nhìn tổng quát (global view)",
+   "giai_thich": "PM cần có tầm nhìn tổng quát để phát hiện các vấn đề tiềm ẩn trong hệ thống và đưa ra giải pháp ứng phó phù hợp. [T03-017]",
+   "nguon": "[T03-017]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Trong bối cảnh kế hoạch tour sử dụng LLM, kỹ thuật bổ sung nào cần thiết để đảm bảo độ chính xác?",
+   "lua_chon": [
+    "Graph",
+    "RAG",
+    "Cơ sở tri thức",
+    "API thời tiết"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "RAG",
+   "giai_thich": "Kỹ thuật RAG (Retrieval-Augmented Generation) cần thiết để cung cấp thông tin chính xác, đặc biệt khi dữ liệu không nằm trong huấn luyện của mô hình. [T03-036]",
+   "nguon": "[T03-036]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Nếu một nhóm muốn triển khai dự án AI của riêng mình có ý nghĩa xã hội, thì họ cần làm gì theo quy định?",
+   "lua_chon": [
+    "Tự động phát triển mà không có mentor",
+    "Tạo dự án và chờ duyệt từ mentor",
+    "Chọn từ checklist mà không cần lý do",
+    "Phát triển mà không cần giám sát"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Tạo dự án và chờ duyệt từ mentor",
+   "giai_thich": "Người học có thể tạo thêm dự án riêng mà có ý nghĩa xã hội, và các mentor sẽ duyệt cho dự án đó. [T03-151]",
+   "nguon": "[T03-151]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Trong quản lý dự án AI, tại sao việc tính toán chi phí là quan trọng?",
+   "lua_chon": [
+    "Để tăng khả năng xuất khẩu sản phẩm",
+    "Để đảm bảo sản phẩm có giá trị cho khách hàng",
+    "Để dễ dàng so sánh với đối thủ",
+    "Để tối ưu hóa quy trình sản xuất"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Để đảm bảo sản phẩm có giá trị cho khách hàng",
+   "giai_thich": "Tính toán chi phí và đánh giá giá trị sản phẩm là rất quan trọng trong công việc thực tế để đem lại giá trị tốt nhất cho khách hàng. [T03-087]",
+   "nguon": "[T03-087]"
+  }
+ ],
+ "muc_da_bo": [
+  "Giới thiệu giảng viên và định hướng khoá học"
+ ],
+ "so_recall": 3,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 12.1
+}

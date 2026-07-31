@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.005, "kind": "user_message", "text": "/reload-sessions"}
+{"t": 1.196, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2499, "out": 29}, "latency_s": 1.19}
+{"t": 1.197, "kind": "session_end", "final_text": "Mình không thể thực hiện yêu cầu đó. Bạn có câu hỏi cụ thể nào về buổi học mà mình có thể giúp không?", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 1.2}

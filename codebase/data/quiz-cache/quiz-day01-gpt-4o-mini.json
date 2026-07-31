@@ -4,82 +4,96 @@
  "cau_hoi": [
   {
    "loai": "RECALL",
-   "cau": "AI được định nghĩa nôm na là gì?",
+   "cau": "AI đã ra đời vào năm nào và ai là người được coi là ông tổ của ngành AI?",
    "lua_chon": [
-    "Một hệ thống máy tính không thể học",
-    "Một hệ thống có trí thông minh",
-    "Một loại ngôn ngữ lập trình",
-    "Một phần mềm giải trí"
+    "1950, John McCarthy",
+    "1956, Allen Turing",
+    "1956, Alan Turing",
+    "1970, Herbert Simon"
    ],
-   "dap_an_dung": 1,
-   "dap_an_text": "Một hệ thống có trí thông minh",
-   "giai_thich": "AI là viết tắt của artificial intelligence, được định nghĩa là một hệ thống có trí thông minh bên trong, bao gồm nhiều lớp khác nhau như machine learning và deep learning. [T04-015]",
-   "nguon": "[T04-015]"
-  },
-  {
-   "loai": "RECALL",
-   "cau": "Ai được coi là ông tổ của ngành AI?",
-   "lua_chon": [
-    "Alan Turing",
-    "Fei-Fei Li",
-    "John McCarthy",
-    "Geoffrey Hinton"
-   ],
-   "dap_an_dung": 0,
-   "dap_an_text": "Alan Turing",
-   "giai_thich": "Alan Turing là một trong những người tiên phong trong lĩnh vực AI, nổi bật với bài Turing test để kiểm tra trí thông minh của máy. [T04-016]",
+   "dap_an_dung": 2,
+   "dap_an_text": "1956, Alan Turing",
+   "giai_thich": "AI ra đời vào năm 1956, và Alan Turing được coi là ông tổ của ngành AI với bài kiểm tra Turing để kiểm tra trí thông minh của máy. [T04-016]",
    "nguon": "[T04-016]"
   },
   {
-   "loai": "KEYWORD",
-   "cau": "Khái niệm 'token' trong mô hình ngôn ngữ lớn (LLM) là gì?",
+   "loai": "RECALL",
+   "cau": "Deep learning khác biệt với machine learning ở điểm nào?",
    "lua_chon": [
-    "Từ hoặc chữ cái",
-    "Đơn vị cơ bản trong xử lý ngôn ngữ",
-    "Một loại phần mềm",
-    "Một mô hình học sâu"
+    "Deep learning không cần dữ liệu",
+    "Deep learning phải gán nhãn dữ liệu",
+    "Deep learning tự động phân loại và học từ dữ liệu",
+    "Deep learning yêu cầu lập trình chi tiết"
    ],
-   "dap_an_dung": 1,
-   "dap_an_text": "Đơn vị cơ bản trong xử lý ngôn ngữ",
-   "giai_thich": "'Token' là đơn vị cơ bản mà mô hình ngôn ngữ lớn (LLM) sử dụng để xử lý văn bản. Nó không luôn tương đương với từ hoặc chữ cái. [T04-049]",
-   "nguon": "[T04-049]"
+   "dap_an_dung": 2,
+   "dap_an_text": "Deep learning tự động phân loại và học từ dữ liệu",
+   "giai_thich": "Deep learning cho phép máy tự động học và phân loại từ dữ liệu mà không cần gán nhãn từng dữ liệu, điều mà machine learning không thể làm. [T04-032]",
+   "nguon": "[T04-032]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "AlphaGo đã đánh bại kỳ thủ nào trong cuộc thi cờ vây nổi tiếng?",
+   "lua_chon": [
+    "Lee Se-dol",
+    "Go Seong-jin",
+    "Shi Yue",
+    "Gu Li"
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "Lee Se-dol",
+   "giai_thich": "AlphaGo đã đánh bại kỳ thủ hàng đầu Lee Se-dol trong một trận đấu cờ vây nổi tiếng, đánh dấu một bước tiến lớn trong AI. [T04-034]",
+   "nguon": "[T04-034]"
   },
   {
    "loai": "KEYWORD",
-   "cau": "Kiến trúc nào đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên?",
+   "cau": "Công nghệ nào đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên?",
    "lua_chon": [
     "RNN",
     "CNN",
-    "Transformer",
-    "SVM"
+    "Decision Trees",
+    "Transformer"
    ],
-   "dap_an_dung": 2,
+   "dap_an_dung": 3,
    "dap_an_text": "Transformer",
-   "giai_thich": "Kiến trúc Transformer, được giới thiệu trong bài báo 'Attention Is All You Need', đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên và vượt trội hơn hẳn các mô hình trước như RNN. [T04-038]",
+   "giai_thich": "Kiến trúc Transformer đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên, cải thiện khả năng nhận diện từ khóa và mối liên hệ giữa chúng. [T04-038]",
    "nguon": "[T04-038]"
   },
   {
-   "loai": "APPLICATION",
-   "cau": "Nếu bạn bắt đầu sử dụng mô hình AI trong công việc thực tế, điều gì là quan trọng nhất mà bạn cần chú ý?",
+   "loai": "KEYWORD",
+   "cau": "Khi gọi API cho mô hình LLM, hai thông số gì cần được chú ý?",
    "lua_chon": [
-    "Chọn mô hình dựa trên vị trí trong benchmark",
-    "Đánh giá và hiểu biết về bài toán cần giải quyết",
-    "Sử dụng bất kỳ mô hình nào có thông tin tốt",
-    "Đối xử với các mô hình như một sản phẩm hoàn hảo"
+    "input và output",
+    "request và response",
+    "data và models",
+    "prompts và tokens"
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "input và output",
+   "giai_thich": "Khi gọi API cho mô hình LLM, cần chú ý đến input (câu hỏi) và output (câu trả lời của AI) để quản lý chi phí hiệu quả. [T04-087]",
+   "nguon": "[T04-087]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Bài học hôm nay có những điểm chính nào mà tôi có thể áp dụng trong thực tế?",
+   "lua_chon": [
+    "Sử dụng mô hình AI mà không hiểu cấu trúc",
+    "Hiểu rõ các yếu tố ảnh hưởng đến hiệu quả của mô hình",
+    "Chỉ nên dùng mô hình có thể gán nhãn tự động",
+    "Không cần thiết lập đánh giá cho mô hình AI"
    ],
    "dap_an_dung": 1,
-   "dap_an_text": "Đánh giá và hiểu biết về bài toán cần giải quyết",
-   "giai_thich": "Việc lựa chọn mô hình AI cần dựa trên hiểu biết về bài toán và sức mạnh của các mô hình, không chỉ dựa vào vị trí trong benchmark, để đảm bảo hiệu quả trong công việc. [T04-084]",
-   "nguon": "[T04-084]"
+   "dap_an_text": "Hiểu rõ các yếu tố ảnh hưởng đến hiệu quả của mô hình",
+   "giai_thich": "Việc hiểu rõ các yếu tố như context, model và evaluation là rất quan trọng để áp dụng AI hiệu quả trong thực tế. [T04-075]",
+   "nguon": "[T04-075]"
   }
  ],
  "muc_da_bo": [
   "Chào lớp và giới thiệu giảng viên",
   "Tương tác cuối buổi"
  ],
- "so_recall": 2,
+ "so_recall": 3,
  "so_keyword": 2,
  "so_application": 1,
  "n_ai_calls": 1,
- "giay": 13.7
+ "giay": 14.3
 }
