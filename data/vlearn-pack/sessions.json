@@ -1,0 +1,30 @@
+{
+  "day01": {
+    "ten": "Day 1 — AI & LLM Foundation (giảng viên Blue)",
+    "transcript": "transcript-04-clean.md",
+    "prefix": "T04",
+    "deck_pdf": "d1-slide-hackathon.pdf",
+    "deck_ten": "d1-slide-hackathon (bản hackathon, 29 trang)"
+  },
+  "day02-sang": {
+    "ten": "Day 2 sáng — Xác định bài toán kinh doanh cho AI",
+    "transcript": "transcript-01-clean.md",
+    "prefix": "T01",
+    "deck_pdf": "d2-slide-hackathon.pdf",
+    "deck_ten": "d2-slide-hackathon (bản hackathon, 29 trang)"
+  },
+  "day02": {
+    "ten": "Day 2 (chiều) — Soi bài toán các nhóm · tự động hoá & ràng buộc",
+    "transcript": "transcript-03-clean.md",
+    "prefix": "T03",
+    "deck_pdf": "",
+    "deck_ten": ""
+  },
+  "buoisaulab": {
+    "ten": "buổi sáng sau một ngày lab — chủ đề bài toán · đánh giá · dữ liệu",
+    "transcript": "transcript-05-clean.md",
+    "prefix": "T05",
+    "deck_pdf": "",
+    "deck_ten": ""
+  }
+}

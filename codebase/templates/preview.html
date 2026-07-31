@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<a href="{{ back_url }}" class="text-sm text-slate-500 hover:text-slate-900 mb-3 inline-block">← Quay lại buổi học</a>
+
+<div class="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+  <h1 class="text-xl font-bold mb-1">{{ title }}</h1>
+  <p class="text-sm text-slate-500">{{ subtitle }}</p>
+</div>
+
+<div class="space-y-4">
+  {% for m in messages %}
+  <div class="bg-slate-900 text-slate-100 rounded-lg p-5 discord-text border-l-4 border-blue-500">
+    <div class="text-xs text-slate-400 mb-2">Message {{ loop.index }} / {{ messages|length }}</div>
+    <div>{{ m }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="mt-6 text-xs text-slate-400">
+  💡 Đây là render giống Discord (dùng cùng hàm <code>render()</code>).
+  Mở Discord → <code>/recap</code> hoặc <code>/quiz</code> để xem tương tác.
+</div>
+{% endblock %}

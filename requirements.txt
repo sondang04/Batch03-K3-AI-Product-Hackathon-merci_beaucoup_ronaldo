@@ -1,4 +1,13 @@
-openai>=1.40
-python-dotenv>=1.0
-pypdf>=4.0
-discord.py>=2.3
+# Agent /recap — dependency tối thiểu (guide §3.4: không commit key, dùng .env)
+openai>=1.40            # gpt-4o-mini (provider mặc định)
+python-dotenv>=1.0      # nạp .env
+pypdf>=4.0              # đọc slide bản hackathon (có text layer)
+discord.py>=2.3         # Discord bot
+aiohttp>=3.9           # mini HTTP trong bot cho UI admin ping/reload sessions
+
+# UI admin (FastAPI, optional — chỉ cần khi chạy ui_admin.py)
+fastapi>=0.110
+uvicorn[standard]>=0.27
+jinja2>=3.1
+python-multipart>=0.0.9  # upload file qua form
+

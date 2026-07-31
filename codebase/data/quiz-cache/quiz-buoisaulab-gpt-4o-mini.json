@@ -1,0 +1,96 @@
+{
+ "session_id": "buoisaulab",
+ "buoi": "buổi sáng sau một ngày lab — chủ đề bài toán · đánh giá · dữ liệu",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "Điều gì là cần thiết trước khi bắt tay vào làm dự án AI để tránh lãng phí thời gian và công sức?",
+   "lua_chon": [
+    "Xây dựng kế hoạch ngân sách",
+    "Đánh giá tính thực tiễn của sản phẩm",
+    "Tuyển dụng thêm nhân lực",
+    "Định nghĩa vấn đề một cách chung chung"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Đánh giá tính thực tiễn của sản phẩm",
+   "giai_thich": "Việc đánh giá tính thực tiễn của sản phẩm giúp lựa chọn hướng đi đúng và tránh lãng phí nguồn lực vào những ý tưởng không khả thi. [T05-004]",
+   "nguon": "[T05-004]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Workflow là gì trong bối cảnh tổ chức làm việc?",
+   "lua_chon": [
+    "Quy trình duyệt ngân sách",
+    "Quy trình sản xuất sản phẩm mới",
+    "Quy trình từ khởi phát ý tưởng đến hoàn thành sản phẩm",
+    "Quy trình tuyển dụng nhân sự"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Quy trình từ khởi phát ý tưởng đến hoàn thành sản phẩm",
+   "giai_thich": "Workflow được định nghĩa là quy trình từ khởi phát ý tưởng đến sản phẩm hoàn thành, thể hiện cách làm việc của một tập thể. [T05-011]",
+   "nguon": "[T05-011]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Điều gì là một trong những vấn đề phổ biến nhất khi viết problem statement?",
+   "lua_chon": [
+    "Thiếu thông tin tài chính",
+    "Viết tuyên bố có scope quá rộng",
+    "Không có tài liệu tham khảo",
+    "Không rõ vai trò của nhân viên"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Viết tuyên bố có scope quá rộng",
+   "giai_thich": "Việc viết tuyên bố có scope quá rộng gây khó khăn trong việc xác định vấn đề cụ thể cần giải quyết và ảnh hưởng tới tính khả thi của giải pháp. [T05-146]",
+   "nguon": "[T05-146]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Yếu tố nào được xem là quan trọng nhất trong problem statement?",
+   "lua_chon": [
+    "Actor",
+    "Impact",
+    "Operational bar",
+    "Workflow hiện tại"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Impact",
+   "giai_thich": "Impact được xem là điểm quan trọng nhất trong problem statement vì nó thể hiện tác động của vấn đề và giải pháp đối với những người liên quan. [T05-145]",
+   "nguon": "[T05-145]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Service level agreement (SLA) trong việc phát triển AI có ý nghĩa gì?",
+   "lua_chon": [
+    "Giúp cam kết về thời gian phát triển",
+    "Cam kết về mức độ dịch vụ",
+    "Cam kết về chất lượng dữ liệu",
+    "Cam kết về chi phí dự án"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Cam kết về mức độ dịch vụ",
+   "giai_thich": "Service level agreement (SLA) là một cam kết về mức độ dịch vụ mà hệ thống AI sẽ cung cấp, giúp đảm bảo rằng hệ thống hoạt động theo các tiêu chuẩn đặt ra. [T05-037]",
+   "nguon": "[T05-037]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Làm thế nào để một học viên có thể giải quyết cảm giác quá tải thông tin khi sử dụng AI trong học tập?",
+   "lua_chon": [
+    "Tăng tốc độ làm việc hơn nữa",
+    "Tổ chức thông tin một cách có hệ thống",
+    "Chỉ sử dụng AI khi cần thiết",
+    "Bỏ qua các nguồn thông tin không liên quan"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Tổ chức thông tin một cách có hệ thống",
+   "giai_thich": "Xây dựng thói quen tổ chức thông tin một cách có hệ thống sẽ giúp học viên xử lý thông tin hiệu quả hơn và giảm bớt cảm giác quá tải khi sử dụng AI. [T05-066]",
+   "nguon": "[T05-066]"
+  }
+ ],
+ "muc_da_bo": [],
+ "so_recall": 3,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 113.8
+}

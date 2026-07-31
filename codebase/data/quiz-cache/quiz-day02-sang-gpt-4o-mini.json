@@ -1,0 +1,96 @@
+{
+ "session_id": "day02-sang",
+ "buoi": "Day 2 sáng — Xác định bài toán kinh doanh cho AI",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "Khả năng xác định bài toán từ yêu cầu mơ hồ là kỹ năng thiết yếu cho điều gì trong doanh nghiệp hiện nay?",
+   "lua_chon": [
+    "Tăng doanh thu",
+    "Ứng dụng AI",
+    "Phát triển sản phẩm truyền thống",
+    "Đào tạo nhân viên"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Ứng dụng AI",
+   "giai_thich": "Kỹ năng xác định bài toán từ yêu cầu mơ hồ là thiết yếu cho việc ứng dụng AI hiệu quả trong doanh nghiệp. [T01-001]",
+   "nguon": "[T01-001]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Theo bài giảng, điều gì chiếm 70% sự thành công trong ứng dụng AI?",
+   "lua_chon": [
+    "Công nghệ",
+    "Nhân lực và cách vận hành",
+    "Kinh nghiệm",
+    "Chiến lược marketing"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Nhân lực và cách vận hành",
+   "giai_thich": "Sự thành công trong ứng dụng AI chủ yếu phụ thuộc vào con người và cách vận hành, chứ không chỉ vào công nghệ. [T01-003]",
+   "nguon": "[T01-003]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Mô hình Double Diamond trong thiết kế sản phẩm gồm mấy pha chính?",
+   "lua_chon": [
+    "Hai pha",
+    "Ba pha",
+    "Bốn pha",
+    "Năm pha"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Bốn pha",
+   "giai_thich": "Mô hình Double Diamond bao gồm bốn pha: mở rộng để xác định vấn đề, hội tụ để tìm ra giải pháp, tiếp tục mở rộng và hội tụ lại để hoàn thiện giải pháp. [T01-049]",
+   "nguon": "[T01-049]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Tư duy 'First Principle Thinking' giúp giải quyết vấn đề như thế nào?",
+   "lua_chon": [
+    "Sao chép từ người khác",
+    "Bóc tách vấn đề về những nguyên lý nguyên bản",
+    "Tập trung vào giải pháp nhanh chóng",
+    "Tăng cường kỹ năng quản lý"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Bóc tách vấn đề về những nguyên lý nguyên bản",
+   "giai_thich": "Tư duy First Principle Thinking giúp giải quyết vấn đề bằng cách phân tích và bóc tách nó về những nguyên lý cơ bản nhất. [T01-062]",
+   "nguon": "[T01-062]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Trong bối cảnh phát triển sản phẩm AI, điều nào là thách thức chính cho người phát triển?",
+   "lua_chon": [
+    "Thiết kế giao diện người dùng",
+    "Nắm vững nguyên lý phát triển sản phẩm",
+    "Kết hợp nhiều yếu tố cùng lúc",
+    "Chịu áp lực từ thị trường"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Kết hợp nhiều yếu tố cùng lúc",
+   "giai_thich": "Việc phát triển sản phẩm AI khó khăn do cần phải kết hợp rất nhiều yếu tố cùng lúc, từ tư duy sản phẩm đến ứng dụng AI. [T01-025]",
+   "nguon": "[T01-025]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Nếu một học viên gặp khó khăn khi nhận đề bài mơ hồ như xây dựng một AI chatbot, bạn nên làm gì để phát triển giải pháp tốt hơn?",
+   "lua_chon": [
+    "Nhảy ngay vào lập trình chatbot",
+    "Xác định các pain points và mục tiêu",
+    "Tìm kiếm tài liệu tham khảo từ người khác",
+    "Bỏ cuộc và chọn giải pháp thủ công"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Xác định các pain points và mục tiêu",
+   "giai_thich": "Để phát triển giải pháp tốt hơn, việc xác định pain points và mục tiêu thực sự phía sau cái đề bài là rất quan trọng. [T01-030]",
+   "nguon": "[T01-030]"
+  }
+ ],
+ "muc_da_bo": [],
+ "so_recall": 3,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 12.5
+}

@@ -1,0 +1,99 @@
+{
+ "session_id": "day01",
+ "buoi": "Day 1 — AI & LLM Foundation (giảng viên Blue)",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "AI đã ra đời vào năm nào và ai là người được coi là ông tổ của ngành AI?",
+   "lua_chon": [
+    "1950, John McCarthy",
+    "1956, Allen Turing",
+    "1956, Alan Turing",
+    "1970, Herbert Simon"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "1956, Alan Turing",
+   "giai_thich": "AI ra đời vào năm 1956, và Alan Turing được coi là ông tổ của ngành AI với bài kiểm tra Turing để kiểm tra trí thông minh của máy. [T04-016]",
+   "nguon": "[T04-016]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Deep learning khác biệt với machine learning ở điểm nào?",
+   "lua_chon": [
+    "Deep learning không cần dữ liệu",
+    "Deep learning phải gán nhãn dữ liệu",
+    "Deep learning tự động phân loại và học từ dữ liệu",
+    "Deep learning yêu cầu lập trình chi tiết"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Deep learning tự động phân loại và học từ dữ liệu",
+   "giai_thich": "Deep learning cho phép máy tự động học và phân loại từ dữ liệu mà không cần gán nhãn từng dữ liệu, điều mà machine learning không thể làm. [T04-032]",
+   "nguon": "[T04-032]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "AlphaGo đã đánh bại kỳ thủ nào trong cuộc thi cờ vây nổi tiếng?",
+   "lua_chon": [
+    "Lee Se-dol",
+    "Go Seong-jin",
+    "Shi Yue",
+    "Gu Li"
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "Lee Se-dol",
+   "giai_thich": "AlphaGo đã đánh bại kỳ thủ hàng đầu Lee Se-dol trong một trận đấu cờ vây nổi tiếng, đánh dấu một bước tiến lớn trong AI. [T04-034]",
+   "nguon": "[T04-034]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Công nghệ nào đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên?",
+   "lua_chon": [
+    "RNN",
+    "CNN",
+    "Decision Trees",
+    "Transformer"
+   ],
+   "dap_an_dung": 3,
+   "dap_an_text": "Transformer",
+   "giai_thich": "Kiến trúc Transformer đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên, cải thiện khả năng nhận diện từ khóa và mối liên hệ giữa chúng. [T04-038]",
+   "nguon": "[T04-038]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Khi gọi API cho mô hình LLM, hai thông số gì cần được chú ý?",
+   "lua_chon": [
+    "input và output",
+    "request và response",
+    "data và models",
+    "prompts và tokens"
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "input và output",
+   "giai_thich": "Khi gọi API cho mô hình LLM, cần chú ý đến input (câu hỏi) và output (câu trả lời của AI) để quản lý chi phí hiệu quả. [T04-087]",
+   "nguon": "[T04-087]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Bài học hôm nay có những điểm chính nào mà tôi có thể áp dụng trong thực tế?",
+   "lua_chon": [
+    "Sử dụng mô hình AI mà không hiểu cấu trúc",
+    "Hiểu rõ các yếu tố ảnh hưởng đến hiệu quả của mô hình",
+    "Chỉ nên dùng mô hình có thể gán nhãn tự động",
+    "Không cần thiết lập đánh giá cho mô hình AI"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Hiểu rõ các yếu tố ảnh hưởng đến hiệu quả của mô hình",
+   "giai_thich": "Việc hiểu rõ các yếu tố như context, model và evaluation là rất quan trọng để áp dụng AI hiệu quả trong thực tế. [T04-075]",
+   "nguon": "[T04-075]"
+  }
+ ],
+ "muc_da_bo": [
+  "Chào lớp và giới thiệu giảng viên",
+  "Tương tác cuối buổi"
+ ],
+ "so_recall": 3,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 14.3
+}

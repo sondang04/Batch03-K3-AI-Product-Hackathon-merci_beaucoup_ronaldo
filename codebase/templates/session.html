@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}{{ s.ten }} — Admin{% endblock %}
+
+{% block content %}
+<a href="/" class="text-sm text-slate-500 hover:text-slate-900 mb-3 inline-block">← Quay lại</a>
+
+<div class="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+  <div class="flex items-start justify-between gap-4 mb-2">
+    <h1 class="text-xl font-bold">{{ s.ten }}</h1>
+    <details class="text-sm">
+      <summary class="cursor-pointer text-slate-500 hover:text-slate-900 select-none">⚙️ Sửa metadata</summary>
+      <form method="POST" action="/session/{{ s.id }}/edit" class="mt-3 p-4 bg-slate-50 rounded-md space-y-3 text-sm">
+        <div>
+          <label class="block font-medium mb-1">Tên hiển thị</label>
+          <input name="ten" value="{{ s.ten }}" required class="w-full px-3 py-2 border border-slate-300 rounded-md">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium mb-1">Prefix (Txx)</label>
+            <input name="prefix" value="{{ s.prefix }}" required pattern="T\d{2}" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Deck PDF</label>
+            <select name="deck_pdf" class="w-full px-3 py-2 border border-slate-300 rounded-md">
+              <option value="">— không có —</option>
+              {% for f in slides_files %}
+              <option value="{{ f }}" {% if f == s.deck_pdf %}selected{% endif %}>{{ f }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Transcript gắn vào</label>
+          <select name="transcript" required class="w-full px-3 py-2 border border-slate-300 rounded-md">
+            {% for t in transcripts %}
+            <option value="{{ t.filename }}" {% if t.filename == s.transcript_file %}selected{% endif %}>{{ t.filename }} ({{ t.size_kb }} KB)</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="px-3 py-1.5 bg-slate-900 text-white rounded-md hover:bg-slate-700">Lưu thay đổi</button>
+      </form>
+    </details>
+  </div>
+
+  <div class="text-sm text-slate-500 mb-4 flex flex-wrap gap-x-3 gap-y-1">
+    <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.id }}</code>
+    <span class="text-slate-400">·</span>
+    <span>prefix <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.prefix or "—" }}</code></span>
+    <span class="text-slate-400">·</span>
+    <span>Transcript: <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.transcript_file }}</code>
+      {% if s.transcript_exists %}
+        <span class="text-slate-400">({{ s.transcript_size_kb }} KB)</span>
+      {% else %}
+        <span class="text-red-600">— file không tồn tại</span>
+      {% endif %}
+    </span>
+  </div>
+
+  {% if flash %}
+  <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800">
+    ✓ {{ flash }}
+  </div>
+  {% endif %}
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <form method="POST" action="/session/{{ s.id }}/build/recap" class="inline"
+          onsubmit="this.querySelector('button').disabled = true; this.querySelector('button').textContent = '⏳ Đang build...';">
+      <button type="submit"
+              class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-50"
+              {% if not s.transcript_exists %}disabled{% endif %}>
+        🔨 Build Recap
+      </button>
+    </form>
+    <form method="POST" action="/session/{{ s.id }}/build/quiz" class="inline"
+          onsubmit="this.querySelector('button').disabled = true; this.querySelector('button').textContent = '⏳ Đang build...';">
+      <button type="submit"
+              class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:opacity-50"
+              {% if not s.has_recap and not s.transcript_exists %}disabled{% endif %}>
+        🧠 Build Quiz
+      </button>
+    </form>
+    {% if s.has_recap %}
+    <a href="/session/{{ s.id }}/preview/recap"
+       class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm rounded-md hover:bg-slate-50">
+      👁 Xem recap
+    </a>
+    {% endif %}
+    {% if s.has_quiz %}
+    <a href="/session/{{ s.id }}/preview/quiz"
+       class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm rounded-md hover:bg-slate-50">
+      👁 Xem quiz
+    </a>
+    {% endif %}
+    {% if can_delete %}
+    <form method="POST" action="/sessions/{{ s.id }}/delete" class="inline ml-auto"
+          onsubmit="return confirm('Xóa buổi &quot;{{ s.ten }}&quot; khỏi registry?\nFile transcript KHÔNG bị xóa.');">
+      <button class="px-3 py-2 text-red-600 text-sm hover:bg-red-50 rounded-md">
+        🗑 Xóa buổi này
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="border-t border-slate-200 pt-6">
+    <h2 class="text-base font-semibold mb-2">📤 Upload / Thay transcript</h2>
+    <p class="text-sm text-slate-600 mb-4">
+      Format: <code>.md</code> / <code>.txt</code> / <code>.srt</code>, tối đa {{ max_upload_mb }} MB.
+      Phải có tiêu đề <code>## Block</code> và mã đoạn <code>**[{{ s.prefix or "Txx" }}-NNN]**</code>.
+      Upload sẽ tự validate format — file sai sẽ bị từ chối và rollback.
+    </p>
+
+    <form method="POST" action="/upload" enctype="multipart/form-data" class="space-y-3"
+          onsubmit="document.getElementById('uploadBtn').disabled = true; document.getElementById('uploadBtn').textContent = '⏳ Đang upload...';">
+      <input type="hidden" name="session_id" value="{{ s.id }}">
+
+      <div>
+        <label class="block text-sm font-medium mb-1">File transcript mới</label>
+        <input type="file" name="file" required accept=".md,.txt,.srt"
+               class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">
+          Lưu vào tên file
+          <span class="text-slate-400 font-normal">(mặc định giữ nguyên tên upload; bot Discord sẽ gọi theo tên trong registry)</span>
+        </label>
+        <input type="text" name="replace_filename" value="{{ s.transcript_file }}" placeholder="{{ s.transcript_file }}"
+               class="block w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <label class="flex items-center gap-2 text-sm text-slate-700">
+        <input type="checkbox" name="overwrite" value="1"
+               class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+        Ghi đè nếu file cùng tên đã tồn tại
+      </label>
+
+      <button type="submit" id="uploadBtn"
+              class="px-4 py-2 bg-slate-900 text-white text-sm rounded-md hover:bg-slate-700">
+        ⬆ Upload & gắn vào buổi này
+      </button>
+      <p class="text-xs text-slate-500">
+        ⚠ Upload sẽ xóa cache recap/quiz cũ của buổi này để lần build sau dùng dữ liệu mới.
+      </p>
+    </form>
+  </div>
+</div>
+{% endblock %}

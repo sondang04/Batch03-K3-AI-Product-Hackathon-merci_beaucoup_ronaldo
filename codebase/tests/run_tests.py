@@ -200,7 +200,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--live", action="store_true")
     ap.add_argument("--provider", default=None,
-                    help="openai | anthropic | gemini (mặc định: env AGENT_PROVIDER)")
+                    help="openrouter | openai | anthropic | gemini "
+                         "(mặc định: env AGENT_PROVIDER)")
     ap.add_argument("--only", default="",
                     help="lọc case theo tiền tố id, vd 'S1,O3'")
     args = ap.parse_args()
@@ -217,7 +218,8 @@ def main():
     if args.live:
         provider = args.provider or config.PROVIDER
         if provider == "mock":
-            sys.exit("--live cần --provider openai|anthropic|gemini (hoặc env AGENT_PROVIDER)")
+            sys.exit("--live cần --provider openrouter|openai|anthropic|gemini "
+                     "(hoặc env AGENT_PROVIDER)")
         run_live(selected, provider, fails)
 
     print(f"\n{'='*60}")

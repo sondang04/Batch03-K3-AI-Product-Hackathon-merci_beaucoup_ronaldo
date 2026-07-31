@@ -1,11 +1,12 @@
 """Cấu hình chung cho agent `/recap` — đường dẫn, model, giới hạn."""
 
+import json
 import os
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 
-# Nạp .env ở gốc repo (OPENAI_API_KEY, ...) — .env đã bị gitignore chặn,
+# Nạp .env ở gốc repo (OPENROUTER_API_KEY, ...) — .env đã bị gitignore chặn,
 # key không bao giờ vào git (luật an toàn guide §3.4).
 try:
     from dotenv import load_dotenv
@@ -21,10 +22,20 @@ LOGS_DIR = REPO / "codebase" / "logs"
 PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 
 # ── Model ────────────────────────────────────────────────────────────────────
-# Provider chọn qua env AGENT_PROVIDER: openai | anthropic | gemini | mock
+# Provider chọn qua env AGENT_PROVIDER: openrouter | openai | anthropic | gemini | mock
 # (mock = offline, dùng cho test suite — không cần key, không cần mạng)
-# Mặc định: openai / gpt-4o-mini (quyết định nhóm 30/07 — xem spec §9).
-PROVIDER = os.environ.get("AGENT_PROVIDER", "openai")
+# Mặc định: openrouter — 1 key gọi được model của nhiều hãng, và đây là key
+# nhóm thực sự có trong .env. Vẫn giữ gpt-4o-mini (quyết định nhóm 30/07,
+# spec §9), chỉ đổi đường vào: openai/gpt-4o-mini qua cổng OpenRouter.
+PROVIDER = os.environ.get("AGENT_PROVIDER", "openrouter")
+
+# OpenRouter nói giao thức OpenAI-compatible → dùng lại `openai` SDK, chỉ đổi
+# base_url + key. Model đặt theo dạng "<hãng>/<model>" (openai/gpt-4o-mini,
+# anthropic/claude-sonnet-4.5, google/gemini-2.5-flash, ...).
+OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL",
+                                     "https://openrouter.ai/api/v1")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-opus-5")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash")  # tên model thấy trong chatlog production của VLearn
@@ -41,7 +52,12 @@ TRUNCATE = 200
 # ── Buổi học ─────────────────────────────────────────────────────────────────
 # Registry buổi: transcript nào + deck slide nào. Chatlog KHÔNG map được theo
 # ID (spec §4 giới hạn #1) nên thắc mắc lớp được khớp theo NỘI DUNG, không join.
-SESSIONS = {
+#
+# Nguồn registry (ưu tiên):
+#   1. data/vlearn-pack/sessions.json  ← UI admin CRUD được (mentor tự tạo buổi)
+#   2. _HARDCODED_SESSIONS dưới đây    ← fallback khi chưa có file (back-compat)
+SESSIONS_FILE = DATA / "sessions.json"
+_HARDCODED_SESSIONS: dict[str, dict] = {
     "day01": {
         "ten": "Day 1 — AI & LLM Foundation (giảng viên Blue)",
         "transcript": "transcript-04-clean.md",
@@ -59,6 +75,42 @@ SESSIONS = {
         "deck_ten": "d2-slide-hackathon (bản hackathon, 29 trang)",
     },
 }
+
+
+def _load_sessions() -> dict[str, dict]:
+    """Đọc registry từ JSON nếu có, fallback về hard-coded."""
+    if SESSIONS_FILE.exists():
+        try:
+            data = json.loads(SESSIONS_FILE.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and data:
+                return data
+        except (json.JSONDecodeError, OSError):
+            pass
+    return dict(_HARDCODED_SESSIONS)
+
+
+SESSIONS: dict[str, dict] = _load_sessions()
+
+
+def reload_sessions() -> dict[str, dict]:
+    """Đọc lại registry từ JSON — gọi khi bot nhận /reload-sessions hoặc file đổi.
+
+    Trả về dict mới; đồng thời ghi đè SESSIONS ở module scope để mọi chỗ import
+    `from agent.config import SESSIONS` đều thấy data mới.
+    """
+    global SESSIONS
+    SESSIONS = _load_sessions()
+    return SESSIONS
+
+
+def list_choices() -> list[tuple[str, str]]:
+    """Trả về [(sid, ten)] cho slash command choices — luôn đọc SESSIONS hiện tại."""
+    return [(sid, s.get("ten", sid)[:100]) for sid, s in SESSIONS.items()]
+
+
+def sessions_signature() -> tuple:
+    """Hash chữ ký của SESSIONS (id + transcript) — dùng để phát hiện file đổi."""
+    return tuple(sorted((sid, s.get("transcript", "")) for sid, s in SESSIONS.items()))
 
 # ⚠️ Số trang của bản hackathon KHÁC deck gốc mà chatlog trỏ tới.
 # Đo được: chỉ 3/673 case chatlog khớp trang (0,4%), độ lệch không phải hằng số

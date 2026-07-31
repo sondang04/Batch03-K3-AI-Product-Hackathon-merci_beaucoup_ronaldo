@@ -162,6 +162,25 @@ TOOLS: list[dict] = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "generate_quiz",
+        "description": (
+            "Sinh quiz tự kiểm tra từ recap đã có của một buổi học. "
+            "Quiz gồm: câu RECALL (từ ý chính block), câu KEYWORD (từ thuật ngữ giảng viên), "
+            "và câu APPLICATION (từ thắc mắc thật của lớp). "
+            "Mỗi câu kèm đáp án, giải thích, và citation. "
+            "Dùng khi: học viên muốn tự kiểm tra hiểu bài sau khi đã xem recap."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session_id": {"type": "string", "enum": SESSION_IDS,
+                               "description": "Buổi học cần sinh quiz"},
+            },
+            "required": ["session_id"],
+            "additionalProperties": False,
+        },
+    },
 ]
 
 
@@ -222,18 +241,10 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                     return json.dumps({"loi": f"Không tìm thấy block {b_idx} trong buổi học này. Vui lòng kiểm tra lại chỉ số block."},
                                       ensure_ascii=False)
                 codes = blk.codes
-            
-            out_lines = []
-            for c in (codes or [])[:40]:
-                noi_dung = tr.paragraphs.get(c, "").strip()
-                if noi_dung:
-                    out_lines.append(f"**[{c}]** {noi_dung}")
-                else:
-                    out_lines.append(f"**[{c}]** (không tìm thấy đoạn mã này trong transcript)")
-            
-            if not out_lines:
-                return "Không tìm thấy đoạn hội thoại nào phù hợp với yêu cầu."
-            return "\n\n".join(out_lines)
+            out = [{"ma_doan": c,
+                     "noi_dung": f"[{c}] " + tr.paragraphs.get(c, "(không có mã này)")}
+                   for c in (codes or [])[:40]]
+            return json.dumps(out, ensure_ascii=False)
 
         if name == "search_sources":
             sid = args.get("session_id", "all")
@@ -242,16 +253,6 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                 return json.dumps({"loi": f"Buổi học '{sid}' không hợp lệ. Các buổi học hỗ trợ gồm: {valid_sessions}."}, ensure_ascii=False)
             q = args.get("query", "")
             
-            # 1. Kiểm tra khái niệm ngoài nguồn trước tiên để tránh việc khớp một phần gây nhiễu
-            note = ""
-            key = sources._norm(q)
-            for k, v in config.NGOAI_NGUON.items():
-                k_norm = sources._norm(k)
-                if k_norm in key or key in k_norm:
-                    note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
-                            "chỉ đúng chỗ đó, không tự giải thích.")
-                    return json.dumps({"transcript": [], "slide": [], "ghi_chu": note}, ensure_ascii=False)
-
             try:
                 if sid == "all":
                     found = sources.search_all_sessions(q)
@@ -264,9 +265,18 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
             except Exception as e:
                 return json.dumps({"loi": f"Gặp lỗi khi tìm kiếm dữ liệu: {type(e).__name__}: {e}. Vui lòng thử lại với từ khóa khác."}, ensure_ascii=False)
                 
+            note = ""
             if not t_hits and not s_hits:
-                note = ("KHÔNG có trong transcript lẫn slide của buổi này — "
-                        "không được tự giải thích từ kiến thức nền.")
+                key = sources._norm(q)
+                for k, v in config.NGOAI_NGUON.items():
+                    k_norm = sources._norm(k)
+                    if k_norm in key or key in k_norm:
+                        note = (f"KHÔNG có trong buổi này. Khái niệm thuộc {v} — "
+                                "chỉ đúng chỗ đó, không tự giải thích.")
+                        break
+                else:
+                    note = ("KHÔNG có trong transcript lẫn slide của buổi này — "
+                            "không được tự giải thích từ kiến thức nền.")
             return json.dumps({"transcript": t_hits, "slide": s_hits,
                                "ghi_chu": note}, ensure_ascii=False)
 
@@ -398,6 +408,27 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                 {"deck": config.SESSIONS[sid]["deck_ten"],
                  "trang": [{"trang": p, "tieu_de": _clean_slide_title(tx)}
                            for p, tx in slides.items()]}, ensure_ascii=False)
+
+        if name == "generate_quiz":
+            # Import bên trong để tránh circular import
+            from .quiz import build_quiz
+            # Lấy client từ subcall closure - cần truyền qua context
+            # Tool này chỉ dùng khi có client, nên subcall đã được bind
+            sid = args["session_id"]
+            # Gọi build_quiz với client từ closure
+            quiz = build_quiz(sid, subcall.__self__ if hasattr(subcall, '__self__') else None)
+            return json.dumps({
+                "buoi": quiz.buoi,
+                "tong_cau": quiz.tong_cau,
+                "so_recall": quiz.so_recall,
+                "so_keyword": quiz.so_keyword,
+                "so_application": quiz.so_application,
+                "cau_hoi": [
+                    {"loai": q.loai, "cau": q.cau, "dap_an": q.dap_an,
+                     "giai_thich": q.giai_thich, "nguon": q.nguon}
+                    for q in quiz.cau_hoi
+                ]
+            }, ensure_ascii=False)
 
         return json.dumps({"loi": f"tool không tồn tại: {name}"}, ensure_ascii=False)
 

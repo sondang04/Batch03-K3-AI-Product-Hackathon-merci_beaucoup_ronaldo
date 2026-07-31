@@ -1,6 +1,8 @@
 """Lớp LLM client — 4 backend sau cùng một interface:
 
 - OpenAIClient    : `openai` SDK, model gpt-4o-mini (mặc định của nhóm từ 30/07).
+                    Cùng lớp này phục vụ provider "openrouter" (OpenAI-compatible,
+                    chỉ khác base_url + key) — xem make_client() ở cuối file.
 - AnthropicClient : `anthropic` SDK, model claude-opus-5 (thinking adaptive mặc
                     định của model; cache system prompt).
 - GeminiClient    : `google.genai` SDK, model theo env GEMINI_MODEL — free tier
@@ -47,13 +49,20 @@ class Turn:
 class OpenAIClient:
     provider = "openai"
 
-    def __init__(self, model: str = config.OPENAI_MODEL):
+    def __init__(self, model: str = config.OPENAI_MODEL,
+                 base_url: str | None = None, api_key: str | None = None):
         import json as _json
         from openai import OpenAI
         self._json = _json
         self.model = model
-        # OPENAI_BASE_URL hỗ trợ sẵn trong SDK — dùng khi BTC cấp key qua proxy
-        self._client = OpenAI()
+        # base_url/api_key để trống → SDK tự đọc OPENAI_BASE_URL / OPENAI_API_KEY.
+        # Truyền vào khi đi qua cổng OpenAI-compatible (OpenRouter, proxy BTC).
+        kwargs = {}
+        if base_url:
+            kwargs["base_url"] = base_url
+        if api_key:
+            kwargs["api_key"] = api_key
+        self._client = OpenAI(**kwargs)
 
     def _to_messages(self, system: str, history: list[dict]) -> list[dict]:
         msgs = [{"role": "system", "content": system}]
@@ -278,6 +287,16 @@ class MockClient:
 
 def make_client(provider: str | None = None):
     p = provider or config.PROVIDER
+    if p == "openrouter":
+        key = os.environ.get("OPENROUTER_API_KEY")
+        if not key:
+            raise RuntimeError(
+                "Thiếu OPENROUTER_API_KEY — đặt trong .env ở gốc repo "
+                "(xem codebase/DISCORD-SETUP.md).")
+        c = OpenAIClient(model=config.OPENROUTER_MODEL,
+                         base_url=config.OPENROUTER_BASE_URL, api_key=key)
+        c.provider = "openrouter"
+        return c
     if p == "openai":
         return OpenAIClient()
     if p == "anthropic":
