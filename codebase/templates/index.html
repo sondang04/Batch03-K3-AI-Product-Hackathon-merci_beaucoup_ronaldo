@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Buổi học — VLearn Bot Admin{% endblock %}
+
+{% block content %}
+<div class="flex items-start justify-between mb-8 gap-4">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">Buổi học</h1>
+    <p class="text-slate-600">Mentor upload transcript và tạo buổi mới — không cần SSH, không cần sửa code Python.</p>
+  </div>
+  <a href="/sessions/new"
+     class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-md hover:bg-emerald-700 whitespace-nowrap font-medium">
+    + Tạo buổi mới
+  </a>
+</div>
+
+{% if flash %}
+<div class="mb-6 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+  ✓ {{ flash }}
+</div>
+{% endif %}
+
+{% if bot_status and bot_status.reachable and bot_status.mismatch %}
+<div class="mb-6 p-4 bg-amber-50 border border-amber-300 rounded text-sm text-amber-900">
+  <div class="font-medium mb-1">⚠️ Bot Discord chưa thấy buổi mới</div>
+  <div class="mb-2">
+    UI có {{ bot_status.ui_sessions|length }} buổi ({{ bot_status.ui_sessions|join(', ') }}),
+    bot chỉ thấy {{ bot_status.bot_sessions|length }} buổi.
+    <strong>Thiếu ở bot:</strong> <code class="bg-amber-100 px-1 rounded">{{ bot_status.missing_in_bot|join(', ') }}</code>
+  </div>
+  <div class="flex gap-2 flex-wrap">
+    <form method="post" action="/api/reload-bot" class="inline">
+      <button type="submit"
+              class="px-3 py-1.5 bg-amber-600 text-white text-sm rounded hover:bg-amber-700 font-medium">
+        🔄 Reload bot ngay
+      </button>
+    </form>
+    <span class="text-xs text-amber-700 self-center">
+      Hoặc gõ <code class="bg-amber-100 px-1 rounded">/reload-sessions</code> trong Discord (admin only).
+    </span>
+  </div>
+</div>
+{% elif bot_status and not bot_status.reachable %}
+<div class="mb-6 p-3 bg-slate-50 border border-slate-200 rounded text-sm text-slate-600">
+  ℹ️ Bot Discord chưa chạy/expose HTTP — không tự đồng bộ. Tạo buổi xong gõ
+  <code class="bg-slate-100 px-1 rounded">/reload-sessions</code> trong Discord sau khi bot online.
+</div>
+{% endif %}
+
+<div class="space-y-4">
+  {% for s in sessions %}
+  <div class="bg-white rounded-lg border border-slate-200 p-5 hover:shadow-sm transition">
+    <div class="flex items-start justify-between gap-4">
+      <div class="flex-1 min-w-0">
+        <h2 class="text-lg font-semibold mb-1">
+          <a href="/session/{{ s.id }}" class="text-slate-900 hover:text-blue-600">{{ s.ten }}</a>
+        </h2>
+        <div class="text-sm text-slate-500 mb-3 flex flex-wrap gap-x-3 gap-y-1">
+          <span><code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.id }}</code></span>
+          <span class="text-slate-400">·</span>
+          <span>prefix <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.prefix or "—" }}</code></span>
+          <span class="text-slate-400">·</span>
+          <span>Transcript: <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.transcript_file }}</code>
+            {% if s.transcript_exists %}
+              <span class="text-slate-400">({{ s.transcript_size_kb }} KB)</span>
+            {% else %}
+              <span class="text-red-600">— file không tồn tại</span>
+            {% endif %}
+          </span>
+          {% if s.deck_pdf %}
+          <span class="text-slate-400">·</span>
+          <span>📑 <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ s.deck_pdf }}</code></span>
+          {% endif %}
+        </div>
+        <div class="flex gap-2">
+          {% if s.has_recap %}
+            <span class="badge-ok text-xs px-2 py-0.5 rounded-full font-medium">✓ có recap</span>
+          {% else %}
+            <span class="badge-off text-xs px-2 py-0.5 rounded-full">chưa có recap</span>
+          {% endif %}
+          {% if s.has_quiz %}
+            <span class="badge-ok text-xs px-2 py-0.5 rounded-full font-medium">✓ có quiz</span>
+          {% else %}
+            <span class="badge-off text-xs px-2 py-0.5 rounded-full">chưa có quiz</span>
+          {% endif %}
+        </div>
+      </div>
+      <a href="/session/{{ s.id }}"
+         class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 whitespace-nowrap">
+        Mở →
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if not sessions %}
+  <div class="bg-white rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-500">
+    Chưa có buổi nào. Bấm <strong>+ Tạo buổi mới</strong> hoặc upload 1 file transcript để bắt đầu.
+  </div>
+  {% endif %}
+</div>
+
+<div class="mt-10 pt-6 border-t border-slate-200">
+  <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+    File transcript trong <code class="text-slate-700">data/vlearn-pack/transcript/</code>
+  </h3>
+  {% if transcripts %}
+  <ul class="text-sm space-y-1">
+    {% for t in transcripts %}
+      <li class="text-slate-700">
+        📄 <code class="bg-slate-100 px-1.5 py-0.5 rounded">{{ t.filename }}</code>
+        <span class="text-slate-400 ml-2">{{ t.size_kb }} KB</span>
+        {% if t.linked %}<span class="badge-ok text-xs px-2 py-0.5 rounded-full ml-2">đang dùng</span>{% else %}<span class="badge-off text-xs px-2 py-0.5 rounded-full ml-2">chưa gắn</span>{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-sm text-slate-500">Chưa có file nào. Upload từ trang buổi học.</p>
+  {% endif %}
+</div>
+{% endblock %}

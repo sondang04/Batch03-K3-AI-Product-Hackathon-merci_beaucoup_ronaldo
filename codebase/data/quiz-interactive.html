@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5865F2;
+            --primary-hover: #4752C4;
+            --success: #3BA55C;
+            --success-bg: #D4EDDA;
+            --danger: #ED4245;
+            --danger-bg: #F8D7DA;
+            --warning: #FAA61A;
+            --warning-bg: #FFF3CD;
+            --bg: #1E1F22;
+            --bg-card: #2B2D31;
+            --bg-input: #383A40;
+            --text: #F2F3F5;
+            --text-muted: #B9BBBE;
+            --border: #40444B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container { max-width: 700px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 2rem; }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #5865F2, #7289DA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; }
+
+        .progress-bar {
+            background: var(--bg-input);
+            border-radius: 999px;
+            height: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary), #7289DA);
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.4s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat { text-align: center; }
+
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+        .stat-value.correct { color: var(--success); }
+        .stat-value.incorrect { color: var(--danger); }
+        .stat-value.current { color: var(--warning); }
+
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+
+        .question-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .question-card.active {
+            opacity: 1;
+            pointer-events: auto;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.2);
+        }
+
+        .question-card.answered { opacity: 1; pointer-events: none; }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+        }
+
+        .question-type {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .question-type.RECALL { background: #3B4CCA; color: white; }
+        .question-type.KEYWORD { background: #FAA61A; color: #1E1F22; }
+        .question-type.APPLICATION { background: #9B59B6; color: white; }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .answer-section { margin-top: 1rem; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #2d8a47; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #c73a3d; }
+        .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+        .answer-content {
+            display: none;
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .answer-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .answer-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .answer-text { font-size: 1rem; line-height: 1.5; margin-bottom: 1rem; }
+
+        .explanation {
+            background: var(--warning-bg);
+            border-left: 3px solid var(--warning);
+            padding: 0.75rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+        }
+
+        .explanation-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #856404;
+            margin-bottom: 0.35rem;
+        }
+
+        .explanation-text { font-size: 0.9rem; color: #856404; line-height: 1.5; }
+
+        .source { font-size: 0.8rem; color: var(--text-muted); }
+        .source strong { color: var(--primary); }
+
+        .self-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .self-check-label { font-size: 0.9rem; color: var(--text-muted); }
+
+        .result-badge {
+            display: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .result-badge.show {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-badge.correct { background: var(--success-bg); color: #155724; }
+        .result-badge.incorrect { background: var(--danger-bg); color: #721c24; }
+
+        .results-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .results-card.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        .results-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .results-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+        .results-score {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--success), #2ECC71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 1rem 0;
+        }
+
+        .results-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .results-stat { text-align: center; }
+        .results-stat-value { font-size: 1.25rem; font-weight: 600; }
+        .results-stat-label { font-size: 0.8rem; color: var(--text-muted); }
+        .btn-restart { margin-top: 1.5rem; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        .btn-nav { background: var(--bg-input); color: var(--text); padding: 0.75rem 1.25rem; }
+        .btn-nav:hover { background: var(--border); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .nav-info { display: flex; align-items: center; color: var(--text-muted); font-size: 0.9rem; }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.75rem; }
+            h1 { font-size: 1.4rem; }
+            .question-card { padding: 1.25rem; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Quiz — <span id="quizTitle">Loading...</span></h1>
+            <p class="subtitle">Self-test kiểm tra hiểu bài</p>
+        </header>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value current" id="currentStat">0/6</div>
+                <div class="stat-label">Câu hiện tại</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value correct" id="correctStat">0</div>
+                <div class="stat-label">Đúng</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value incorrect" id="incorrectStat">0</div>
+                <div class="stat-label">Sai</div>
+            </div>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-nav" id="prevBtn" onclick="prevQuestion()" disabled>← Câu trước</button>
+            <div class="nav-info" id="navInfo">Chưa bắt đầu</div>
+            <button class="btn btn-nav" id="nextBtn" onclick="nextQuestion()">Câu sau →</button>
+        </div>
+
+        <div class="results-card" id="resultsCard">
+            <div class="results-icon" id="resultsIcon">🎉</div>
+            <div class="results-title" id="resultsTitle">Kết quả Quiz</div>
+            <div class="results-score" id="resultsScore">0/6</div>
+            <div class="results-breakdown">
+                <div class="results-stat">
+                    <div class="results-stat-value" style="color: var(--success)" id="resultsCorrect">0</div>
+                    <div class="results-stat-label">Đúng</div>
+                </div>
+                <div class="results-stat">
+                    <div class="results-stat-value" style="color: var(--danger)" id="resultsIncorrect">0</div>
+                    <div class="results-stat-label">Sai</div>
+                </div>
+                <div class="results-stat">
+                    <div class="results-stat-value" style="color: var(--warning)" id="resultsPercent">0%</div>
+                    <div class="results-stat-label">Điểm</div>
+                </div>
+            </div>
+            <p id="resultsMessage" style="color: var(--text-muted); margin-bottom: 1rem;"></p>
+            <button class="btn btn-primary btn-restart" onclick="restartQuiz()">🔄 Làm lại</button>
+        </div>
+    </div>
+
+    <script>
+        // ── Quiz data — INJECTED BY bot.py ──────────────────────────────────────
+        // bot.py sẽ thay thế phần bên dưới bằng data quiz thật
+        // Structure: { session_id, buoi, cau_hoi: [{loai, cau, dap_an, giai_thich, nguon}] }
+
+        const quizData = {
+            session_id: "",
+            buoi: "Quiz",
+            cau_hoi: []
+        };
+        // ───────────────────────────────────────────────────────────────────────
+
+        // Check: nếu mở trực tiếp (không qua bot), hiện thông báo
+        if (!quizData.cau_hoi || quizData.cau_hoi.length === 0) {
+            document.body.innerHTML = `
+                <div class="container" style="text-align:center; padding-top:4rem;">
+                    <h1 style="margin-bottom:1rem;">📝 Quiz Chưa Sẵn Sàng</h1>
+                    <p style="color:var(--text-muted); margin-bottom:2rem;">
+                        Hãy chạy lệnh <code>/quiz day01</code> trong Discord trước,<br>
+                        sau đó mở link quiz từ tin nhắn bot.
+                    </p>
+                    <a href="https://discord.com" target="_blank" class="btn btn-primary">
+                        Mở Discord
+                    </a>
+                </div>
+            `;
+            throw new Error('No quiz data');
+        }
+
+        // Update title từ quiz data
+        document.getElementById('quizTitle').textContent = quizData.buoi;
+        document.title = `Quiz — ${quizData.buoi}`;
+        document.getElementById('currentStat').textContent = `0/${quizData.cau_hoi.length}`;
+
+        let currentQuestion = 0;
+        let answers = new Array(quizData.cau_hoi.length).fill(null);
+
+        function initQuiz() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            const loaiIcon = { 'RECALL': '📖', 'KEYWORD': '🔑', 'APPLICATION': '💬' };
+
+            quizData.cau_hoi.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${idx}`;
+
+                card.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">Câu ${idx + 1}</span>
+                        <span class="question-type ${q.loai}">${loaiIcon[q.loai]} ${q.loai}</span>
+                    </div>
+                    <div class="question-text">${q.cau}</div>
+                    <div class="answer-section">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="revealAnswer(${idx})">
+                                👀 Hiện đáp án
+                            </button>
+                        </div>
+                        <div class="answer-content" id="answer-${idx}">
+                            <div class="answer-label">📌 Đáp án</div>
+                            <div class="answer-text">${q.dap_an}</div>
+                            <div class="explanation">
+                                <div class="explanation-label">💡 Giải thích</div>
+                                <div class="explanation-text">${q.giai_thich}</div>
+                            </div>
+                            <div class="source"><strong>Nguồn:</strong> ${q.nguon}</div>
+                            <div class="self-check">
+                                <span class="self-check-label">Bạn trả lời đúng chưa?</span>
+                                <div class="result-badge" id="badge-${idx}"></div>
+                                <button class="btn btn-success" onclick="markAnswer(${idx}, true)" id="btn-correct-${idx}">
+                                    ✓ Đúng
+                                </button>
+                                <button class="btn btn-danger" onclick="markAnswer(${idx}, false)" id="btn-wrong-${idx}">
+                                    ✗ Sai
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            updateUI();
+        }
+
+        function revealAnswer(idx) {
+            document.getElementById(`answer-${idx}`).classList.add('show');
+        }
+
+        function markAnswer(idx, correct) {
+            answers[idx] = correct;
+            const badge = document.getElementById(`badge-${idx}`);
+            badge.classList.add('show', correct ? 'correct' : 'incorrect');
+            badge.textContent = correct ? '✓ Đúng' : '✗ Sai';
+            document.getElementById(`btn-correct-${idx}`).style.display = 'none';
+            document.getElementById(`btn-wrong-${idx}`).style.display = 'none';
+            updateUI();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.question-card').forEach((card, idx) => {
+                card.classList.remove('active', 'answered');
+                if (idx === currentQuestion) card.classList.add('active');
+                if (answers[idx] !== null) card.classList.add('answered');
+            });
+
+            const answered = answers.filter(a => a !== null).length;
+            document.getElementById('progressFill').style.width = `${(answered / quizData.cau_hoi.length) * 100}%`;
+
+            const correct = answers.filter(a => a === true).length;
+            const incorrect = answers.filter(a => a === false).length;
+            document.getElementById('currentStat').textContent = `${currentQuestion + 1}/${quizData.cau_hoi.length}`;
+            document.getElementById('correctStat').textContent = correct;
+            document.getElementById('incorrectStat').textContent = incorrect;
+            document.getElementById('navInfo').textContent = `Câu ${currentQuestion + 1} trong ${quizData.cau_hoi.length}`;
+
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === quizData.cau_hoi.length - 1;
+
+            if (answered === quizData.cau_hoi.length) showResults();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.cau_hoi.length - 1) {
+                currentQuestion++;
+                updateUI();
+                document.getElementById(`question-${currentQuestion}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateUI();
+                document.getElementById(`question-${currentQuestion}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function showResults() {
+            const correct = answers.filter(a => a === true).length;
+            const total = quizData.cau_hoi.length;
+            const percent = Math.round((correct / total) * 100);
+
+            document.getElementById('resultsScore').textContent = `${correct}/${total}`;
+            document.getElementById('resultsCorrect').textContent = correct;
+            document.getElementById('resultsIncorrect').textContent = total - correct;
+            document.getElementById('resultsPercent').textContent = `${percent}%`;
+
+            const icon = document.getElementById('resultsIcon');
+            const title = document.getElementById('resultsTitle');
+            const msg = document.getElementById('resultsMessage');
+
+            if (percent >= 80) {
+                icon.textContent = '🎉'; title.textContent = 'Xuất sắc!';
+                msg.textContent = 'Bạn nắm vững kiến thức rồi!';
+            } else if (percent >= 60) {
+                icon.textContent = '👍'; title.textContent = 'Khá tốt!';
+                msg.textContent = 'Cố gắng ôn lại những phần chưa đúng nhé!';
+            } else if (percent >= 40) {
+                icon.textContent = '📚'; title.textContent = 'Cần cải thiện';
+                msg.textContent = 'Hãy xem lại bài giảng và làm lại quiz nhé!';
+            } else {
+                icon.textContent = '💪'; title.textContent = 'Đừng nản chí!';
+                msg.textContent = 'Hãy học lại nội dung và thử lại lần nữa!';
+            }
+
+            document.getElementById('resultsCard').classList.add('show');
+            document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(quizData.cau_hoi.length).fill(null);
+            document.querySelectorAll('.answer-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.result-badge').forEach(el => {
+                el.classList.remove('show', 'correct', 'incorrect');
+                el.textContent = '';
+            });
+            document.querySelectorAll('#btn-correct-0, #btn-wrong-0').forEach(el => el.style.display = '');
+            document.querySelectorAll('[id^="btn-correct-"], [id^="btn-wrong-"]').forEach(el => el.style.display = '');
+            document.getElementById('resultsCard').classList.remove('show');
+            updateUI();
+            document.getElementById('question-0').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

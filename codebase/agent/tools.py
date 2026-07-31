@@ -162,6 +162,25 @@ TOOLS: list[dict] = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "generate_quiz",
+        "description": (
+            "Sinh quiz tự kiểm tra từ recap đã có của một buổi học. "
+            "Quiz gồm: câu RECALL (từ ý chính block), câu KEYWORD (từ thuật ngữ giảng viên), "
+            "và câu APPLICATION (từ thắc mắc thật của lớp). "
+            "Mỗi câu kèm đáp án, giải thích, và citation. "
+            "Dùng khi: học viên muốn tự kiểm tra hiểu bài sau khi đã xem recap."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "session_id": {"type": "string", "enum": SESSION_IDS,
+                               "description": "Buổi học cần sinh quiz"},
+            },
+            "required": ["session_id"],
+            "additionalProperties": False,
+        },
+    },
 ]
 
 
@@ -389,6 +408,27 @@ def make_dispatch(subcall: Callable[[str, str], str]) -> Callable[[str, dict], s
                 {"deck": config.SESSIONS[sid]["deck_ten"],
                  "trang": [{"trang": p, "tieu_de": _clean_slide_title(tx)}
                            for p, tx in slides.items()]}, ensure_ascii=False)
+
+        if name == "generate_quiz":
+            # Import bên trong để tránh circular import
+            from .quiz import build_quiz
+            # Lấy client từ subcall closure - cần truyền qua context
+            # Tool này chỉ dùng khi có client, nên subcall đã được bind
+            sid = args["session_id"]
+            # Gọi build_quiz với client từ closure
+            quiz = build_quiz(sid, subcall.__self__ if hasattr(subcall, '__self__') else None)
+            return json.dumps({
+                "buoi": quiz.buoi,
+                "tong_cau": quiz.tong_cau,
+                "so_recall": quiz.so_recall,
+                "so_keyword": quiz.so_keyword,
+                "so_application": quiz.so_application,
+                "cau_hoi": [
+                    {"loai": q.loai, "cau": q.cau, "dap_an": q.dap_an,
+                     "giai_thich": q.giai_thich, "nguon": q.nguon}
+                    for q in quiz.cau_hoi
+                ]
+            }, ensure_ascii=False)
 
         return json.dumps({"loi": f"tool không tồn tại: {name}"}, ensure_ascii=False)
 

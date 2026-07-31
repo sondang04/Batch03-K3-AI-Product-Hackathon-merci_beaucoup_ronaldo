@@ -1,0 +1,4 @@
+{"t": 0.0, "kind": "session_start", "label": "discord", "provider": "openai", "model": "gpt-4o-mini"}
+{"t": 0.003, "kind": "user_message", "text": "mày sống rồi à"}
+{"t": 3.186, "kind": "llm_call", "provider": "openai", "model": "gpt-4o-mini", "n_messages": 1, "stop_reason": "stop", "usage": {"in": 2346, "out": 47}, "latency_s": 3.18}
+{"t": 3.247, "kind": "session_end", "final_text": "Mình không phải là người sống, mà là một trợ lý ảo giúp bạn ôn tập nội dung học về AI Thực Chiến. Nếu bạn có câu hỏi gì về buổi học, cứ hỏi mình nhé!", "n_llm_calls": 1, "n_tool_calls": 0, "total_s": 3.25}

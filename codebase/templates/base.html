@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}VLearn Bot Admin{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    pre, .discord-text { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 13px; }
+    .badge-ok   { background:#dcfce7; color:#166534; }
+    .badge-warn { background:#fef3c7; color:#92400e; }
+    .badge-off  { background:#f3f4f6; color:#4b5563; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="text-lg font-semibold text-slate-900">📚 VLearn Bot Admin</a>
+      <nav class="flex gap-4 text-sm text-slate-600">
+        <a href="/" class="hover:text-slate-900">Buổi học</a>
+        <a href="/health" class="hover:text-slate-900" target="_blank">Health</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 py-6 text-xs text-slate-400">
+    UI admin — quản lý transcript + build recap/quiz. Bot Discord chạy process riêng.
+  </footer>
+</body>
+</html>

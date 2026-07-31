@@ -1,0 +1,85 @@
+{
+ "session_id": "day01",
+ "buoi": "Day 1 — AI & LLM Foundation (giảng viên Blue)",
+ "cau_hoi": [
+  {
+   "loai": "RECALL",
+   "cau": "AI được định nghĩa nôm na là gì?",
+   "lua_chon": [
+    "Một hệ thống máy tính không thể học",
+    "Một hệ thống có trí thông minh",
+    "Một loại ngôn ngữ lập trình",
+    "Một phần mềm giải trí"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Một hệ thống có trí thông minh",
+   "giai_thich": "AI là viết tắt của artificial intelligence, được định nghĩa là một hệ thống có trí thông minh bên trong, bao gồm nhiều lớp khác nhau như machine learning và deep learning. [T04-015]",
+   "nguon": "[T04-015]"
+  },
+  {
+   "loai": "RECALL",
+   "cau": "Ai được coi là ông tổ của ngành AI?",
+   "lua_chon": [
+    "Alan Turing",
+    "Fei-Fei Li",
+    "John McCarthy",
+    "Geoffrey Hinton"
+   ],
+   "dap_an_dung": 0,
+   "dap_an_text": "Alan Turing",
+   "giai_thich": "Alan Turing là một trong những người tiên phong trong lĩnh vực AI, nổi bật với bài Turing test để kiểm tra trí thông minh của máy. [T04-016]",
+   "nguon": "[T04-016]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Khái niệm 'token' trong mô hình ngôn ngữ lớn (LLM) là gì?",
+   "lua_chon": [
+    "Từ hoặc chữ cái",
+    "Đơn vị cơ bản trong xử lý ngôn ngữ",
+    "Một loại phần mềm",
+    "Một mô hình học sâu"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Đơn vị cơ bản trong xử lý ngôn ngữ",
+   "giai_thich": "'Token' là đơn vị cơ bản mà mô hình ngôn ngữ lớn (LLM) sử dụng để xử lý văn bản. Nó không luôn tương đương với từ hoặc chữ cái. [T04-049]",
+   "nguon": "[T04-049]"
+  },
+  {
+   "loai": "KEYWORD",
+   "cau": "Kiến trúc nào đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên?",
+   "lua_chon": [
+    "RNN",
+    "CNN",
+    "Transformer",
+    "SVM"
+   ],
+   "dap_an_dung": 2,
+   "dap_an_text": "Transformer",
+   "giai_thich": "Kiến trúc Transformer, được giới thiệu trong bài báo 'Attention Is All You Need', đã cách mạng hóa việc xử lý ngôn ngữ tự nhiên và vượt trội hơn hẳn các mô hình trước như RNN. [T04-038]",
+   "nguon": "[T04-038]"
+  },
+  {
+   "loai": "APPLICATION",
+   "cau": "Nếu bạn bắt đầu sử dụng mô hình AI trong công việc thực tế, điều gì là quan trọng nhất mà bạn cần chú ý?",
+   "lua_chon": [
+    "Chọn mô hình dựa trên vị trí trong benchmark",
+    "Đánh giá và hiểu biết về bài toán cần giải quyết",
+    "Sử dụng bất kỳ mô hình nào có thông tin tốt",
+    "Đối xử với các mô hình như một sản phẩm hoàn hảo"
+   ],
+   "dap_an_dung": 1,
+   "dap_an_text": "Đánh giá và hiểu biết về bài toán cần giải quyết",
+   "giai_thich": "Việc lựa chọn mô hình AI cần dựa trên hiểu biết về bài toán và sức mạnh của các mô hình, không chỉ dựa vào vị trí trong benchmark, để đảm bảo hiệu quả trong công việc. [T04-084]",
+   "nguon": "[T04-084]"
+  }
+ ],
+ "muc_da_bo": [
+  "Chào lớp và giới thiệu giảng viên",
+  "Tương tác cuối buổi"
+ ],
+ "so_recall": 2,
+ "so_keyword": 2,
+ "so_application": 1,
+ "n_ai_calls": 1,
+ "giay": 13.7
+}
